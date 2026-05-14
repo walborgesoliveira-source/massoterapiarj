@@ -1,0 +1,17 @@
+services:
+  massoterapiarj_web:
+    image: nginx:alpine
+    container_name: massoterapiarj_web
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8092:80"
+    volumes:
+      - ./app:/usr/share/nginx/html:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - massoterapiarj_net
+
+networks:
+  massoterapiarj_net:
+    name: massoterapiarj_net
+    driver: bridge
