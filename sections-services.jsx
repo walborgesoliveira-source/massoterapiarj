@@ -8,7 +8,7 @@ function FeaturedServices({ t, compact, cardStyle }) {
     tone: ['sand', 'accent', 'sand', 'sand', 'accent', 'sand'][i],
   }));
   return (
-    <Section t={t} pad="xl" compact={compact} bg={t.bg}>
+    <Section id="servicos" t={t} pad="xl" compact={compact} bg={t.bg}>
       <div style={{
         display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
         flexDirection: compact ? 'column' : 'row',
@@ -173,7 +173,7 @@ function PriceTable({ t, compact }) {
 function Depoimentos({ t, compact, cardStyle }) {
   const reviews = window.MRJ_TESTIMONIALS.slice(0, 3);
   return (
-    <Section t={t} pad="xl" compact={compact} bg={t.bg}>
+    <Section id="depoimentos" t={t} pad="xl" compact={compact} bg={t.bg}>
       <div style={{
         display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
         flexDirection: compact ? 'column' : 'row',

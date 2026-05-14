@@ -98,34 +98,107 @@ function UtilityStrip({ t, compact }) {
 
 // ─── Top Navigation ───
 function Nav({ t, compact }) {
-  const links = ['Início', 'Serviços', 'Sobre', 'Depoimentos', 'Blog', 'Contato'];
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const links = [
+    { label: 'Início',      id: 'inicio' },
+    { label: 'Sobre',       id: 'sobre' },
+    { label: 'Serviços',    id: 'servicos' },
+    { label: 'Equipe',      id: 'equipe' },
+    { label: 'Depoimentos', id: 'depoimentos' },
+    { label: 'FAQ',         id: 'faq' },
+    { label: 'Blog',        id: 'blog' },
+    { label: 'Contato',     id: 'contato' },
+  ];
+
+  const scrollTo = (id) => {
+    setIsMenuOpen(false);
+    const el = document.getElementById(id);
+    if (el) {
+      const offset = compact ? 70 : 100;
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = el.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   if (compact) {
     return (
       <>
         <UtilityStrip t={t} compact />
         <div style={{
-          position: 'sticky', top: 0, zIndex: 30,
+          position: 'sticky', top: 0, zIndex: 100,
           background: t.bg, borderBottom: `1px solid ${t.line}`,
           padding: '14px 20px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
-          <Wordmark t={t} compact />
+          <div onClick={() => scrollTo('inicio')} style={{ cursor: 'pointer' }}>
+            <Wordmark t={t} compact />
+          </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button style={{
-              background: t.accent, color: '#fff', border: 'none', borderRadius: 999,
-              padding: '8px 14px', fontSize: 12, fontWeight: 600, fontFamily: 'Karla, sans-serif',
-            }}>Agendar</button>
-            <div style={{ color: t.ink, padding: 4 }}>{Icon.menu(22, t.ink)}</div>
+            <a href={window.MRJ_CONTACT.whatsapp} target="_blank" rel="noopener" style={{ textDecoration: 'none' }}>
+              <button style={{
+                background: t.accent, color: '#fff', border: 'none', borderRadius: 999,
+                padding: '8px 14px', fontSize: 12, fontWeight: 600, fontFamily: 'Karla, sans-serif',
+                cursor: 'pointer'
+              }}>Agendar</button>
+            </a>
+            <div 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              style={{ color: t.ink, padding: 4, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+            >
+              {isMenuOpen ? Icon.plus(22, t.ink) : Icon.menu(22, t.ink)}
+            </div>
           </div>
         </div>
+
+        {/* Mobile Menu Overlay */}
+        {isMenuOpen && (
+          <div style={{
+            position: 'fixed', inset: 0, top: 65, zIndex: 90,
+            background: t.bg, padding: '40px 24px',
+            display: 'flex', flexDirection: 'column', gap: 24,
+            animation: 'fadeIn 200ms ease-out',
+          }}>
+            <style>{`
+              @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+            `}</style>
+            {links.map((l, i) => (
+              <div key={i} 
+                onClick={() => scrollTo(l.id)}
+                style={{
+                  fontFamily: 'Cormorant Garamond, serif', fontSize: 32,
+                  color: t.ink, fontWeight: 500, borderBottom: `1px solid ${t.line}`,
+                  paddingBottom: 12
+                }}
+              >
+                {l.label}
+              </div>
+            ))}
+            <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <Btn t={t} full onClick={() => { setIsMenuOpen(false); window.open(window.MRJ_CONTACT.whatsapp); }}>
+                Falar no WhatsApp
+              </Btn>
+              <div style={{ textAlign: 'center', fontFamily: 'Karla', fontSize: 14, color: t.muted }}>
+                {window.MRJ_CONTACT.phoneLabel}
+              </div>
+            </div>
+          </div>
+        )}
       </>
     );
   }
+
   return (
     <>
       <UtilityStrip t={t} />
       <div style={{
-        position: 'sticky', top: 0, zIndex: 30,
+        position: 'sticky', top: 0, zIndex: 100,
         background: 'rgba(245,239,231,0.92)', backdropFilter: 'blur(12px)',
         borderBottom: `1px solid ${t.line}`,
       }}>
@@ -133,18 +206,28 @@ function Nav({ t, compact }) {
           maxWidth: 1200, margin: '0 auto', padding: '20px 64px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
-          <Wordmark t={t} />
-          <nav style={{ display: 'flex', gap: 36 }}>
+          <div onClick={() => scrollTo('inicio')} style={{ cursor: 'pointer' }}>
+            <Wordmark t={t} />
+          </div>
+          <nav style={{ display: 'flex', gap: 32 }}>
             {links.map((l, i) => (
-              <a key={i} href="#" style={{
-                fontFamily: 'Karla, sans-serif', fontSize: 14,
-                color: i === 0 ? t.ink : t.inkSoft, fontWeight: i === 0 ? 600 : 500,
-                textDecoration: 'none', letterSpacing: '0.01em',
-              }}>{l}</a>
+              <div key={i} 
+                onClick={() => scrollTo(l.id)}
+                style={{
+                  fontFamily: 'Karla, sans-serif', fontSize: 14,
+                  color: t.inkSoft, fontWeight: 500,
+                  textDecoration: 'none', letterSpacing: '0.01em',
+                  cursor: 'pointer', transition: 'color 0.2s',
+                }}
+                onMouseOver={(e) => e.target.style.color = t.accent}
+                onMouseOut={(e) => e.target.style.color = t.inkSoft}
+              >
+                {l.label}
+              </div>
             ))}
           </nav>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <Btn t={t} size="sm">Agendar sessão</Btn>
+            <Btn t={t} size="sm" onClick={() => window.open(window.MRJ_CONTACT.scheduleUrl)}>Agendar sessão</Btn>
           </div>
         </div>
       </div>
@@ -156,7 +239,7 @@ function Nav({ t, compact }) {
 function Hero({ t, compact, heroText }) {
   const [title, sub] = heroText.split('|').map(s => s.trim());
   return (
-    <section style={{
+    <section id="inicio" style={{
       background: t.deep, color: t.onDeep,
       padding: compact ? '56px 22px 64px' : '120px 64px 140px',
       position: 'relative', overflow: 'hidden',
@@ -322,7 +405,7 @@ function TrustStrip({ t, compact }) {
 // ─── Sobre Nós ───
 function Sobre({ t, compact }) {
   return (
-    <Section t={t} pad="xl" compact={compact} bg={t.bg}>
+    <Section id="sobre" t={t} pad="xl" compact={compact} bg={t.bg}>
       <div style={{
         display: 'grid',
         gridTemplateColumns: compact ? '1fr' : '0.9fr 1.1fr',
@@ -409,7 +492,7 @@ function Equipe({ t, compact }) {
     { name: 'Fabiola',          role: 'Massoterapeuta · Terapias orientais', bio: 'Lomi Lomi, Thai Massage, Shiatsu e Reflexologia. Formada no Brasil e com estudos no Havaí e na Tailândia.', tone: 'accent' },
   ];
   return (
-    <Section t={t} pad="xl" compact={compact} bg={t.surface}>
+    <Section id="equipe" t={t} pad="xl" compact={compact} bg={t.surface}>
       <div style={{ textAlign: 'center', marginBottom: compact ? 48 : 72 }}>
         <Eyebrow color={t.muted} compact={compact}>Quem cuida de você</Eyebrow>
         <h2 style={{

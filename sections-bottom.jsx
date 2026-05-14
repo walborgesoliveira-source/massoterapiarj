@@ -5,7 +5,7 @@ function FAQ({ t, compact }) {
   const [open, setOpen] = React.useState(0);
   const faqs = window.MRJ_FAQS;
   return (
-    <Section t={t} pad="xl" compact={compact} bg={t.surface}>
+    <Section id="faq" t={t} pad="xl" compact={compact} bg={t.surface}>
       <div style={{
         display: 'grid', gridTemplateColumns: compact ? '1fr' : '0.7fr 1.3fr',
         gap: compact ? 32 : 96,
@@ -74,7 +74,7 @@ function FAQ({ t, compact }) {
 function Blog({ t, compact, cardStyle }) {
   const posts = window.MRJ_POSTS;
   return (
-    <Section t={t} pad="xl" compact={compact} bg={t.bg}>
+    <Section id="blog" t={t} pad="xl" compact={compact} bg={t.bg}>
       <div style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end',
         flexDirection: compact ? 'column' : 'row',
@@ -143,7 +143,7 @@ function Blog({ t, compact, cardStyle }) {
 // ─── Mapa + Contato ───
 function MapaContato({ t, compact }) {
   return (
-    <Section t={t} pad="xl" compact={compact} bg={t.surface}>
+    <Section id="contato" t={t} pad="xl" compact={compact} bg={t.surface}>
       <div style={{
         display: 'grid',
         gridTemplateColumns: compact ? '1fr' : '1fr 1fr',
