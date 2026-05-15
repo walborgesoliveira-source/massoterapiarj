@@ -141,7 +141,7 @@ function Nav({ t, compact }) {
             <Wordmark t={t} compact />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <a href={window.MRJ_CONTACT.whatsapp} target="_blank" rel="noopener" style={{ textDecoration: 'none' }}>
+            <a href={window.MRJ_CONTACT.scheduleUrl} style={{ textDecoration: 'none' }}>
               <button style={{
                 background: t.accent, color: '#fff', border: 'none', borderRadius: 999,
                 padding: '8px 14px', fontSize: 12, fontWeight: 600, fontFamily: 'Karla, sans-serif',

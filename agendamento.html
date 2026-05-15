@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agendamento Online | Massoterapia RJ</title>
+  <meta name="description" content="Solicite seu agendamento online na Massoterapia RJ. Escolha serviço, data e horário para análise e confirmação da equipe.">
+  <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5efe7;
+      --surface: #fbf7f0;
+      --cream: #f0e4d0;
+      --ink: #2a2520;
+      --soft: #5c4f44;
+      --muted: #8c7b6a;
+      --line: #e5daca;
+      --accent: #b8895a;
+      --accent-dark: #946b40;
+      --deep: #1a1410;
+      --ok: #2f7d50;
+      --warn: #9b6a1a;
+      --error: #9f3f35;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Karla, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+
+    .topbar {
+      background: var(--deep);
+      color: var(--cream);
+      border-bottom: 1px solid rgba(240, 228, 208, 0.12);
+    }
+    .topbar-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 12px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      font-size: 13px;
+    }
+    .shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 22px;
+    }
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(245, 239, 231, 0.94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+    .nav-inner {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--surface);
+      flex: 0 0 auto;
+    }
+    .brand-mark img {
+      width: 30px;
+      display: block;
+    }
+    .brand-title {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 600;
+    }
+    .brand-sub {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .link {
+      color: var(--soft);
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .button {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+    }
+    .button:hover { transform: translateY(-1px); }
+    .button.primary {
+      color: #fff;
+      background: var(--accent);
+    }
+    .button.primary:hover { background: var(--accent-dark); }
+    .button.secondary {
+      color: var(--ink);
+      background: transparent;
+      border-color: var(--line);
+    }
+    .button.full { width: 100%; }
+
+    .hero {
+      background:
+        linear-gradient(90deg, rgba(26, 20, 16, 0.9), rgba(26, 20, 16, 0.62)),
+        url("assets/espaco/sala-2.jpeg") center / cover;
+      color: var(--cream);
+    }
+    .hero-inner {
+      min-height: 360px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 410px);
+      align-items: end;
+      gap: 42px;
+      padding-top: 80px;
+      padding-bottom: 56px;
+    }
+    .eyebrow {
+      margin: 0 0 14px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 760px;
+      margin-bottom: 18px;
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(44px, 7vw, 78px);
+      line-height: 0.96;
+      font-weight: 600;
+    }
+    .hero p {
+      max-width: 640px;
+      color: rgba(240, 228, 208, 0.82);
+      font-size: 18px;
+      line-height: 1.65;
+    }
+    .status-card {
+      border: 1px solid rgba(240, 228, 208, 0.16);
+      border-radius: 8px;
+      padding: 22px;
+      background: rgba(251, 247, 240, 0.08);
+      backdrop-filter: blur(8px);
+    }
+    .status-card strong {
+      display: block;
+      margin-bottom: 8px;
+      color: #fff;
+      font-size: 18px;
+    }
+    .status-card span {
+      display: block;
+      color: rgba(240, 228, 208, 0.74);
+      line-height: 1.5;
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      gap: 28px;
+      padding-top: 54px;
+      padding-bottom: 70px;
+      align-items: start;
+    }
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+    .panel-header {
+      padding: 26px 28px;
+      border-bottom: 1px solid var(--line);
+    }
+    .panel-header h2 {
+      margin-bottom: 8px;
+      font-family: "Cormorant Garamond", serif;
+      font-size: 38px;
+      line-height: 1;
+    }
+    .panel-header p {
+      margin: 0;
+      color: var(--soft);
+      line-height: 1.55;
+    }
+    .form {
+      padding: 28px;
+      display: grid;
+      gap: 24px;
+    }
+    .fieldset {
+      display: grid;
+      gap: 16px;
+    }
+    .fieldset-title {
+      color: var(--accent-dark);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    label {
+      display: grid;
+      gap: 8px;
+      color: var(--soft);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 13px 14px;
+      color: var(--ink);
+      background: #fffdf9;
+      outline: none;
+      min-height: 48px;
+    }
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(184, 137, 90, 0.16);
+    }
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .alert {
+      display: none;
+      border-radius: 8px;
+      padding: 16px;
+      line-height: 1.55;
+      font-weight: 600;
+    }
+    .alert.show { display: block; }
+    .alert.success {
+      border: 1px solid rgba(47, 125, 80, 0.28);
+      color: var(--ok);
+      background: rgba(47, 125, 80, 0.08);
+    }
+    .alert.error {
+      border: 1px solid rgba(159, 63, 53, 0.28);
+      color: var(--error);
+      background: rgba(159, 63, 53, 0.08);
+    }
+    .alert.warning {
+      border: 1px solid rgba(155, 106, 26, 0.28);
+      color: var(--warn);
+      background: rgba(155, 106, 26, 0.08);
+    }
+    .side {
+      display: grid;
+      gap: 16px;
+      position: sticky;
+      top: 100px;
+    }
+    .side-card {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+    .side-card h3 {
+      margin-bottom: 10px;
+      font-family: "Cormorant Garamond", serif;
+      font-size: 27px;
+      line-height: 1;
+    }
+    .side-card p, .side-card li {
+      color: var(--soft);
+      line-height: 1.55;
+    }
+    .side-card ul {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding-left: 18px;
+    }
+    .summary {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      color: var(--soft);
+      font-size: 14px;
+    }
+    .summary div {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .summary strong { color: var(--ink); text-align: right; }
+
+    footer {
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      padding: 26px 0;
+      font-size: 14px;
+    }
+    footer .shell {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+      .topbar-inner { align-items: flex-start; flex-direction: column; }
+      .nav-inner { min-height: auto; padding-top: 14px; padding-bottom: 14px; align-items: flex-start; flex-direction: column; }
+      .nav-actions { width: 100%; justify-content: flex-start; }
+      .hero-inner, .main { grid-template-columns: 1fr; }
+      .hero-inner { min-height: auto; padding-top: 54px; }
+      .side { position: static; }
+    }
+    @media (max-width: 620px) {
+      .grid { grid-template-columns: 1fr; }
+      .panel-header, .form, .side-card { padding: 22px; }
+      .button { width: 100%; }
+      .link { width: 100%; text-align: center; }
+      h1 { font-size: 42px; }
+      .panel-header h2 { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <span>Av. Princesa Isabel, 323 — sala 1007 · Copacabana, Rio de Janeiro</span>
+      <span>Agendamentos enviados ficam pendentes até confirmação da equipe.</span>
+    </div>
+  </div>
+
+  <header class="nav">
+    <div class="shell nav-inner">
+      <a class="brand" href="/">
+        <span class="brand-mark"><img src="assets/logo.png" alt="Massoterapia RJ"></span>
+        <span>
+          <span class="brand-title">Massoterapia RJ</span>
+          <span class="brand-sub">Ellaine · Fabiola · Copacabana</span>
+        </span>
+      </a>
+      <div class="nav-actions">
+        <a class="link" href="/">Voltar ao site</a>
+        <a class="button secondary" href="tel:+5521982033272">(21) 98203-3272</a>
+        <a class="button primary" href="https://wa.me/message/JWUUFOFDZABFB1" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="shell hero-inner">
+      <div>
+        <p class="eyebrow">Agendamento online</p>
+        <h1>Escolha sua sessão e envie o pedido para confirmação.</h1>
+        <p>Preencha serviço, data, horário e contato. A equipe recebe o pedido como pendente e confirma após análise da agenda.</p>
+      </div>
+      <div class="status-card">
+        <strong>Status inicial: Pendente</strong>
+        <span>Este formulário segue o fluxo definido para integração com n8n, banco PS e aprovação pelo gerente mestre.</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="shell main">
+    <section class="panel">
+      <div class="panel-header">
+        <p class="eyebrow">Solicitação</p>
+        <h2>Dados do agendamento</h2>
+        <p>Os horários exibidos seguem a agenda base do site. A confirmação final acontece somente após aprovação da equipe.</p>
+      </div>
+
+      <form class="form" id="scheduleForm">
+        <div id="formAlert" class="alert" role="status" aria-live="polite"></div>
+
+        <div class="fieldset">
+          <div class="fieldset-title">Serviço e horário</div>
+          <div class="grid">
+            <label>
+              Serviço
+              <select name="service" id="service" required>
+                <option value="">Selecione uma técnica</option>
+              </select>
+            </label>
+            <label>
+              Local
+              <select name="location" required>
+                <option value="Av. Princesa Isabel, 323 - sala 1007, Copacabana">Copacabana - sala 1007</option>
+              </select>
+            </label>
+            <label>
+              Data
+              <input type="date" name="date" id="date" required>
+            </label>
+            <label>
+              Horário
+              <select name="time" id="time" required>
+                <option value="">Escolha uma data primeiro</option>
+              </select>
+            </label>
+          </div>
+          <div class="hint">Funcionamento base: segunda a sábado, das 09h às 21h. Domingos aparecem bloqueados.</div>
+        </div>
+
+        <div class="fieldset">
+          <div class="fieldset-title">Cliente</div>
+          <div class="grid">
+            <label>
+              Nome completo
+              <input type="text" name="name" autocomplete="name" required>
+            </label>
+            <label>
+              WhatsApp
+              <input type="tel" name="whatsapp" autocomplete="tel" placeholder="(21) 99999-9999" required>
+            </label>
+            <label>
+              E-mail
+              <input type="email" name="email" autocomplete="email" placeholder="voce@email.com">
+            </label>
+            <label>
+              Telegram
+              <input type="text" name="telegram" placeholder="@usuario">
+            </label>
+          </div>
+        </div>
+
+        <div class="fieldset">
+          <div class="fieldset-title">Observações</div>
+          <label>
+            Conte o que você precisa trabalhar na sessão
+            <textarea name="notes" placeholder="Ex.: dor cervical, lombar, relaxamento, pós-treino, preferência de profissional..."></textarea>
+          </label>
+        </div>
+
+        <input type="hidden" name="status" value="Pendente">
+        <button class="button primary full" type="submit">Enviar pedido de agendamento</button>
+        <div class="hint">Ao enviar, o pedido fica pendente de aprovação. A confirmação será feita pelo WhatsApp, e-mail, Telegram ou tela do site quando a integração estiver ativa.</div>
+      </form>
+    </section>
+
+    <aside class="side">
+      <div class="side-card">
+        <h3>Resumo</h3>
+        <p>Confira os dados principais antes de enviar.</p>
+        <div class="summary" id="summary">
+          <div><span>Serviço</span><strong>-</strong></div>
+          <div><span>Data</span><strong>-</strong></div>
+          <div><span>Horário</span><strong>-</strong></div>
+          <div><span>Status</span><strong>Pendente</strong></div>
+        </div>
+      </div>
+      <div class="side-card">
+        <h3>Como funciona</h3>
+        <ul>
+          <li>Você envia o pedido pelo formulário.</li>
+          <li>A equipe analisa disponibilidade e serviço.</li>
+          <li>O agendamento é confirmado ou reagendado.</li>
+          <li>O fluxo será integrado ao n8n e banco PS.</li>
+        </ul>
+      </div>
+      <div class="side-card">
+        <h3>Contato rápido</h3>
+        <p>Prefere confirmar alguma dúvida antes de enviar?</p>
+        <a class="button secondary full" href="https://wa.me/message/JWUUFOFDZABFB1" target="_blank" rel="noopener">Falar no WhatsApp</a>
+      </div>
+    </aside>
+  </main>
+
+  <footer>
+    <div class="shell">
+      <span>Massoterapia RJ · Agendamento online</span>
+      <span>Pedidos enviados com status pendente de aprovação.</span>
+    </div>
+  </footer>
+
+  <script src="theme.js"></script>
+  <script>
+    const CONFIG = {
+      webhookUrl: 'https://n8n.iaguru.com.br/webhook/massoterapiarj-agendamento',
+      webhookToken: '',
+      storageKey: 'mrj_schedule_requests',
+    };
+
+    const form = document.getElementById('scheduleForm');
+    const serviceSelect = document.getElementById('service');
+    const dateInput = document.getElementById('date');
+    const timeSelect = document.getElementById('time');
+    const alertBox = document.getElementById('formAlert');
+    const summary = document.getElementById('summary');
+
+    const services = Array.isArray(window.MRJ_SERVICES) ? window.MRJ_SERVICES : [];
+    services.forEach((service) => {
+      const option = document.createElement('option');
+      option.value = service.name;
+      option.textContent = `${service.name} - ${service.dur || 50} min`;
+      option.dataset.duration = service.dur || 50;
+      option.dataset.price = service.price || '';
+      serviceSelect.appendChild(option);
+    });
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    dateInput.min = today.toISOString().slice(0, 10);
+
+    function formatDate(dateValue) {
+      if (!dateValue) return '-';
+      const [year, month, day] = dateValue.split('-');
+      return `${day}/${month}/${year}`;
+    }
+
+    function getAvailableTimes(dateValue) {
+      if (!dateValue) return [];
+      const selected = new Date(`${dateValue}T12:00:00`);
+      const day = selected.getDay();
+      if (day === 0) return [];
+
+      const times = [];
+      const startHour = 9;
+      const endHour = 21;
+      for (let hour = startHour; hour < endHour; hour += 1) {
+        times.push(`${String(hour).padStart(2, '0')}:00`);
+        times.push(`${String(hour).padStart(2, '0')}:30`);
+      }
+      return times;
+    }
+
+    function refreshTimes() {
+      const times = getAvailableTimes(dateInput.value);
+      timeSelect.innerHTML = '';
+      if (!dateInput.value) {
+        timeSelect.append(new Option('Escolha uma data primeiro', ''));
+      } else if (!times.length) {
+        timeSelect.append(new Option('Data indisponível', ''));
+      } else {
+        timeSelect.append(new Option('Selecione um horário', ''));
+        times.forEach((time) => timeSelect.append(new Option(time, time)));
+      }
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const values = new FormData(form);
+      const rows = summary.querySelectorAll('strong');
+      rows[0].textContent = values.get('service') || '-';
+      rows[1].textContent = formatDate(values.get('date'));
+      rows[2].textContent = values.get('time') || '-';
+      rows[3].textContent = 'Pendente';
+    }
+
+    function showAlert(type, message) {
+      alertBox.className = `alert ${type} show`;
+      alertBox.textContent = message;
+      alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function saveLocal(payload) {
+      const current = JSON.parse(localStorage.getItem(CONFIG.storageKey) || '[]');
+      current.push(payload);
+      localStorage.setItem(CONFIG.storageKey, JSON.stringify(current));
+    }
+
+    async function sendToWebhook(payload) {
+      if (!CONFIG.webhookUrl) return { skipped: true };
+      const headers = { 'Content-Type': 'application/json' };
+      if (CONFIG.webhookToken) headers.Authorization = `Bearer ${CONFIG.webhookToken}`;
+      const response = await fetch(CONFIG.webhookUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) throw new Error(`Webhook respondeu ${response.status}`);
+      return response.json().catch(() => ({}));
+    }
+
+    form.addEventListener('input', updateSummary);
+    form.addEventListener('change', updateSummary);
+    dateInput.addEventListener('change', refreshTimes);
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
+      const selectedService = services.find((service) => service.name === data.service);
+      const payload = {
+        id_agendamento: `MRJ-${Date.now()}`,
+        nome_cliente: data.name,
+        telefone: data.whatsapp,
+        whatsapp: data.whatsapp,
+        email: data.email,
+        telegram: data.telegram,
+        servico: data.service,
+        duracao_media: selectedService ? selectedService.dur : 50,
+        valor_referencia: selectedService ? selectedService.price : null,
+        data_agendada: data.date,
+        hora_agendada: data.time,
+        local: data.location,
+        observacoes_cliente: data.notes,
+        status: 'Pendente',
+        origem: 'site_massoterapiarj',
+        criado_em: new Date().toISOString(),
+      };
+
+      const button = form.querySelector('button[type="submit"]');
+      button.disabled = true;
+      button.textContent = 'Enviando...';
+
+      try {
+        const result = await sendToWebhook(payload);
+        saveLocal(payload);
+        if (result.skipped) {
+          showAlert('warning', 'A página de agendamento está criada, mas o webhook do n8n ainda não foi configurado. Este teste ficou salvo apenas neste navegador e não foi enviado para a equipe.');
+        } else {
+          showAlert('success', 'Pedido recebido com sucesso! Seu agendamento foi enviado para análise. Você receberá a confirmação após aprovação do responsável.');
+        }
+        form.reset();
+        refreshTimes();
+      } catch (error) {
+        saveLocal(payload);
+        showAlert('error', 'O pedido foi salvo localmente, mas ainda não foi enviado ao n8n. Verifique a integração do webhook antes de usar em produção.');
+      } finally {
+        button.disabled = false;
+        button.textContent = 'Enviar pedido de agendamento';
+      }
+    });
+
+    refreshTimes();
+    updateSummary();
+  </script>
+</body>
+</html>

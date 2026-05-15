@@ -1,0 +1,114 @@
+{
+  "name": "Massoterapia RJ — Novo Agendamento",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "massoterapiarj-agendamento",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "webhook-agendamento",
+      "name": "1. Webhook Agendamento",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "massoterapiarj-agendamento"
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\nconst body = input.body || input;\n\nconst limpar = (valor, limite = 500) => valor ? String(valor).trim().slice(0, limite) : '';\n\nconst payload = {\n  id_agendamento: limpar(body.id_agendamento || `MRJ-${Date.now()}`, 40),\n  nome_cliente: limpar(body.nome_cliente || body.name || body.nome, 200),\n  telefone: limpar(body.telefone || body.phone || body.whatsapp, 40),\n  whatsapp: limpar(body.whatsapp, 40),\n  email: limpar(body.email, 180),\n  telegram: limpar(body.telegram, 120),\n  servico: limpar(body.servico || body.service, 180),\n  duracao_media: Number(body.duracao_media || body.duration || 50),\n  valor_referencia: body.valor_referencia || body.price || null,\n  data_agendada: limpar(body.data_agendada || body.date, 20),\n  hora_agendada: limpar(body.hora_agendada || body.time, 20),\n  local: limpar(body.local || body.location, 220),\n  observacoes_cliente: limpar(body.observacoes_cliente || body.notes, 1000),\n  status: 'Pendente',\n  origem: 'site_massoterapiarj',\n  recebido_em: new Date().toISOString()\n};\n\nconst erros = [];\nif (!payload.nome_cliente) erros.push('Nome do cliente é obrigatório.');\nif (!payload.servico) erros.push('Serviço é obrigatório.');\nif (!payload.data_agendada) erros.push('Data é obrigatória.');\nif (!payload.hora_agendada) erros.push('Horário é obrigatório.');\nif (!payload.whatsapp && !payload.telefone && !payload.email && !payload.telegram) erros.push('Informe ao menos um contato.');\n\nif (erros.length) {\n  throw new Error(`VALIDACAO: ${erros.join(' ')}`);\n}\n\nreturn [{ json: payload }];"
+      },
+      "id": "validar-agendamento",
+      "name": "2. Validar Dados",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://coreps_api:3001/api/agendamentos/public",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-agendamentos-token",
+              "value": "={{ $env.AGENDAMENTOS_API_TOKEN }}"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "salvar-coreps",
+      "name": "3. Salvar no CORE PS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [760, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"sucesso\": true, \"mensagem\": \"Pedido recebido com sucesso. Aguarde a confirmação do responsável.\", \"status\": \"Pendente\", \"agendamento\": {{ JSON.stringify($json.agendamento || $json) }} }",
+        "options": {
+          "responseCode": 201
+        }
+      },
+      "id": "responder-ok",
+      "name": "4. Responder Sucesso",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1020, 300]
+    }
+  ],
+  "connections": {
+    "1. Webhook Agendamento": {
+      "main": [
+        [
+          {
+            "node": "2. Validar Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2. Validar Dados": {
+      "main": [
+        [
+          {
+            "node": "3. Salvar no CORE PS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3. Salvar no CORE PS": {
+      "main": [
+        [
+          {
+            "node": "4. Responder Sucesso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true
+  }
+}

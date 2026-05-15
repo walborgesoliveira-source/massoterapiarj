@@ -11,7 +11,7 @@ window.MRJ_CONTACT = {
   phoneLabel: '(21) 98203-3272',
   phoneTel:   'tel:+5521982033272',
   email:      'saudebemestarelazer@gmail.com',
-  scheduleUrl: 'https://www.massoterapiarj.com.br/book-online',
+  scheduleUrl: '/agendamento.html',
 };
 
 window.MRJ_PALETTES = {
