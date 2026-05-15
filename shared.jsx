@@ -144,29 +144,38 @@ function Stars({ count = 5, size = 14, color }) {
 
 // ─── Button ───
 function Btn({ children, variant = 'primary', size = 'md', t, full = false, onClick }) {
+  const [hovered, setHovered] = React.useState(false);
   const sizes = {
     sm: { padY: 10, padX: 18, fs: 13 },
     md: { padY: 14, padX: 24, fs: 14 },
     lg: { padY: 18, padX: 32, fs: 15 },
   }[size];
   const variants = {
-    primary: { bg: t.accent, fg: '#fff', bd: 'transparent' },
-    ghost:   { bg: 'transparent', fg: t.ink, bd: t.ink },
-    onDeep:  { bg: t.cream, fg: t.deep, bd: 'transparent' },
-    outDeep: { bg: 'transparent', fg: t.onDeep, bd: 'rgba(240,228,208,0.4)' },
+    primary: { bg: t.accent, fg: '#fff', bd: 'transparent', hoverBg: t.accentDk },
+    ghost:   { bg: 'transparent', fg: t.ink, bd: t.ink, hoverBg: t.cream },
+    onDeep:  { bg: t.cream, fg: t.deep, bd: 'transparent', hoverBg: '#fff' },
+    outDeep: { bg: 'transparent', fg: t.onDeep, bd: 'rgba(240,228,208,0.4)', hoverBg: 'rgba(240,228,208,0.08)' },
   }[variant];
   return (
-    <button onClick={onClick} style={{
-      padding: `${sizes.padY}px ${sizes.padX}px`,
-      background: variants.bg, color: variants.fg,
-      border: `1px solid ${variants.bd}`, borderRadius: 999,
-      fontFamily: 'Karla, system-ui, sans-serif',
-      fontSize: sizes.fs, fontWeight: 600,
-      letterSpacing: '0.02em', cursor: 'pointer',
-      width: full ? '100%' : 'auto',
-      display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-      transition: 'transform 120ms ease',
-    }}>{children}</button>
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        padding: `${sizes.padY}px ${sizes.padX}px`,
+        background: hovered ? variants.hoverBg : variants.bg,
+        color: variants.fg,
+        border: `1px solid ${variants.bd}`, borderRadius: 999,
+        fontFamily: 'Karla, system-ui, sans-serif',
+        fontSize: sizes.fs, fontWeight: 600,
+        letterSpacing: '0.02em', cursor: 'pointer',
+        width: full ? '100%' : 'auto',
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+        transition: 'all 200ms cubic-bezier(0.22, 1, 0.36, 1)',
+        transform: hovered ? 'translateY(-2px)' : 'translateY(0)',
+        boxShadow: hovered ? '0 4px 12px rgba(0,0,0,0.12)' : 'none',
+      }}
+    >{children}</button>
   );
 }
 
@@ -182,12 +191,13 @@ function Eyebrow({ children, color, compact }) {
 }
 
 // ─── Section container — handles padding + max width ───
-function Section({ children, t, bg, pad = 'lg', compact, fullBleed = false, style = {} }) {
+function Section({ children, t, bg, pad = 'lg', compact, fullBleed = false, style = {}, id }) {
   const padY = compact ? { sm: 40, md: 56, lg: 72, xl: 96 } : { sm: 64, md: 96, lg: 128, xl: 160 };
   return (
-    <section style={{
+    <section id={id} style={{
       background: bg || 'transparent',
       padding: `${padY[pad]}px 0`,
+      scrollMarginTop: compact ? 70 : 100,
       ...style,
     }}>
       <div style={{

@@ -158,42 +158,14 @@ function MapaContato({ t, compact }) {
           border: `1px solid ${t.line}`,
           background: t.cream,
         }}>
-          {/* Stylized map — abstract pattern */}
-          <svg width="100%" height="100%" viewBox="0 0 400 460" preserveAspectRatio="xMidYMid slice" style={{ position: 'absolute', inset: 0 }}>
-            <rect width="400" height="460" fill={t.cream}/>
-            {/* roads */}
-            <g stroke={t.line} strokeWidth="1.5" fill="none" opacity="0.9">
-              <path d="M0 90 L400 60"/>
-              <path d="M0 200 L400 180"/>
-              <path d="M0 310 L400 290"/>
-              <path d="M0 410 L400 400"/>
-              <path d="M70 0 L100 460"/>
-              <path d="M200 0 L240 460"/>
-              <path d="M330 0 L360 460"/>
-            </g>
-            <g stroke={t.line} strokeWidth="0.6" fill="none" opacity="0.7">
-              <path d="M0 140 L400 120"/><path d="M0 250 L400 235"/>
-              <path d="M0 360 L400 345"/>
-              <path d="M140 0 L165 460"/><path d="M270 0 L300 460"/>
-            </g>
-            {/* beach */}
-            <path d="M0 380 Q200 410 400 360 L400 460 L0 460 Z" fill={t.accent} opacity="0.15"/>
-            <path d="M0 380 Q200 410 400 360" stroke={t.accent} strokeWidth="1.2" fill="none" opacity="0.5"/>
-            {/* blocks */}
-            <g fill={t.line} opacity="0.4">
-              <rect x="105" y="65" width="90" height="120" rx="2"/>
-              <rect x="245" y="60" width="80" height="125" rx="2"/>
-              <rect x="105" y="195" width="90" height="110" rx="2"/>
-              <rect x="245" y="190" width="80" height="105" rx="2"/>
-            </g>
-            {/* pin */}
-            <g transform="translate(195, 175)">
-              <circle cx="0" cy="0" r="22" fill={t.accent} opacity="0.18"/>
-              <circle cx="0" cy="0" r="12" fill={t.accent} opacity="0.35"/>
-              <circle cx="0" cy="0" r="6" fill={t.accent}/>
-              <circle cx="0" cy="0" r="2.5" fill="#fff"/>
-            </g>
-          </svg>
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3674.3!2d-43.1837!3d-22.9685!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9981dbecce1c0b%3A0x0!2sAv.+Princesa+Isabel%2C+323+-+Copacabana%2C+Rio+de+Janeiro+-+RJ!5e0!3m2!1spt-BR!2sbr!4v1"
+            width="100%" height="100%"
+            style={{ border: 0, position: 'absolute', inset: 0 }}
+            allowFullScreen="" loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            title="Localização Ellaine Massoterapia"
+          />
           <div style={{
             position: 'absolute', left: 16, top: 16,
             background: t.bg, padding: '8px 12px', borderRadius: 4,
@@ -432,10 +404,14 @@ function FinalCTA({ t, compact }) {
           Agende sua sessão em Copacabana e sinta a diferença desde a primeira visita.
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Btn t={t} variant="onDeep" size={compact ? 'md' : 'lg'}>
+          <Btn t={t} variant="onDeep" size={compact ? 'md' : 'lg'}
+            onClick={() => window.open(window.MRJ_CONTACT.scheduleUrl, '_blank')}
+          >
             Agendar online {Icon.arrow(16, t.deep)}
           </Btn>
-          <Btn t={t} variant="outDeep" size={compact ? 'md' : 'lg'}>
+          <Btn t={t} variant="outDeep" size={compact ? 'md' : 'lg'}
+            onClick={() => window.open(window.MRJ_CONTACT.phoneTel)}
+          >
             Ligar agora
           </Btn>
         </div>
@@ -556,26 +532,38 @@ function Footer({ t, compact }) {
 
 // ─── WhatsApp float ───
 function WhatsAppFloat({ t, compact }) {
+  const [hovered, setHovered] = React.useState(false);
   return (
-    <a href={window.MRJ_CONTACT.whatsapp} target="_blank" rel="noopener" style={{
-      position: 'absolute',
-      right: compact ? 16 : 24, bottom: compact ? 16 : 24,
-      zIndex: 40, textDecoration: 'none',
-      display: 'flex', alignItems: 'center', gap: 10,
-    }}>
+    <a href={window.MRJ_CONTACT.whatsapp} target="_blank" rel="noopener"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position: 'fixed',
+        right: compact ? 16 : 24, bottom: compact ? 16 : 24,
+        zIndex: 1000, textDecoration: 'none',
+        display: 'flex', alignItems: 'center', gap: 10,
+        transition: 'transform 0.3s ease',
+        transform: hovered ? 'scale(1.08)' : 'scale(1)',
+      }}
+    >
       {!compact && (
         <div style={{
           background: '#fff', padding: '10px 14px', borderRadius: 999,
           fontFamily: 'Karla', fontSize: 13, color: t.ink, fontWeight: 500,
           boxShadow: '0 4px 16px rgba(0,0,0,0.12)',
+          opacity: hovered ? 1 : 0.85,
+          transition: 'opacity 0.3s ease',
         }}>Fale com a gente</div>
       )}
       <div style={{
         width: compact ? 52 : 60, height: compact ? 52 : 60, borderRadius: '50%',
         background: '#25D366',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        boxShadow: '0 8px 24px rgba(37,211,102,0.4), 0 2px 8px rgba(0,0,0,0.2)',
+        boxShadow: hovered
+          ? '0 12px 32px rgba(37,211,102,0.5), 0 4px 12px rgba(0,0,0,0.25)'
+          : '0 8px 24px rgba(37,211,102,0.4), 0 2px 8px rgba(0,0,0,0.2)',
         cursor: 'pointer',
+        transition: 'box-shadow 0.3s ease',
       }}>
         {Icon.whatsapp(compact ? 26 : 30, '#fff')}
       </div>

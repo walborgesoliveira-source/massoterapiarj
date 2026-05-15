@@ -63,23 +63,31 @@ window.MRJ_PALETTES = {
 };
 
 window.MRJ_SERVICES = [
-  { name: 'Massagem Relaxante',          price: 250, dur: 50, tag: 'Relaxante',  desc: 'Toque suave com creme ou óleo. Desacelera o sistema nervoso e descontrai o corpo.' },
-  { name: 'Massagem Lomi Lomi',           price: 250, dur: 50, tag: 'Relaxante',  desc: 'Tradição havaiana. Movimentos longos e fluidos como ondas, profundamente acolhedores.' },
-  { name: 'Massagem Terapêutica',         price: 280, dur: 50, tag: 'Terapêutica', desc: 'Indicada para dores crônicas, tensões musculares e desconfortos posturais.' },
-  { name: 'Massagem Desportiva',          price: 280, dur: 50, tag: 'Terapêutica', desc: 'Prepara e recupera musculatura de quem treina, corre ou pratica esportes regularmente.' },
-  { name: 'Shiatsu',                       price: 280, dur: 50, tag: 'Oriental',    desc: 'Pressão em pontos energéticos da tradição japonesa. Equilíbrio profundo.' },
-  { name: 'Deep Tissue',                   price: 280, dur: 50, tag: 'Terapêutica', desc: 'Trabalho em camadas profundas para tensões enraizadas e contraturas teimosas.' },
-  { name: 'Drenagem Linfática',            price: 280, dur: 50, tag: 'Estética',    desc: 'Toque rítmico e leve que estimula a circulação e reduz retenção de líquidos.' },
-  { name: 'Thai Massagem',                 price: 280, dur: 50, tag: 'Oriental',    desc: 'Alongamentos passivos e digitopressão. Como um yoga praticado em você.' },
-  { name: 'Massagem Crânio Facial',        price: 280, dur: 50, tag: 'Relaxante',   desc: 'Foco em cabeça, rosto e pescoço. Alívio para quem trabalha muito na tela.' },
-  { name: 'Pedras Quentes',                price: 280, dur: 50, tag: 'Especial',    desc: 'Pedras vulcânicas aquecidas que derretem tensões mais profundas e gelam o corpo.' },
-  { name: 'Velas Quentes',                 price: 280, dur: 50, tag: 'Especial',    desc: 'Óleo de vela aromática derretido aplicado morno sobre a pele.' },
-  { name: 'New Seitai',                    price: 280, dur: 50, tag: 'Terapêutica', desc: 'Técnica japonesa de realinhamento postural. Reorganiza estrutura e respiração.' },
-  { name: 'Reflexologia Podal',            price: 280, dur: 50, tag: 'Oriental',    desc: 'Pressão em pontos dos pés que correspondem a órgãos e sistemas do corpo.' },
-  { name: 'Ashiatsu',                      price: 280, dur: 50, tag: 'Especial',    desc: 'Massagem profunda aplicada com os pés. Pressão ampla e contínua.' },
-  { name: 'Liberação Miofascial',          price: 320, dur: 50, tag: 'Terapêutica', desc: 'Trabalho instrumental na fáscia muscular. Devolve mobilidade ao tecido.' },
-  { name: 'Terapêutica + Relaxante',       price: 375, dur: 50, tag: 'Combinada',   desc: 'O melhor dos dois mundos em uma só sessão. Trata e acolhe.' },
-  { name: 'Massagem 4 Mãos',               price: 500, dur: 50, tag: 'Especial',    desc: 'Duas terapeutas, sincronizadas. Uma experiência sensorial completa.' },
+  { name: 'Massagem Relaxante',          price: 250, dur: 50, tag: 'Relaxante',  img: 'assets/servicos/massagem-relaxante.jpeg', desc: 'Toque suave com creme ou óleo. Desacelera o sistema nervoso e descontrai o corpo.' },
+  { name: 'Massagem Lomi Lomi',           price: 250, dur: 50, tag: 'Relaxante',  img: 'assets/servicos/massagem-1.jpeg', desc: 'Tradição havaiana. Movimentos longos e fluidos como ondas, profundamente acolhedores.' },
+  { name: 'Massagem Terapêutica',         price: 280, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/massagem-terapeutica.jpeg', desc: 'Indicada para dores crônicas, tensões musculares e desconfortos posturais.' },
+  { name: 'Massagem Desportiva',          price: 280, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/desportiva.jpeg', desc: 'Prepara e recupera musculatura de quem treina, corre ou pratica esportes regularmente.' },
+  { name: 'Shiatsu',                       price: 280, dur: 50, tag: 'Oriental',    img: 'assets/servicos/massagem-2.jpeg', desc: 'Pressão em pontos energéticos da tradição japonesa. Equilíbrio profundo.' },
+  { name: 'Deep Tissue',                   price: 280, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/deep-tissue.jpeg', desc: 'Trabalho em camadas profundas para tensões enraizadas e contraturas teimosas.' },
+  { name: 'Drenagem Linfática',            price: 280, dur: 50, tag: 'Estética',    img: 'assets/servicos/drenagem-linfatica.jpeg', desc: 'Toque rítmico e leve que estimula a circulação e reduz retenção de líquidos.' },
+  { name: 'Thai Massagem',                 price: 280, dur: 50, tag: 'Oriental',    img: 'assets/servicos/thai-massagem.jpeg', desc: 'Alongamentos passivos e digitopressão. Como um yoga praticado em você.' },
+  { name: 'Massagem Crânio Facial',        price: 280, dur: 50, tag: 'Relaxante',   img: 'assets/servicos/massagem-relaxante.jpeg', desc: 'Foco em cabeça, rosto e pescoço. Alívio para quem trabalha muito na tela.' },
+  { name: 'Pedras Quentes',                price: 280, dur: 50, tag: 'Especial',    img: 'assets/espaco/detalhes-5.jpeg', desc: 'Pedras vulcânicas aquecidas que derretem tensões mais profundas e gelam o corpo.' },
+  { name: 'Velas Quentes',                 price: 280, dur: 50, tag: 'Especial',    img: 'assets/espaco/detalhes-6.jpeg', desc: 'Óleo de vela aromática derretido aplicado morno sobre a pele.' },
+  { name: 'New Seitai',                    price: 280, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/new-seitai.jpeg', desc: 'Técnica japonesa de realinhamento postural. Reorganiza estrutura e respiração.' },
+  { name: 'Reflexologia Podal',            price: 280, dur: 50, tag: 'Oriental',    img: 'assets/servicos/reflexologia.jpeg', desc: 'Pressão em pontos dos pés que correspondem a órgãos e sistemas do corpo.' },
+  { name: 'Ashiatsu',                      price: 280, dur: 50, tag: 'Especial',    img: 'assets/servicos/desportiva-2.jpeg', desc: 'Massagem profunda aplicada com os pés. Pressão ampla e contínua.' },
+  { name: 'Liberação Miofascial',          price: 320, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/liberacao-miofascial.jpeg', desc: 'Trabalho instrumental na fáscia muscular. Devolve mobilidade ao tecido.' },
+  { name: 'Terapêutica + Relaxante',       price: 375, dur: 50, tag: 'Combinada',   img: 'assets/servicos/massagem-terapeutica.jpeg', desc: 'O melhor dos dois mundos em uma só sessão. Trata e acolhe.' },
+  { name: 'Massagem 4 Mãos',               price: 500, dur: 50, tag: 'Especial',    img: 'assets/servicos/massagem-1.jpeg', desc: 'Duas terapeutas, sincronizadas. Uma experiência sensorial completa.' },
+];
+
+window.MRJ_TEAM = [
+  { name: 'Ellaine Moreira', role: 'Fisioterapeuta · Massoterapeuta', bio: 'Fundadora. Especialista em técnicas terapêuticas, Deep Tissue e Liberação Miofascial. 12 anos cuidando de corpos.', img: 'assets/equipe/ellaine.jpeg' },
+  { name: 'Fabíola',          role: 'Massoterapeuta · Terapias orientais', bio: 'Lomi Lomi, Thai Massage, Shiatsu e Reflexologia. Formada no Brasil e com estudos no Havaí e na Tailândia.', img: 'assets/equipe/fabiola.jpeg' },
+  { name: 'Amanda',           role: 'Massoterapeuta clínica', bio: 'Especialista em massagem terapêutica e relaxante. Toque preciso e acolhedor.', img: 'assets/equipe/amanda.jpeg' },
+  { name: 'Diana',            role: 'Massoterapeuta clínica', bio: 'Formação em técnicas ocidentais e orientais. Foco em bem-estar integral e alívio de tensões.', img: 'assets/equipe/diana.jpeg' },
+  { name: 'Selma',            role: 'Massoterapeuta clínica', bio: 'Experiência em drenagem linfática, massagem desportiva e técnicas de relaxamento profundo.', img: 'assets/equipe/selma.jpeg' },
 ];
 
 window.MRJ_TESTIMONIALS = [
@@ -106,7 +114,7 @@ window.MRJ_FAQS = [
 ];
 
 window.MRJ_POSTS = [
-  { tag: 'Esportistas',  title: 'Massagem desportiva: como prevenir lesões e acelerar a recuperação', img: 'assets/blog-desportiva.png',  read: '5 min', date: '12 Mai' },
-  { tag: 'Técnicas',     title: 'Thai massagem: a arte do relaxamento e do alívio da dor',              img: 'assets/blog-thai.png',        read: '6 min', date: '28 Abr' },
-  { tag: 'Bem-estar',    title: 'A importância da Massoterapia para o seu corpo e a sua rotina',        img: 'assets/blog-importancia.png', read: '4 min', date: '15 Abr' },
+  { tag: 'Esportistas',  title: 'Massagem desportiva: como prevenir lesões e acelerar a recuperação', img: 'assets/servicos/desportiva.jpeg',  read: '5 min', date: '12 Mai' },
+  { tag: 'Técnicas',     title: 'Thai massagem: a arte do relaxamento e do alívio da dor',              img: 'assets/servicos/thai-massagem.jpeg',        read: '6 min', date: '28 Abr' },
+  { tag: 'Bem-estar',    title: 'A importância da Massoterapia para o seu corpo e a sua rotina',        img: 'assets/servicos/massagem-terapeutica.jpeg', read: '4 min', date: '15 Abr' },
 ];

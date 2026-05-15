@@ -42,14 +42,29 @@ function FeaturedServices({ t, compact, cardStyle }) {
         gridTemplateColumns: compact ? '1fr' : 'repeat(3, 1fr)',
         gap: compact ? 16 : 24,
       }}>
-        {featured.map((s, i) => (
-          <div key={i} style={{
-            ...cardSurface(cardStyle, t),
-            padding: compact ? 18 : 22,
-            display: 'flex', flexDirection: 'column', gap: compact ? 14 : 18,
-            cursor: 'pointer',
-          }}>
-            <Placeholder label={s.name.toLowerCase()} ratio="3/2" tone={s.tone} kind={s.kind} t={t} radius={3} compact={compact}/>
+        {featured.map((s, i) => {
+          const [hovered, setHovered] = React.useState(false);
+          return (
+          <div key={i}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            style={{
+              ...cardSurface(cardStyle, t),
+              padding: compact ? 18 : 22,
+              display: 'flex', flexDirection: 'column', gap: compact ? 14 : 18,
+              cursor: 'pointer',
+              transition: 'all 0.3s cubic-bezier(0.22, 1, 0.36, 1)',
+              transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
+              boxShadow: hovered ? '0 8px 32px rgba(42,37,32,0.10)' : 'none',
+            }}
+          >
+            <div style={{ position: 'relative', width: '100%', aspectRatio: '3/2', borderRadius: 3, overflow: 'hidden' }}>
+              <img src={s.img} alt={s.name}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', filter: 'saturate(0.85) brightness(0.95)', transition: 'transform 0.5s ease' }}
+                onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+              />
+            </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12 }}>
                 <h3 style={{
@@ -75,7 +90,8 @@ function FeaturedServices({ t, compact, cardStyle }) {
               </div>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <div style={{

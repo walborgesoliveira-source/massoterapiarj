@@ -104,9 +104,9 @@ function Nav({ t, compact }) {
     { label: 'Sobre',       id: 'sobre' },
     { label: 'Serviços',    id: 'servicos' },
     { label: 'Equipe',      id: 'equipe' },
+    { label: 'Espaço',      id: 'espaco' },
     { label: 'Depoimentos', id: 'depoimentos' },
     { label: 'FAQ',         id: 'faq' },
-    { label: 'Blog',        id: 'blog' },
     { label: 'Contato',     id: 'contato' },
   ];
 
@@ -279,10 +279,17 @@ function Hero({ t, compact, heroText }) {
               maxWidth: 480, fontWeight: 400,
             }}>{sub}</p>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <Btn t={t} variant="onDeep" size={compact ? 'md' : 'lg'}>
+              <Btn t={t} variant="onDeep" size={compact ? 'md' : 'lg'}
+                onClick={() => window.open(window.MRJ_CONTACT.scheduleUrl, '_blank')}
+              >
                 Agendar sessão {Icon.arrow(16, t.deep)}
               </Btn>
-              <Btn t={t} variant="outDeep" size={compact ? 'md' : 'lg'}>
+              <Btn t={t} variant="outDeep" size={compact ? 'md' : 'lg'}
+                onClick={() => {
+                  const el = document.getElementById('servicos');
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+              >
                 Ver técnicas
               </Btn>
             </div>
@@ -314,7 +321,7 @@ function Hero({ t, compact, heroText }) {
                 background: `linear-gradient(135deg, ${t.deep}, #2a1f18)`,
                 boxShadow: 'inset 0 0 0 1px rgba(240,228,208,0.06)',
               }}>
-                <img src="assets/hero-massage.png" alt="Atendimento de massoterapia"
+                <img src="assets/hero-real.jpeg" alt="Atendimento de massoterapia"
                      style={{
                        width: '100%', height: '100%',
                        objectFit: 'cover', objectPosition: 'center',
@@ -348,7 +355,7 @@ function Hero({ t, compact, heroText }) {
                 borderRadius: 4, overflow: 'hidden',
                 background: `linear-gradient(135deg, ${t.deep}, #2a1f18)`,
               }}>
-                <img src="assets/hero-massage.png" alt="Atendimento de massoterapia"
+                <img src="assets/hero-real.jpeg" alt="Atendimento de massoterapia"
                      style={{
                        width: '100%', height: '100%',
                        objectFit: 'cover', objectPosition: 'center',
@@ -418,7 +425,7 @@ function Sobre({ t, compact }) {
             borderRadius: 4, overflow: 'hidden',
             boxShadow: `inset 0 0 0 1px ${t.line}`,
           }}>
-            <img src="assets/services-lead.png" alt="Sessão de massoterapia"
+            <img src="assets/espaco/sala-1.jpeg" alt="Sessão de massoterapia"
                  style={{
                    width: '100%', height: '100%', objectFit: 'cover', display: 'block',
                    filter: 'saturate(0.7) contrast(0.95)',
@@ -487,10 +494,7 @@ function Sobre({ t, compact }) {
 
 // ─── Equipe ───
 function Equipe({ t, compact }) {
-  const team = [
-    { name: 'Ellaine Moreira', role: 'Fisioterapeuta · Massoterapeuta', bio: 'Fundadora. Especialista em técnicas terapêuticas, Deep Tissue e Liberação Miofascial. 12 anos cuidando de corpos.', tone: 'sand' },
-    { name: 'Fabiola',          role: 'Massoterapeuta · Terapias orientais', bio: 'Lomi Lomi, Thai Massage, Shiatsu e Reflexologia. Formada no Brasil e com estudos no Havaí e na Tailândia.', tone: 'accent' },
-  ];
+  const team = window.MRJ_TEAM;
   return (
     <Section id="equipe" t={t} pad="xl" compact={compact} bg={t.surface}>
       <div style={{ textAlign: 'center', marginBottom: compact ? 48 : 72 }}>
@@ -500,25 +504,285 @@ function Equipe({ t, compact }) {
           fontSize: compact ? 36 : 56, lineHeight: 1.05, fontWeight: 400,
           color: t.ink, margin: '16px 0 0', letterSpacing: '-0.02em',
         }}>Nossa equipe</h2>
+        <p style={{
+          fontFamily: 'Karla', fontSize: compact ? 15 : 17, lineHeight: 1.6,
+          color: t.inkSoft, margin: '20px auto 0', maxWidth: 560,
+        }}>
+          Cinco profissionais certificadas, cada uma com especialidades complementares. 
+          Para que o seu corpo encontre sempre o toque certo.
+        </p>
       </div>
+
+      {/* Featured row: Ellaine (founder) */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: compact ? '1fr' : 'repeat(2, 1fr)',
-        gap: compact ? 36 : 56,
+        gridTemplateColumns: compact ? '1fr' : '1fr 1fr',
+        gap: compact ? 32 : 64,
+        alignItems: 'center',
+        marginBottom: compact ? 48 : 72,
       }}>
-        {team.map((p, i) => (
-          <div key={i} style={{ display: 'flex', flexDirection: 'column' }}>
-            <Placeholder label={`retrato · ${p.name.toLowerCase()}`} ratio="4/5" tone={p.tone} kind="orb" t={t} radius={4} compact={compact}/>
-            <div style={{ marginTop: 24 }}>
-              <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: compact ? 30 : 38, color: t.ink, lineHeight: 1, fontWeight: 500 }}>{p.name}</div>
-              <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10.5, letterSpacing: '0.18em', color: t.muted, textTransform: 'uppercase', margin: '10px 0 14px' }}>{p.role}</div>
-              <p style={{ fontFamily: 'Karla', fontSize: compact ? 15 : 16, lineHeight: 1.6, color: t.inkSoft, margin: 0 }}>{p.bio}</p>
-            </div>
+        <div style={{
+          position: 'relative', width: '100%', aspectRatio: '4/5',
+          borderRadius: 6, overflow: 'hidden',
+          boxShadow: `inset 0 0 0 1px ${t.line}`,
+        }}>
+          <img src={team[0].img} alt={team[0].name}
+            style={{
+              width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+              filter: 'saturate(0.85) brightness(0.95)',
+            }}/>
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: `linear-gradient(180deg, transparent 60%, ${t.deep}88 100%)`,
+          }}/>
+          <div style={{
+            position: 'absolute', left: compact ? 16 : 24, bottom: compact ? 16 : 24,
+            right: compact ? 16 : 24,
+          }}>
+            <div style={{
+              fontFamily: 'ui-monospace, monospace', fontSize: 10, letterSpacing: '0.22em',
+              color: t.accent, textTransform: 'uppercase', marginBottom: 6,
+            }}>Fundadora</div>
           </div>
-        ))}
+        </div>
+        <div>
+          <div style={{
+            fontFamily: 'Cormorant Garamond, serif',
+            fontSize: compact ? 36 : 52, color: t.ink, lineHeight: 1.05, fontWeight: 400,
+            letterSpacing: '-0.02em',
+          }}>{team[0].name}</div>
+          <div style={{
+            fontFamily: 'ui-monospace, monospace', fontSize: 10.5, letterSpacing: '0.18em',
+            color: t.muted, textTransform: 'uppercase', margin: '14px 0 20px',
+          }}>{team[0].role}</div>
+          <p style={{
+            fontFamily: 'Karla', fontSize: compact ? 15 : 17, lineHeight: 1.65,
+            color: t.inkSoft, margin: '0 0 28px',
+          }}>{team[0].bio}</p>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <Btn t={t} size="md"
+              onClick={() => window.open(window.MRJ_CONTACT.scheduleUrl, '_blank')}
+            >Agendar com Ellaine {Icon.arrow(14, '#fff')}</Btn>
+          </div>
+        </div>
+      </div>
+
+      {/* Rest of team in grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: compact ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+        gap: compact ? 16 : 28,
+      }}>
+        {team.slice(1).map((p, i) => {
+          const [hovered, setHovered] = React.useState(false);
+          return (
+            <div key={i}
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+              style={{
+                display: 'flex', flexDirection: 'column',
+                transition: 'transform 0.3s ease',
+                transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
+              }}
+            >
+              <div style={{
+                position: 'relative', width: '100%', aspectRatio: '3/4',
+                borderRadius: 6, overflow: 'hidden',
+                boxShadow: hovered
+                  ? `0 12px 32px rgba(42,37,32,0.12), inset 0 0 0 1px ${t.line}`
+                  : `inset 0 0 0 1px ${t.line}`,
+                transition: 'box-shadow 0.3s ease',
+              }}>
+                <img src={p.img} alt={p.name}
+                  style={{
+                    width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+                    filter: 'saturate(0.85) brightness(0.95)',
+                    transition: 'transform 0.5s ease',
+                    transform: hovered ? 'scale(1.05)' : 'scale(1)',
+                  }}/>
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  background: `linear-gradient(180deg, transparent 55%, ${t.deep}99 100%)`,
+                }}/>
+              </div>
+              <div style={{ marginTop: compact ? 12 : 16 }}>
+                <div style={{
+                  fontFamily: 'Cormorant Garamond, serif',
+                  fontSize: compact ? 20 : 24, color: t.ink, lineHeight: 1.1, fontWeight: 500,
+                }}>{p.name}</div>
+                <div style={{
+                  fontFamily: 'ui-monospace, monospace', fontSize: compact ? 9 : 10,
+                  letterSpacing: '0.16em', color: t.muted, textTransform: 'uppercase',
+                  margin: '8px 0 10px',
+                }}>{p.role}</div>
+                <p style={{
+                  fontFamily: 'Karla', fontSize: compact ? 13 : 14, lineHeight: 1.55,
+                  color: t.inkSoft, margin: 0,
+                }}>{p.bio}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Team group photo */}
+      <div style={{
+        marginTop: compact ? 48 : 72,
+        borderRadius: 6, overflow: 'hidden',
+        position: 'relative',
+        boxShadow: `inset 0 0 0 1px ${t.line}`,
+      }}>
+        <img src="assets/equipe/equipe-grupo.jpeg" alt="Equipe Massoterapia RJ"
+          style={{
+            width: '100%', height: compact ? 220 : 360, objectFit: 'cover',
+            display: 'block', filter: 'saturate(0.85) brightness(0.92)',
+          }}/>
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: `linear-gradient(180deg, transparent 40%, ${t.deep}88 100%)`,
+        }}/>
+        <div style={{
+          position: 'absolute', bottom: compact ? 16 : 28, left: compact ? 16 : 28,
+          right: compact ? 16 : 28,
+          display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
+          flexWrap: 'wrap', gap: 12,
+        }}>
+          <div>
+            <div style={{
+              fontFamily: 'Cormorant Garamond, serif',
+              fontSize: compact ? 24 : 36, color: t.onDeep, fontWeight: 400,
+              lineHeight: 1.1,
+            }}>Equipe unida, cuidado completo</div>
+            <div style={{
+              fontFamily: 'Karla', fontSize: compact ? 12 : 14,
+              color: 'rgba(240,228,208,0.75)', marginTop: 8,
+            }}>5 profissionais · 16 técnicas · +500 atendimentos</div>
+          </div>
+        </div>
       </div>
     </Section>
   );
 }
 
-Object.assign(window, { Wordmark, UtilityStrip, Nav, Hero, TrustStrip, Sobre, Equipe });
+// ─── Nosso Espaço — photo gallery ───
+function NossoEspaco({ t, compact }) {
+  const photos = [
+    { src: 'assets/espaco/sala-1.jpeg',      label: 'Sala de atendimento',     span: 'wide' },
+    { src: 'assets/espaco/recepcao.jpeg',     label: 'Recepção',               span: 'tall' },
+    { src: 'assets/espaco/detalhes-1.jpeg',   label: 'Detalhes do ambiente',   span: 'normal' },
+    { src: 'assets/espaco/sala-2.jpeg',       label: 'Sala privativa',         span: 'normal' },
+    { src: 'assets/espaco/detalhes-5.jpeg',   label: 'Ambientação',            span: 'wide' },
+    { src: 'assets/espaco/detalhes-3.jpeg',   label: 'Toalhas e aromas',       span: 'normal' },
+    { src: 'assets/espaco/sala-3.jpeg',       label: 'Vista da sala',          span: 'normal' },
+    { src: 'assets/espaco/detalhes-7.jpeg',   label: 'Detalhes zen',           span: 'tall' },
+  ];
+
+  return (
+    <Section id="espaco" t={t} pad="xl" compact={compact} bg={t.bg}>
+      <div style={{
+        display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
+        flexDirection: compact ? 'column' : 'row',
+        alignItems: compact ? 'flex-start' : 'flex-end',
+        gap: compact ? 16 : 40, marginBottom: compact ? 36 : 64,
+      }}>
+        <div>
+          <Eyebrow color={t.muted} compact={compact}>Nosso espaço</Eyebrow>
+          <h2 style={{
+            fontFamily: 'Cormorant Garamond, serif',
+            fontSize: compact ? 36 : 56, lineHeight: 1.05, fontWeight: 400,
+            color: t.ink, margin: '16px 0 0', letterSpacing: '-0.02em',
+            maxWidth: 620, textWrap: 'balance',
+          }}>
+            Um ambiente que <em style={{ color: t.accent }}>acolhe</em> antes do primeiro toque
+          </h2>
+        </div>
+        {!compact && (
+          <p style={{
+            fontFamily: 'Karla', fontSize: 16, lineHeight: 1.6,
+            color: t.inkSoft, maxWidth: 320, margin: 0,
+          }}>
+            Cada detalhe pensado para que você solte o mundo na porta e receba 
+            o cuidado que merece. Aromas, luz natural e silêncio.
+          </p>
+        )}
+      </div>
+
+      {/* Photo Grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: compact ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+        gridAutoRows: compact ? 140 : 220,
+        gap: compact ? 8 : 12,
+      }}>
+        {photos.map((photo, i) => {
+          const [hovered, setHovered] = React.useState(false);
+          const gridColumn = !compact && photo.span === 'wide' ? 'span 2' : 'span 1';
+          const gridRow = !compact && photo.span === 'tall' ? 'span 2' : 'span 1';
+          return (
+            <div key={i}
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+              style={{
+                position: 'relative',
+                borderRadius: compact ? 4 : 6, overflow: 'hidden',
+                gridColumn, gridRow,
+                cursor: 'pointer',
+              }}
+            >
+              <img src={photo.src} alt={photo.label}
+                style={{
+                  width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+                  filter: 'saturate(0.85) brightness(0.92)',
+                  transition: 'transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
+                  transform: hovered ? 'scale(1.08)' : 'scale(1)',
+                }}/>
+              <div style={{
+                position: 'absolute', inset: 0,
+                background: hovered
+                  ? `linear-gradient(180deg, transparent 40%, ${t.deep}cc 100%)`
+                  : `linear-gradient(180deg, transparent 60%, ${t.deep}66 100%)`,
+                transition: 'background 0.4s ease',
+              }}/>
+              <div style={{
+                position: 'absolute', left: compact ? 8 : 14, bottom: compact ? 8 : 14,
+                fontFamily: 'Karla', fontSize: compact ? 11 : 13,
+                color: 'rgba(240,228,208,0.9)', fontWeight: 500,
+                opacity: hovered ? 1 : 0.7,
+                transition: 'opacity 0.3s ease',
+                transform: hovered ? 'translateY(0)' : 'translateY(4px)',
+              }}>{photo.label}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Address strip under gallery */}
+      <div style={{
+        marginTop: compact ? 24 : 36,
+        padding: compact ? '16px 18px' : '20px 28px',
+        background: t.surface, borderRadius: 6,
+        border: `1px solid ${t.line}`,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        gap: 16, flexWrap: 'wrap',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {Icon.pin(16, t.accent)}
+          <div>
+            <div style={{
+              fontFamily: 'Karla', fontSize: compact ? 14 : 15, color: t.ink, fontWeight: 600,
+            }}>Av. Princesa Isabel, 323 — sala 1007</div>
+            <div style={{
+              fontFamily: 'Karla', fontSize: compact ? 12 : 13, color: t.muted, marginTop: 2,
+            }}>Copacabana, Rio de Janeiro · 6 min do metrô</div>
+          </div>
+        </div>
+        <a href="https://www.google.com/maps/search/?api=1&query=Av.+Princesa+Isabel+323+Copacabana+Rio+de+Janeiro" 
+           target="_blank" rel="noopener" style={{ textDecoration: 'none' }}>
+          <Btn t={t} size="sm">Ver no Maps {Icon.arrow(13, '#fff')}</Btn>
+        </a>
+      </div>
+    </Section>
+  );
+}
+
+Object.assign(window, { Wordmark, UtilityStrip, Nav, Hero, TrustStrip, Sobre, Equipe, NossoEspaco });
