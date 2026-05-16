@@ -57,6 +57,86 @@
     },
     {
       "parameters": {
+        "jsCode": "const agendamento = $json.agendamento || $json;\nconst data = agendamento.data_agendada ? String(agendamento.data_agendada).slice(0, 10).split('-').reverse().join('/') : '-';\nconst hora = agendamento.hora_agendada ? String(agendamento.hora_agendada).slice(0, 5) : '-';\nconst contato = agendamento.whatsapp || agendamento.telefone || agendamento.email || agendamento.telegram || '-';\n\nconst linhas = [\n  'Novo agendamento recebido - Massoterapia RJ',\n  '',\n  `Codigo: ${agendamento.codigo || agendamento.id_agendamento || '-'}`,\n  `Cliente: ${agendamento.nome_cliente || '-'}`,\n  `Contato: ${contato}`,\n  `Servico: ${agendamento.servico || '-'}`,\n  `Data: ${data}`,\n  `Horario: ${hora}`,\n  `Local: ${agendamento.local || '-'}`,\n  `Status: ${agendamento.status || 'Pendente'}`\n];\n\nif (agendamento.observacoes_cliente) {\n  linhas.push('', `Observacoes: ${agendamento.observacoes_cliente}`);\n}\n\nreturn [{ json: { ...$json, telegram_text: linhas.join('\\n') } }];"
+      },
+      "id": "preparar-alerta-telegram",
+      "name": "4. Preparar Alerta Telegram",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1020, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "telegram-token-configurado",
+              "leftValue": "={{ $env.TELEGRAM_BOT_TOKEN }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "telegram-chat-configurado",
+              "leftValue": "={{ $env.TELEGRAM_CHAT_ID }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "telegram-configurado",
+      "name": "5. Telegram Configurado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1280, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "={{ $env.TELEGRAM_CHAT_ID }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.telegram_text }}"
+            },
+            {
+              "name": "disable_web_page_preview",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "enviar-telegram",
+      "name": "6. Enviar Telegram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1540, 200],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
         "respondWith": "json",
         "responseBody": "={ \"sucesso\": true, \"mensagem\": \"Pedido recebido com sucesso. Aguarde a confirmação do responsável.\", \"status\": \"Pendente\", \"agendamento\": {{ JSON.stringify($json.agendamento || $json) }} }",
         "options": {
@@ -64,10 +144,10 @@
         }
       },
       "id": "responder-ok",
-      "name": "4. Responder Sucesso",
+      "name": "7. Responder Sucesso",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [1020, 300]
+      "position": [1800, 300]
     }
   ],
   "connections": {
@@ -97,7 +177,47 @@
       "main": [
         [
           {
-            "node": "4. Responder Sucesso",
+            "node": "4. Preparar Alerta Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4. Preparar Alerta Telegram": {
+      "main": [
+        [
+          {
+            "node": "5. Telegram Configurado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "5. Telegram Configurado?": {
+      "main": [
+        [
+          {
+            "node": "6. Enviar Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "7. Responder Sucesso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "6. Enviar Telegram": {
+      "main": [
+        [
+          {
+            "node": "7. Responder Sucesso",
             "type": "main",
             "index": 0
           }
