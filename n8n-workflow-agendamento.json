@@ -14,7 +14,10 @@
       "name": "1. Webhook Agendamento",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [240, 300],
+      "position": [
+        240,
+        300
+      ],
       "webhookId": "massoterapiarj-agendamento"
     },
     {
@@ -25,7 +28,10 @@
       "name": "2. Validar Dados",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [500, 300]
+      "position": [
+        500,
+        300
+      ]
     },
     {
       "parameters": {
@@ -36,7 +42,10 @@
       "name": "3. Verificar Disponibilidade",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [760, 300]
+      "position": [
+        760,
+        300
+      ]
     },
     {
       "parameters": {
@@ -66,7 +75,10 @@
       "name": "4. Horário Ocupado?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [1020, 300]
+      "position": [
+        1020,
+        300
+      ]
     },
     {
       "parameters": {
@@ -80,7 +92,10 @@
       "name": "5. Responder Horário Ocupado",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [1280, 180]
+      "position": [
+        1280,
+        180
+      ]
     },
     {
       "parameters": {
@@ -108,17 +123,23 @@
       "name": "6. Salvar no CORE PS",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1280, 420]
+      "position": [
+        1280,
+        420
+      ]
     },
     {
       "parameters": {
-        "jsCode": "const agendamento = $json.agendamento || $json;\nconst data = agendamento.data_agendada ? String(agendamento.data_agendada).slice(0, 10).split('-').reverse().join('/') : '-';\nconst hora = agendamento.hora_agendada ? String(agendamento.hora_agendada).slice(0, 5) : '-';\nconst contato = agendamento.whatsapp || agendamento.telefone || agendamento.email || agendamento.telegram || '-';\n\nconst linhas = [\n  'Novo agendamento recebido - Massoterapia RJ',\n  '',\n  `Codigo: ${agendamento.codigo || agendamento.id_agendamento || '-'}`,\n  `Cliente: ${agendamento.nome_cliente || '-'}`,\n  `Contato: ${contato}`,\n  `Servico: ${agendamento.servico || '-'}`,\n  `Data: ${data}`,\n  `Horario: ${hora}`,\n  `Local: ${agendamento.local || '-'}`,\n  `Status: ${agendamento.status || 'Pendente'}`\n];\n\nif (agendamento.observacoes_cliente) {\n  linhas.push('', `Observacoes: ${agendamento.observacoes_cliente}`);\n}\n\nreturn [{ json: { ...$json, telegram_text: linhas.join('\\n') } }];"
+        "jsCode": "const agendamento = $json.agendamento || $json;\nconst data = agendamento.data_agendada ? String(agendamento.data_agendada).slice(0, 10).split('-').reverse().join('/') : '-';\nconst hora = agendamento.hora_agendada ? String(agendamento.hora_agendada).slice(0, 5) : '-';\nconst contato = agendamento.whatsapp || agendamento.telefone || agendamento.email || agendamento.telegram || '-';\nconst normalizarTelefone = (valor) => {\n  const digitos = String(valor || '').replace(/\\D/g, '');\n  if (!digitos) return '';\n  if (digitos.startsWith('55') && (digitos.length === 12 || digitos.length === 13)) return digitos;\n  if (digitos.length === 10 || digitos.length === 11) return `55${digitos}`;\n  return digitos;\n};\n\nconst linhasTelegram = [\n  'Novo agendamento recebido - Massoterapia RJ',\n  '',\n  `Codigo: ${agendamento.codigo || agendamento.id_agendamento || '-'}`,\n  `Cliente: ${agendamento.nome_cliente || '-'}`,\n  `Contato: ${contato}`,\n  `Servico: ${agendamento.servico || '-'}`,\n  `Data: ${data}`,\n  `Horario: ${hora}`,\n  `Local: ${agendamento.local || '-'}`,\n  `Status: ${agendamento.status || 'Pendente'}`\n];\n\nif (agendamento.observacoes_cliente) {\n  linhasTelegram.push('', `Observacoes: ${agendamento.observacoes_cliente}`);\n}\n\nconst linhasWhatsApp = [\n  `Olá, ${agendamento.nome_cliente || 'tudo bem'}!`,\n  '',\n  'Recebemos seu pedido de agendamento na Massoterapia RJ.',\n  '',\n  `Código: ${agendamento.codigo || agendamento.id_agendamento || '-'}`,\n  `Serviço: ${agendamento.servico || '-'}`,\n  `Data: ${data}`,\n  `Horário: ${hora}`,\n  `Local: ${agendamento.local || '-'}`,\n  '',\n  'Status: Pendente de confirmação.',\n  'A equipe vai analisar e confirmar, recusar ou sugerir reagendamento.'\n];\n\nreturn [{\n  json: {\n    ...$json,\n    telegram_text: linhasTelegram.join('\\n'),\n    whatsapp_number: normalizarTelefone(agendamento.whatsapp || agendamento.telefone),\n    whatsapp_text: linhasWhatsApp.join('\\n')\n  }\n}];"
       },
       "id": "preparar-alerta-telegram",
       "name": "7. Preparar Alerta Telegram",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1540, 420]
+      "position": [
+        1540,
+        420
+      ]
     },
     {
       "parameters": {
@@ -158,37 +179,10 @@
       "name": "8. Telegram Configurado?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [1800, 420]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "=https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "chat_id",
-              "value": "={{ $env.TELEGRAM_CHAT_ID }}"
-            },
-            {
-              "name": "text",
-              "value": "={{ $json.telegram_text }}"
-            },
-            {
-              "name": "disable_web_page_preview",
-              "value": "true"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "enviar-telegram",
-      "name": "9. Enviar Telegram",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [2060, 320],
-      "continueOnFail": true
+      "position": [
+        1800,
+        420
+      ]
     },
     {
       "parameters": {
@@ -218,7 +212,96 @@
       "name": "10. Cliente Tem Email?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [1800, 620]
+      "position": [
+        1800,
+        620
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cliente-whatsapp-informado",
+              "leftValue": "={{ $json.whatsapp_number }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "whatsapp-url-configurada",
+              "leftValue": "={{ $env.WHATSAPP_API_URL }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "whatsapp-token-configurado",
+              "leftValue": "={{ $env.WHATSAPP_API_TOKEN }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "cliente-tem-whatsapp",
+      "name": "12. Cliente Tem WhatsApp?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1800,
+        820
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot{{ $env.TELEGRAM_BOT_TOKEN }}/sendMessage",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "={{ $env.TELEGRAM_CHAT_ID }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.telegram_text }}"
+            },
+            {
+              "name": "disable_web_page_preview",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "enviar-telegram",
+      "name": "9. Enviar Telegram",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2060,
+        320
+      ],
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -233,13 +316,48 @@
       "name": "11. Email Cliente",
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2,
-      "position": [2060, 620],
+      "position": [
+        2060,
+        620
+      ],
       "credentials": {
         "smtp": {
           "id": "0WubbuSS4i0veB45",
           "name": "SMTP — loja@iaguru.com.br"
         }
       },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.WHATSAPP_API_URL }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.WHATSAPP_API_TOKEN }}"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { [($env.WHATSAPP_TO_FIELD || \"to\")]: $json.whatsapp_number, [($env.WHATSAPP_MESSAGE_FIELD || \"message\")]: $json.whatsapp_text } }}",
+        "options": {}
+      },
+      "id": "enviar-whatsapp-cliente",
+      "name": "13. WhatsApp Cliente",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2060,
+        820
+      ],
       "continueOnFail": true
     },
     {
@@ -251,10 +369,13 @@
         }
       },
       "id": "responder-ok",
-      "name": "12. Responder Sucesso",
+      "name": "14. Responder Sucesso",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [2320, 420]
+      "position": [
+        2320,
+        420
+      ]
     }
   ],
   "connections": {
@@ -332,6 +453,11 @@
             "node": "10. Cliente Tem Email?",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "12. Cliente Tem WhatsApp?",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -345,14 +471,14 @@
             "index": 0
           },
           {
-            "node": "12. Responder Sucesso",
+            "node": "14. Responder Sucesso",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "12. Responder Sucesso",
+            "node": "14. Responder Sucesso",
             "type": "main",
             "index": 0
           }
@@ -369,12 +495,24 @@
           }
         ]
       ]
+    },
+    "12. Cliente Tem WhatsApp?": {
+      "main": [
+        [
+          {
+            "node": "13. WhatsApp Cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "saveManualExecutions": true,
     "saveExecutionProgress": true
-  }
+  },
+  "id": "FKeAKCF3hsNheMsT"
 }
