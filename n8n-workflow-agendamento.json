@@ -192,6 +192,58 @@
     },
     {
       "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cliente-email-configurado",
+              "leftValue": "={{ $json.agendamento?.email || $json.email || '' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "cliente-tem-email",
+      "name": "10. Cliente Tem Email?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1800, 620]
+    },
+    {
+      "parameters": {
+        "fromEmail": "loja@iaguru.com.br",
+        "toEmail": "={{ $json.agendamento?.email || $json.email }}",
+        "subject": "=Recebemos seu pedido de agendamento - Massoterapia RJ",
+        "emailType": "html",
+        "message": "=<div style=\"font-family:Arial,sans-serif;max-width:620px;margin:0 auto;color:#2a2520;line-height:1.6\">\n  <h2 style=\"color:#946b40\">Pedido de agendamento recebido</h2>\n  <p>Olá, {{ $json.agendamento?.nome_cliente || $json.nome_cliente }}.</p>\n  <p>Recebemos seu pedido na Massoterapia RJ. Ele está com status <strong>Pendente</strong> e será analisado pela equipe antes da confirmação final.</p>\n  <table style=\"border-collapse:collapse;width:100%;margin:18px 0\">\n    <tr><td style=\"padding:8px;border:1px solid #e5daca;font-weight:bold\">Código</td><td style=\"padding:8px;border:1px solid #e5daca\">{{ $json.agendamento?.codigo || $json.id_agendamento }}</td></tr>\n    <tr><td style=\"padding:8px;border:1px solid #e5daca;font-weight:bold\">Serviço</td><td style=\"padding:8px;border:1px solid #e5daca\">{{ $json.agendamento?.servico || $json.servico }}</td></tr>\n    <tr><td style=\"padding:8px;border:1px solid #e5daca;font-weight:bold\">Data</td><td style=\"padding:8px;border:1px solid #e5daca\">{{ String($json.agendamento?.data_agendada || $json.data_agendada).slice(0, 10).split('-').reverse().join('/') }}</td></tr>\n    <tr><td style=\"padding:8px;border:1px solid #e5daca;font-weight:bold\">Horário</td><td style=\"padding:8px;border:1px solid #e5daca\">{{ String($json.agendamento?.hora_agendada || $json.hora_agendada).slice(0, 5) }}</td></tr>\n    <tr><td style=\"padding:8px;border:1px solid #e5daca;font-weight:bold\">Local</td><td style=\"padding:8px;border:1px solid #e5daca\">{{ $json.agendamento?.local || $json.local }}</td></tr>\n  </table>\n  <p>A confirmação, recusa ou sugestão de reagendamento será enviada pela equipe.</p>\n  <p style=\"font-size:13px;color:#8c7b6a\">Massoterapia RJ<br>Av. Princesa Isabel, 323 - sala 1007, Copacabana</p>\n</div>",
+        "options": {}
+      },
+      "id": "enviar-email-cliente",
+      "name": "11. Email Cliente",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [2060, 620],
+      "credentials": {
+        "smtp": {
+          "id": "0WubbuSS4i0veB45",
+          "name": "SMTP — loja@iaguru.com.br"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
         "respondWith": "json",
         "responseBody": "={ \"sucesso\": true, \"mensagem\": \"Pedido recebido com sucesso. Aguarde a confirmação do responsável.\", \"status\": \"Pendente\", \"agendamento\": {{ JSON.stringify($json.agendamento || $json) }} }",
         "options": {
@@ -199,7 +251,7 @@
         }
       },
       "id": "responder-ok",
-      "name": "10. Responder Sucesso",
+      "name": "12. Responder Sucesso",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [2320, 420]
@@ -275,6 +327,11 @@
             "node": "8. Telegram Configurado?",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "10. Cliente Tem Email?",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -288,14 +345,25 @@
             "index": 0
           },
           {
-            "node": "10. Responder Sucesso",
+            "node": "12. Responder Sucesso",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "10. Responder Sucesso",
+            "node": "12. Responder Sucesso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "10. Cliente Tem Email?": {
+      "main": [
+        [
+          {
+            "node": "11. Email Cliente",
             "type": "main",
             "index": 0
           }
