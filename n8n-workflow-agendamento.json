@@ -202,19 +202,13 @@
             "node": "6. Enviar Telegram",
             "type": "main",
             "index": 0
-          }
-        ],
-        [
+          },
           {
             "node": "7. Responder Sucesso",
             "type": "main",
             "index": 0
           }
-        ]
-      ]
-    },
-    "6. Enviar Telegram": {
-      "main": [
+        ],
         [
           {
             "node": "7. Responder Sucesso",
