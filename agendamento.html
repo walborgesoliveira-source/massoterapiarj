@@ -279,6 +279,13 @@
       font-size: 13px;
       line-height: 1.45;
     }
+    .availability-status {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .availability-status.warning { color: var(--warn); }
+    .availability-status.error { color: var(--error); }
     .alert {
       display: none;
       border-radius: 8px;
@@ -531,6 +538,7 @@
   <script>
     const CONFIG = {
       webhookUrl: 'https://n8n.iaguru.com.br/webhook/massoterapiarj-agendamento',
+      availabilityUrl: '/coreps-api/agendamentos/disponibilidade',
       webhookToken: '',
       storageKey: 'mrj_schedule_requests',
     };
@@ -541,6 +549,9 @@
     const timeSelect = document.getElementById('time');
     const alertBox = document.getElementById('formAlert');
     const summary = document.getElementById('summary');
+    const availabilityStatus = document.createElement('div');
+    availabilityStatus.className = 'availability-status';
+    timeSelect.closest('label').after(availabilityStatus);
 
     const services = Array.isArray(window.MRJ_SERVICES) ? window.MRJ_SERVICES : [];
     services.forEach((service) => {
@@ -578,16 +589,62 @@
       return times;
     }
 
-    function refreshTimes() {
+    async function fetchBusyTimes(dateValue, locationValue) {
+      if (!dateValue || !CONFIG.availabilityUrl) return [];
+      const params = new URLSearchParams({ data: dateValue });
+      if (locationValue) params.set('local', locationValue);
+
+      const response = await fetch(`${CONFIG.availabilityUrl}?${params.toString()}`, {
+        headers: { Accept: 'application/json' },
+      });
+      if (!response.ok) throw new Error(`Disponibilidade respondeu ${response.status}`);
+      const result = await response.json();
+      return Array.isArray(result.horarios_ocupados) ? result.horarios_ocupados : [];
+    }
+
+    async function refreshTimes() {
+      const selectedTime = timeSelect.value;
       const times = getAvailableTimes(dateInput.value);
+      const locationValue = form.elements.location.value;
+      let busyTimes = [];
+      availabilityStatus.textContent = '';
+      availabilityStatus.className = 'availability-status';
+      timeSelect.disabled = false;
+
       timeSelect.innerHTML = '';
       if (!dateInput.value) {
         timeSelect.append(new Option('Escolha uma data primeiro', ''));
       } else if (!times.length) {
         timeSelect.append(new Option('Data indisponível', ''));
       } else {
+        timeSelect.disabled = true;
+        timeSelect.append(new Option('Consultando agenda...', ''));
+        try {
+          busyTimes = await fetchBusyTimes(dateInput.value, locationValue);
+        } catch (error) {
+          availabilityStatus.textContent = 'Não foi possível consultar os horários ocupados agora. A equipe ainda validará o pedido antes da confirmação.';
+          availabilityStatus.classList.add('warning');
+        }
+
+        timeSelect.innerHTML = '';
+        timeSelect.disabled = false;
         timeSelect.append(new Option('Selecione um horário', ''));
-        times.forEach((time) => timeSelect.append(new Option(time, time)));
+        times.forEach((time) => {
+          const busy = busyTimes.includes(time);
+          const option = new Option(busy ? `${time} - indisponível` : time, time);
+          option.disabled = busy;
+          timeSelect.append(option);
+        });
+
+        if (busyTimes.length) {
+          availabilityStatus.textContent = `${busyTimes.length} horário(s) já bloqueado(s) por pedidos pendentes, aprovados ou reagendados.`;
+        } else if (dateInput.value) {
+          availabilityStatus.textContent = 'Agenda consultada: nenhum horário bloqueado para esta data.';
+        }
+
+        if (selectedTime && !busyTimes.includes(selectedTime) && times.includes(selectedTime)) {
+          timeSelect.value = selectedTime;
+        }
       }
       updateSummary();
     }
@@ -622,18 +679,30 @@
         headers,
         body: JSON.stringify(payload),
       });
-      if (!response.ok) throw new Error(`Webhook respondeu ${response.status}`);
+      if (!response.ok) {
+        const error = new Error(`Webhook respondeu ${response.status}`);
+        error.status = response.status;
+        throw error;
+      }
       return response.json().catch(() => ({}));
     }
 
     form.addEventListener('input', updateSummary);
     form.addEventListener('change', updateSummary);
     dateInput.addEventListener('change', refreshTimes);
+    form.elements.location.addEventListener('change', refreshTimes);
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       const data = Object.fromEntries(new FormData(form).entries());
       const selectedService = services.find((service) => service.name === data.service);
+      const busyTimes = await fetchBusyTimes(data.date, data.location).catch(() => []);
+      if (busyTimes.includes(data.time)) {
+        showAlert('error', 'Este horário acabou de ficar indisponível. Escolha outro horário para enviar o pedido.');
+        await refreshTimes();
+        return;
+      }
+
       const payload = {
         id_agendamento: `MRJ-${Date.now()}`,
         nome_cliente: data.name,
@@ -668,6 +737,11 @@
         form.reset();
         refreshTimes();
       } catch (error) {
+        if (error.status === 409) {
+          showAlert('error', 'Este horário não está mais disponível. Escolha outro horário e envie novamente.');
+          await refreshTimes();
+          return;
+        }
         saveLocal(payload);
         showAlert('error', 'O pedido foi salvo localmente, mas ainda não foi enviado ao n8n. Verifique a integração do webhook antes de usar em produção.');
       } finally {

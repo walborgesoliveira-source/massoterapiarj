@@ -11,6 +11,7 @@ services:
     networks:
       - massoterapiarj_net
       - npm_proxy
+      - proxy_net
 
 networks:
   massoterapiarj_net:
@@ -19,3 +20,6 @@ networks:
   npm_proxy:
     external: true
     name: nginx-proxy-manager_default
+  proxy_net:
+    external: true
+    name: proxy_net
