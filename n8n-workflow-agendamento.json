@@ -130,7 +130,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const agendamento = $json.agendamento || $json;\nconst data = agendamento.data_agendada ? String(agendamento.data_agendada).slice(0, 10).split('-').reverse().join('/') : '-';\nconst hora = agendamento.hora_agendada ? String(agendamento.hora_agendada).slice(0, 5) : '-';\nconst contato = agendamento.whatsapp || agendamento.telefone || agendamento.email || agendamento.telegram || '-';\nconst normalizarTelefone = (valor) => {\n  const digitos = String(valor || '').replace(/\\D/g, '');\n  if (!digitos) return '';\n  if (digitos.startsWith('55') && (digitos.length === 12 || digitos.length === 13)) return digitos;\n  if (digitos.length === 10 || digitos.length === 11) return `55${digitos}`;\n  return digitos;\n};\n\nconst linhasTelegram = [\n  'Novo agendamento recebido - Massoterapia RJ',\n  '',\n  `Codigo: ${agendamento.codigo || agendamento.id_agendamento || '-'}`,\n  `Cliente: ${agendamento.nome_cliente || '-'}`,\n  `Contato: ${contato}`,\n  `Servico: ${agendamento.servico || '-'}`,\n  `Data: ${data}`,\n  `Horario: ${hora}`,\n  `Local: ${agendamento.local || '-'}`,\n  `Status: ${agendamento.status || 'Pendente'}`\n];\n\nif (agendamento.observacoes_cliente) {\n  linhasTelegram.push('', `Observacoes: ${agendamento.observacoes_cliente}`);\n}\n\nconst linhasWhatsApp = [\n  `Olá, ${agendamento.nome_cliente || 'tudo bem'}!`,\n  '',\n  'Recebemos seu pedido de agendamento na Massoterapia RJ.',\n  '',\n  `Código: ${agendamento.codigo || agendamento.id_agendamento || '-'}`,\n  `Serviço: ${agendamento.servico || '-'}`,\n  `Data: ${data}`,\n  `Horário: ${hora}`,\n  `Local: ${agendamento.local || '-'}`,\n  '',\n  'Status: Pendente de confirmação.',\n  'A equipe vai analisar e confirmar, recusar ou sugerir reagendamento.'\n];\n\nreturn [{\n  json: {\n    ...$json,\n    telegram_text: linhasTelegram.join('\\n'),\n    whatsapp_number: normalizarTelefone(agendamento.whatsapp || agendamento.telefone),\n    whatsapp_text: linhasWhatsApp.join('\\n')\n  }\n}];"
+        "jsCode": "const agendamento = $json.agendamento || $json;\nconst data = agendamento.data_agendada ? String(agendamento.data_agendada).slice(0, 10).split('-').reverse().join('/') : '-';\nconst hora = agendamento.hora_agendada ? String(agendamento.hora_agendada).slice(0, 5) : '-';\nconst contato = agendamento.whatsapp || agendamento.telefone || agendamento.email || agendamento.telegram || '-';\nconst valor = (v, fallback = '-') => v == null || v === '' ? fallback : String(v);\nconst normalizarTelefone = (valor) => {\n  const digitos = String(valor || '').replace(/\\D/g, '');\n  if (!digitos) return '';\n  if (digitos.startsWith('55') && (digitos.length === 12 || digitos.length === 13)) return digitos;\n  if (digitos.length === 10 || digitos.length === 11) return `55${digitos}`;\n  return digitos;\n};\n\nconst linhasTelegram = [\n  'Novo agendamento recebido - Massoterapia RJ',\n  '',\n  `Codigo: ${agendamento.codigo || agendamento.id_agendamento || '-'}`,\n  `Cliente: ${agendamento.nome_cliente || '-'}`,\n  `Contato: ${contato}`,\n  `Servico: ${agendamento.servico || '-'}`,\n  `Data: ${data}`,\n  `Horario: ${hora}`,\n  `Local: ${agendamento.local || '-'}`,\n  `Status: ${agendamento.status || 'Pendente'}`\n];\n\nif (agendamento.observacoes_cliente) {\n  linhasTelegram.push('', `Observacoes: ${agendamento.observacoes_cliente}`);\n}\n\nconst linhasWhatsApp = [\n  `Olá, ${agendamento.nome_cliente || 'tudo bem'}!`,\n  '',\n  'Recebemos seu pedido de agendamento na Massoterapia RJ.',\n  '',\n  `Código: ${agendamento.codigo || agendamento.id_agendamento || '-'}`,\n  `Serviço: ${agendamento.servico || '-'}`,\n  `Data: ${data}`,\n  `Horário: ${hora}`,\n  `Local: ${agendamento.local || '-'}`,\n  '',\n  'Status: Pendente de confirmação.',\n  'A equipe vai analisar e confirmar, recusar ou sugerir reagendamento.'\n];\n\nconst emailHtml = `<div style=\"font-family:Arial,sans-serif;max-width:620px;margin:0 auto;color:#2a2520;line-height:1.6\">\n  <h2 style=\"color:#946b40\">Pedido de agendamento recebido</h2>\n  <p>Olá, ${valor(agendamento.nome_cliente, 'tudo bem')}.</p>\n  <p>Recebemos seu pedido na Massoterapia RJ. Ele está com status <strong>Pendente</strong> e será analisado pela equipe antes da confirmação final.</p>\n  <table style=\"border-collapse:collapse;width:100%;margin:18px 0\">\n    <tr><td style=\"padding:8px;border:1px solid #e5daca;font-weight:bold\">Código</td><td style=\"padding:8px;border:1px solid #e5daca\">${valor(agendamento.codigo || agendamento.id_agendamento)}</td></tr>\n    <tr><td style=\"padding:8px;border:1px solid #e5daca;font-weight:bold\">Serviço</td><td style=\"padding:8px;border:1px solid #e5daca\">${valor(agendamento.servico)}</td></tr>\n    <tr><td style=\"padding:8px;border:1px solid #e5daca;font-weight:bold\">Data</td><td style=\"padding:8px;border:1px solid #e5daca\">${data}</td></tr>\n    <tr><td style=\"padding:8px;border:1px solid #e5daca;font-weight:bold\">Horário</td><td style=\"padding:8px;border:1px solid #e5daca\">${hora}</td></tr>\n    <tr><td style=\"padding:8px;border:1px solid #e5daca;font-weight:bold\">Local</td><td style=\"padding:8px;border:1px solid #e5daca\">${valor(agendamento.local)}</td></tr>\n    <tr><td style=\"padding:8px;border:1px solid #e5daca;font-weight:bold\">Contato informado</td><td style=\"padding:8px;border:1px solid #e5daca\">${valor(contato)}</td></tr>\n  </table>\n  ${agendamento.observacoes_cliente ? `<p><strong>Observações enviadas:</strong><br>${valor(agendamento.observacoes_cliente)}</p>` : ''}\n  <p>A confirmação, recusa ou sugestão de reagendamento será enviada pela equipe.</p>\n  <div style=\"margin-top:22px;padding-top:16px;border-top:1px solid #e5daca;font-size:14px;color:#5f5145\">\n  <p><strong>Mensagem da equipe:</strong></p>\n  <p>Este é um e-mail automático enviado pelo sistema de agendamento da Massoterapia RJ com os dados da sua solicitação preenchidos.</p>\n  <p><strong>⚠️ Por favor, não responda este e-mail.</strong></p>\n  <p>Para alterações de horário, dúvidas ou suporte ao seu agendamento, entre em contato diretamente pelo WhatsApp oficial do site:</p>\n  <p><strong>📲 WhatsApp Massoterapia RJ: (21) 98203-3272</strong></p>\n  <p><strong>Massoterapia RJ</strong><br>Av. Princesa Isabel, 323 – Sala 1007<br>Copacabana – Rio de Janeiro</p>\n</div>\n</div>`;\n\nreturn [{\n  json: {\n    ...$json,\n    telegram_text: linhasTelegram.join('\\n'),\n    whatsapp_number: normalizarTelefone(agendamento.whatsapp || agendamento.telefone),\n    whatsapp_text: linhasWhatsApp.join('\\n'),\n    email_subject: 'Recebemos seu pedido de agendamento - Massoterapia RJ',\n    email_html: emailHtml\n  }\n}];"
       },
       "id": "preparar-alerta-telegram",
       "name": "7. Preparar Alerta Telegram",
@@ -162,7 +162,7 @@
             },
             {
               "id": "telegram-chat-configurado",
-              "leftValue": "={{ $env.TELEGRAM_CHAT_ID }}",
+              "leftValue": "={{ $env.TELEGRAM_CHAT_IDS || $env.TELEGRAM_CHAT_ID }}",
               "rightValue": "",
               "operator": {
                 "type": "string",
@@ -279,7 +279,7 @@
           "parameters": [
             {
               "name": "chat_id",
-              "value": "={{ $env.TELEGRAM_CHAT_ID }}"
+              "value": "={{ $json.telegram_chat_id }}"
             },
             {
               "name": "text",
@@ -305,12 +305,14 @@
     },
     {
       "parameters": {
-        "fromEmail": "loja@iaguru.com.br",
+        "fromEmail": "IA Guru Avisos <avisos@iaguru.com.br>",
         "toEmail": "={{ $json.agendamento?.email || $json.email }}",
-        "subject": "=Recebemos seu pedido de agendamento - Massoterapia RJ",
-        "emailType": "html",
-        "message": "=<div style=\"font-family:Arial,sans-serif;max-width:620px;margin:0 auto;color:#2a2520;line-height:1.6\">\n  <h2 style=\"color:#946b40\">Pedido de agendamento recebido</h2>\n  <p>Olá, {{ $json.agendamento?.nome_cliente || $json.nome_cliente }}.</p>\n  <p>Recebemos seu pedido na Massoterapia RJ. Ele está com status <strong>Pendente</strong> e será analisado pela equipe antes da confirmação final.</p>\n  <table style=\"border-collapse:collapse;width:100%;margin:18px 0\">\n    <tr><td style=\"padding:8px;border:1px solid #e5daca;font-weight:bold\">Código</td><td style=\"padding:8px;border:1px solid #e5daca\">{{ $json.agendamento?.codigo || $json.id_agendamento }}</td></tr>\n    <tr><td style=\"padding:8px;border:1px solid #e5daca;font-weight:bold\">Serviço</td><td style=\"padding:8px;border:1px solid #e5daca\">{{ $json.agendamento?.servico || $json.servico }}</td></tr>\n    <tr><td style=\"padding:8px;border:1px solid #e5daca;font-weight:bold\">Data</td><td style=\"padding:8px;border:1px solid #e5daca\">{{ String($json.agendamento?.data_agendada || $json.data_agendada).slice(0, 10).split('-').reverse().join('/') }}</td></tr>\n    <tr><td style=\"padding:8px;border:1px solid #e5daca;font-weight:bold\">Horário</td><td style=\"padding:8px;border:1px solid #e5daca\">{{ String($json.agendamento?.hora_agendada || $json.hora_agendada).slice(0, 5) }}</td></tr>\n    <tr><td style=\"padding:8px;border:1px solid #e5daca;font-weight:bold\">Local</td><td style=\"padding:8px;border:1px solid #e5daca\">{{ $json.agendamento?.local || $json.local }}</td></tr>\n  </table>\n  <p>A confirmação, recusa ou sugestão de reagendamento será enviada pela equipe.</p>\n  <p style=\"font-size:13px;color:#8c7b6a\">Massoterapia RJ<br>Av. Princesa Isabel, 323 - sala 1007, Copacabana</p>\n</div>",
-        "options": {}
+        "subject": "={{ $json.email_subject }}",
+        "options": {
+          "appendAttribution": false
+        },
+        "emailFormat": "html",
+        "html": "={{ $json.email_html }}"
       },
       "id": "enviar-email-cliente",
       "name": "11. Email Cliente",
@@ -323,10 +325,9 @@
       "credentials": {
         "smtp": {
           "id": "0WubbuSS4i0veB45",
-          "name": "SMTP — loja@iaguru.com.br"
+          "name": "SMTP — avisos@iaguru.com.br"
         }
-      },
-      "continueOnFail": true
+      }
     },
     {
       "parameters": {
@@ -375,6 +376,19 @@
       "position": [
         2320,
         420
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const destinos = String($env.TELEGRAM_CHAT_IDS || $env.TELEGRAM_CHAT_ID || '')\n  .split(',')\n  .map((id) => id.trim())\n  .filter(Boolean);\n\nreturn destinos.map((telegram_chat_id) => ({\n  json: {\n    ...$json,\n    telegram_chat_id\n  }\n}));"
+      },
+      "id": "preparar-destinos-telegram",
+      "name": "8.1 Preparar Destinos Telegram",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1930,
+        320
       ]
     }
   ],
@@ -466,7 +480,7 @@
       "main": [
         [
           {
-            "node": "9. Enviar Telegram",
+            "node": "8.1 Preparar Destinos Telegram",
             "type": "main",
             "index": 0
           },
@@ -501,6 +515,17 @@
         [
           {
             "node": "13. WhatsApp Cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "8.1 Preparar Destinos Telegram": {
+      "main": [
+        [
+          {
+            "node": "9. Enviar Telegram",
             "type": "main",
             "index": 0
           }

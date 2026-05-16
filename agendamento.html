@@ -563,14 +563,37 @@
       serviceSelect.appendChild(option);
     });
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    dateInput.min = today.toISOString().slice(0, 10);
+    const BUSINESS_TIME_ZONE = 'America/Sao_Paulo';
+
+    function getBusinessNow() {
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: BUSINESS_TIME_ZONE,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      }).formatToParts(new Date());
+      const value = (type) => parts.find((part) => part.type === type)?.value;
+      return {
+        date: `${value('year')}-${value('month')}-${value('day')}`,
+        time: `${value('hour')}:${value('minute')}`,
+      };
+    }
+
+    dateInput.min = getBusinessNow().date;
 
     function formatDate(dateValue) {
       if (!dateValue) return '-';
       const [year, month, day] = dateValue.split('-');
       return `${day}/${month}/${year}`;
+    }
+
+    function isPastSlot(dateValue, timeValue) {
+      if (!dateValue || !timeValue) return false;
+      const now = getBusinessNow();
+      return `${dateValue} ${timeValue}` <= `${now.date} ${now.time}`;
     }
 
     function getAvailableTimes(dateValue) {
@@ -586,7 +609,7 @@
         times.push(`${String(hour).padStart(2, '0')}:00`);
         times.push(`${String(hour).padStart(2, '0')}:30`);
       }
-      return times;
+      return times.filter((time) => !isPastSlot(dateValue, time));
     }
 
     async function fetchBusyTimes(dateValue, locationValue) {
@@ -616,6 +639,10 @@
         timeSelect.append(new Option('Escolha uma data primeiro', ''));
       } else if (!times.length) {
         timeSelect.append(new Option('Data indisponível', ''));
+        if (dateInput.value === getBusinessNow().date) {
+          availabilityStatus.textContent = 'Não há mais horários disponíveis para hoje. Escolha uma data futura.';
+          availabilityStatus.classList.add('error');
+        }
       } else {
         timeSelect.disabled = true;
         timeSelect.append(new Option('Consultando agenda...', ''));
@@ -696,6 +723,11 @@
       event.preventDefault();
       const data = Object.fromEntries(new FormData(form).entries());
       const selectedService = services.find((service) => service.name === data.service);
+      if (isPastSlot(data.date, data.time)) {
+        showAlert('error', 'Este horário já passou. Escolha um horário futuro para enviar o pedido.');
+        await refreshTimes();
+        return;
+      }
       const busyTimes = await fetchBusyTimes(data.date, data.location).catch(() => []);
       if (busyTimes.includes(data.time)) {
         showAlert('error', 'Este horário acabou de ficar indisponível. Escolha outro horário para enviar o pedido.');
