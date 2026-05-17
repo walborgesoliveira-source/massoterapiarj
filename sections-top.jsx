@@ -634,7 +634,7 @@ function Equipe({ t, compact }) {
       }}>
         <img src="assets/equipe/equipe-grupo.jpeg" alt="Equipe Massoterapia RJ"
           style={{
-            width: '100%', height: compact ? 220 : 360, objectFit: 'cover',
+            width: '100%', height: compact ? 320 : 640, objectFit: 'cover', objectPosition: 'center 30%',
             display: 'block', filter: 'saturate(0.85) brightness(0.92)',
           }}/>
         <div style={{
