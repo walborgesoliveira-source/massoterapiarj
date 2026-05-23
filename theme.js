@@ -63,31 +63,30 @@ window.MRJ_PALETTES = {
 };
 
 window.MRJ_SERVICES = [
-  { name: 'Massagem Relaxante',          price: 250, dur: 50, tag: 'Relaxante',  img: 'assets/servicos/massagem-relaxante.jpeg', desc: 'Toque suave com creme ou óleo. Desacelera o sistema nervoso e descontrai o corpo.' },
-  { name: 'Massagem Lomi Lomi',           price: 250, dur: 50, tag: 'Relaxante',  img: 'assets/servicos/massagem-1.jpeg', desc: 'Tradição havaiana. Movimentos longos e fluidos como ondas, profundamente acolhedores.' },
-  { name: 'Massagem Terapêutica',         price: 280, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/massagem-terapeutica.jpeg', desc: 'Indicada para dores crônicas, tensões musculares e desconfortos posturais.' },
-  { name: 'Massagem Desportiva',          price: 280, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/desportiva.jpeg', desc: 'Prepara e recupera musculatura de quem treina, corre ou pratica esportes regularmente.' },
-  { name: 'Shiatsu',                       price: 280, dur: 50, tag: 'Oriental',    img: 'assets/servicos/massagem-2.jpeg', desc: 'Pressão em pontos energéticos da tradição japonesa. Equilíbrio profundo.' },
-  { name: 'Deep Tissue',                   price: 280, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/deep-tissue.jpeg', desc: 'Trabalho em camadas profundas para tensões enraizadas e contraturas teimosas.' },
-  { name: 'Drenagem Linfática',            price: 280, dur: 50, tag: 'Estética',    img: 'assets/servicos/drenagem-linfatica.jpeg', desc: 'Toque rítmico e leve que estimula a circulação e reduz retenção de líquidos.' },
-  { name: 'Thai Massagem',                 price: 280, dur: 50, tag: 'Oriental',    img: 'assets/servicos/thai-massagem.jpeg', desc: 'Alongamentos passivos e digitopressão. Como um yoga praticado em você.' },
-  { name: 'Massagem Crânio Facial',        price: 280, dur: 50, tag: 'Relaxante',   img: 'assets/servicos/massagem-relaxante.jpeg', desc: 'Foco em cabeça, rosto e pescoço. Alívio para quem trabalha muito na tela.' },
-  { name: 'Pedras Quentes',                price: 280, dur: 50, tag: 'Especial',    img: 'assets/espaco/detalhes-5.jpeg', desc: 'Pedras vulcânicas aquecidas que derretem tensões mais profundas e gelam o corpo.' },
-  { name: 'Velas Quentes',                 price: 280, dur: 50, tag: 'Especial',    img: 'assets/espaco/detalhes-6.jpeg', desc: 'Óleo de vela aromática derretido aplicado morno sobre a pele.' },
-  { name: 'New Seitai',                    price: 280, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/new-seitai.jpeg', desc: 'Técnica japonesa de realinhamento postural. Reorganiza estrutura e respiração.' },
-  { name: 'Reflexologia Podal',            price: 280, dur: 50, tag: 'Oriental',    img: 'assets/servicos/reflexologia.jpeg', desc: 'Pressão em pontos dos pés que correspondem a órgãos e sistemas do corpo.' },
-  { name: 'Ashiatsu',                      price: 280, dur: 50, tag: 'Especial',    img: 'assets/servicos/desportiva-2.jpeg', desc: 'Massagem profunda aplicada com os pés. Pressão ampla e contínua.' },
-  { name: 'Liberação Miofascial',          price: 320, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/liberacao-miofascial.jpeg', desc: 'Trabalho instrumental na fáscia muscular. Devolve mobilidade ao tecido.' },
-  { name: 'Terapêutica + Relaxante',       price: 375, dur: 50, tag: 'Combinada',   img: 'assets/servicos/massagem-terapeutica.jpeg', desc: 'O melhor dos dois mundos em uma só sessão. Trata e acolhe.' },
-  { name: 'Massagem 4 Mãos',               price: 500, dur: 50, tag: 'Especial',    img: 'assets/servicos/massagem-1.jpeg', desc: 'Duas terapeutas, sincronizadas. Uma experiência sensorial completa.' },
+  { name: 'Massagem Terapêutica',   price: 280, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/massagem-terapeutica.jpeg', desc: 'Indicada para dores crônicas, tensões musculares e desconfortos posturais.' },
+  { name: 'Deep Tissue',             price: 280, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/deep-tissue.jpeg', desc: 'Trabalho em camadas profundas para tensões enraizadas e contraturas teimosas.' },
+  { name: 'Drenagem Linfática',      price: 280, dur: 50, tag: 'Estética',    img: 'assets/servicos/drenagem-linfatica.jpeg', desc: 'Toque rítmico e leve que estimula a circulação e reduz retenção de líquidos.' },
+  { name: 'Liberação Miofascial',    price: 280, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/liberacao-miofascial.jpeg', desc: 'Trabalho instrumental na fáscia muscular. Devolve mobilidade ao tecido.' },
+  { name: 'Shiatsu',                 price: 280, dur: 50, tag: 'Oriental',    img: 'assets/servicos/massagem-2.jpeg', desc: 'Pressão em pontos energéticos da tradição japonesa. Equilíbrio profundo.' },
+  { name: 'Massagem Relaxante',      price: 250, dur: 50, tag: 'Relaxante',   img: 'assets/servicos/massagem-relaxante.jpeg', desc: 'Toque suave com creme ou óleo. Desacelera o sistema nervoso e descontrai o corpo.' },
+  { name: 'Thai Massagem',           price: 280, dur: 50, tag: 'Oriental',    img: 'assets/servicos/thai-massagem.jpeg', desc: 'Alongamentos passivos e digitopressão. Como um yoga praticado em você.' },
+  { name: 'New Seitai',              price: 320, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/new-seitai.jpeg', desc: 'Técnica japonesa de realinhamento postural. Reorganiza estrutura e respiração.' },
+  { name: 'Reflexologia Podal',      price: 280, dur: 50, tag: 'Oriental',    img: 'assets/servicos/reflexologia.jpeg', desc: 'Pressão em pontos dos pés que correspondem a órgãos e sistemas do corpo.' },
+  { name: 'Massagem Lomi Lomi',      price: 280, dur: 50, tag: 'Relaxante',   img: 'assets/servicos/massagem-1.jpeg', desc: 'Tradição havaiana. Movimentos longos e fluidos como ondas, profundamente acolhedores.' },
+  { name: 'Pedras Quentes',          price: 280, dur: 50, tag: 'Especial',    img: 'assets/espaco/detalhes-5.jpeg', desc: 'Pedras vulcânicas aquecidas que derretem tensões mais profundas e promovem relaxamento.' },
+  { name: 'Massagem com Velas',      price: 280, dur: 50, tag: 'Especial',    img: 'assets/espaco/detalhes-6.jpeg', desc: 'Óleo de vela aromática derretido aplicado morno sobre a pele.' },
+  { name: 'Aromaterapia',            price: 280, dur: 50, tag: 'Especial',    img: 'assets/espaco/detalhes-3.jpeg', desc: 'Óleos essenciais naturais combinados com massagem para estimular os sentidos e promover equilíbrio.' },
+  { name: 'Massagem Crânio Facial',  price: 280, dur: 50, tag: 'Relaxante',   img: 'assets/servicos/massagem-relaxante.jpeg', desc: 'Foco em cabeça, rosto e pescoço. Alívio para quem trabalha muito na tela.' },
+  { name: 'Ventosaterapia',          price: 280, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/massagem-terapeutica.jpeg', desc: 'Técnica milenar com ventosas que alivia tensões musculares profundas e melhora a circulação.' },
+  { name: 'Massagem 4 Mãos',         price: 560, dur: 50, tag: 'Especial',    img: 'assets/servicos/massagem-1.jpeg', desc: 'Duas terapeutas, sincronizadas. Uma experiência sensorial completa.' },
 ];
 
 window.MRJ_TEAM = [
-  { name: 'Ellaine Moreira', role: 'Fisioterapeuta · Massoterapeuta', bio: 'Fundadora. Especialista em técnicas terapêuticas, Deep Tissue e Liberação Miofascial. 12 anos cuidando de corpos.', img: 'assets/equipe/ellaine.jpeg' },
-  { name: 'Fabíola',          role: 'Massoterapeuta · Terapias orientais', bio: 'Lomi Lomi, Thai Massage, Shiatsu e Reflexologia. Formada no Brasil e com estudos no Havaí e na Tailândia.', img: 'assets/equipe/fabiola.jpeg' },
-  { name: 'Amanda',           role: 'Massoterapeuta clínica', bio: 'Especialista em massagem terapêutica e relaxante. Toque preciso e acolhedor.', img: 'assets/equipe/amanda.jpeg' },
-  { name: 'Diana',            role: 'Massoterapeuta clínica', bio: 'Formação em técnicas ocidentais e orientais. Foco em bem-estar integral e alívio de tensões.', img: 'assets/equipe/diana.jpeg' },
-  { name: 'Selma',            role: 'Massoterapeuta clínica', bio: 'Experiência em drenagem linfática, massagem desportiva e técnicas de relaxamento profundo.', img: 'assets/equipe/selma.jpeg' },
+  { name: 'Ellaine Moreira', role: 'Fisioterapeuta · Massoterapeuta', bio: 'Fundadora. Especialista em técnicas terapêuticas, Deep Tissue e Liberação Miofascial. 15 anos cuidando de corpos.', img: 'assets/equipe/ellaine.jpeg' },
+  { name: 'Fabíola',          role: 'Massoterapeuta · Terapias orientais', bio: 'Curso técnico de Massoterapia pelo SENAC. Especializada em Thai Massagem e Liberação Miofascial.', img: 'assets/equipe/fabiola.jpeg' },
+  { name: 'Amanda',           role: 'Massoterapeuta clínica', bio: 'Especializada em Massagem Terapêutica e Relaxante. Formação em Thai Massagem.', img: 'assets/equipe/amanda.jpeg' },
+  { name: 'Diana',            role: 'Massoterapeuta clínica', bio: 'Especialista em Drenagem Linfática. Referência da equipe na técnica com formação especializada.', img: 'assets/equipe/diana.jpeg' },
+  { name: 'Selma',            role: 'Massoterapeuta clínica', bio: 'Especializada em Massagem Terapêutica e Relaxante. Formação em Thai Massagem.', img: 'assets/equipe/selma.jpeg' },
 ];
 
 window.MRJ_TESTIMONIALS = [
@@ -99,8 +98,12 @@ window.MRJ_TESTIMONIALS = [
 ];
 
 window.MRJ_FAQS = [
-  { q: 'Preciso tirar a roupa toda?',
-    a: 'Não. Você fica à vontade — pode manter roupa íntima ou peças leves. Trabalhamos com toalhas e lençóis cobrindo todo o corpo, descobrindo apenas a região atendida no momento.' },
+  { q: 'Preciso tirar toda a roupa para a massagem?',
+    a: 'Você escolhe como se sentir mais confortável. Se preferir ficar completamente nu(a), o atendimento será realizado normalmente, utilizando as técnicas de covering/drapeamento (uso correto de toalhas/lençóis para cobrir as partes que não estão sendo massageadas). Caso prefira permanecer de roupa íntima ou vestido(a), adaptamos o atendimento da mesma forma. Nosso foco é o seu bem-estar.' },
+  { q: 'O ambiente é seguro e estritamente profissional?',
+    a: 'Sim, absolutamente. Somos uma clínica de massagem terapêutica de verdade, reconhecida pela seriedade, ética e respeito ao corpo humano. Criamos um ambiente seguro para todos os perfis de clientes — incluindo gestantes, famílias e turistas estrangeiros —, onde o foco é exclusivamente a qualidade técnica do serviço.' },
+  { q: 'Como funciona o atendimento para turistas estrangeiros?',
+    a: 'Da mesma maneira profissional e transparente. Sabemos que quem vem de fora busca segurança e tem receio de locais inadequados. Aqui, garantimos um atendimento ético, seguro e de alto padrão, o que se reflete nas nossas excelentes avaliações internacionais.' },
   { q: 'Posso comer antes da sessão?',
     a: 'Pode, mas evite refeições pesadas até duas horas antes. Algo leve está perfeito. Vir totalmente em jejum também não é ideal.' },
   { q: 'Quanto tempo demora cada sessão?',
