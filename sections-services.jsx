@@ -210,7 +210,7 @@ function Depoimentos({ t, compact, cardStyle }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <Stars color={t.star} size={18}/>
           <div style={{ fontFamily: 'Karla', fontSize: 14, color: t.inkSoft }}>
-            <strong style={{ color: t.ink }}>4.9</strong> de 5 — 87 avaliações no Google
+            <strong style={{ color: t.ink }}>5</strong> de 5 — 87 avaliações no Google
           </div>
         </div>
       </div>

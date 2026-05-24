@@ -278,6 +278,11 @@ function Hero({ t, compact, heroText }) {
               margin: compact ? '20px 0 32px' : '32px 0 44px',
               maxWidth: 480, fontWeight: 400,
             }}>{sub}</p>
+            <p style={{
+              fontFamily: 'Karla, sans-serif',
+              fontSize: 11, color: 'rgba(240,228,208,0.45)',
+              margin: '-28px 0 36px', fontWeight: 400,
+            }}>Atualização: 24/05/2025 16:05</p>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               <Btn t={t} variant="onDeep" size={compact ? 'md' : 'lg'}
                 onClick={() => window.open(window.MRJ_CONTACT.scheduleUrl, '_blank')}
@@ -303,7 +308,7 @@ function Hero({ t, compact, heroText }) {
                 <span style={{
                   fontFamily: 'Karla', fontSize: compact ? 13 : 14,
                   color: 'rgba(240,228,208,0.78)',
-                }}>4.9 no Google</span>
+                }}>5 no Google</span>
               </div>
               <div style={{ width: 1, height: 20, background: 'rgba(240,228,208,0.2)' }} />
               <div style={{
@@ -375,8 +380,8 @@ function Hero({ t, compact, heroText }) {
 function TrustStrip({ t, compact }) {
   const items = [
     { num: '16',    lbl: 'técnicas oferecidas' },
-    { num: '8',     lbl: 'anos cuidando do RJ' },
-    { num: '4.9 ★', lbl: 'avaliação no Google' },
+    { num: '+15',   lbl: 'anos cuidando do RJ' },
+    { num: '5 ★',   lbl: 'avaliação no Google' },
     { num: '50min', lbl: 'duração de cada sessão' },
   ];
   return (
@@ -463,7 +468,7 @@ function Sobre({ t, compact }) {
             fontFamily: 'Karla', fontSize: compact ? 16 : 18, lineHeight: 1.65,
             color: t.inkSoft, margin: '0 0 18px', textWrap: 'pretty',
           }}>
-            A Ellaine Massoterapia nasceu do desejo de oferecer ao Rio um cuidado que não fosse
+            A Massoterapia RJ nasceu do desejo de oferecer ao Rio um cuidado que não fosse
             apressado. Um lugar onde o seu corpo pudesse ser escutado antes de ser tocado.
           </p>
           <p style={{
@@ -675,6 +680,7 @@ function NossoEspaco({ t, compact }) {
     { src: 'assets/espaco/detalhes-3.jpeg',   label: 'Toalhas e aromas',       span: 'normal' },
     { src: 'assets/espaco/sala-3.jpeg',       label: 'Vista da sala',          span: 'normal' },
     { src: 'assets/espaco/detalhes-7.jpeg',   label: 'Detalhes zen',           span: 'tall' },
+    { src: 'assets/espaco/consultorio2405.jpg', label: 'Recepção',             span: 'normal' },
   ];
 
   return (

@@ -3,7 +3,7 @@ const SITE_TWEAKS = {
   palette: "areia",
   cardStyle: "border",
   heroTitle: "O cuidado que o seu corpo está pedindo",
-  heroSub: "Massoterapia e fisioterapia em Copacabana, com 16 técnicas e mais de 8 anos cuidando do Rio."
+  heroSub: "Massoterapia e fisioterapia em Copacabana, com 16 técnicas e mais de 15 anos cuidando do Rio."
 };
 
 // ─── Scroll reveal hook ───

@@ -82,11 +82,11 @@ window.MRJ_SERVICES = [
 ];
 
 window.MRJ_TEAM = [
-  { name: 'Ellaine Moreira', role: 'Fisioterapeuta · Massoterapeuta', bio: 'Fundadora. Especialista em técnicas terapêuticas, Deep Tissue e Liberação Miofascial. 15 anos cuidando de corpos.', img: 'assets/equipe/ellaine.jpeg' },
-  { name: 'Fabíola',          role: 'Massoterapeuta · Terapias orientais', bio: 'Curso técnico de Massoterapia pelo SENAC. Especializada em Thai Massagem e Liberação Miofascial.', img: 'assets/equipe/fabiola.jpeg' },
-  { name: 'Amanda',           role: 'Massoterapeuta clínica', bio: 'Especializada em Massagem Terapêutica e Relaxante. Formação em Thai Massagem.', img: 'assets/equipe/amanda.jpeg' },
-  { name: 'Diana',            role: 'Massoterapeuta clínica', bio: 'Especialista em Drenagem Linfática. Referência da equipe na técnica com formação especializada.', img: 'assets/equipe/diana.jpeg' },
-  { name: 'Selma',            role: 'Massoterapeuta clínica', bio: 'Especializada em Massagem Terapêutica e Relaxante. Formação em Thai Massagem.', img: 'assets/equipe/selma.jpeg' },
+  { name: 'Ellaine Moreira', role: 'Fisioterapeuta · Massoterapeuta', bio: 'Idealizadora da Massoterapia RJ, Ellaine é fisioterapeuta e especialista nas técnicas oferecidas pela clínica, com foco em massagem terapêutica para alívio de dores, liberação muscular, equilíbrio corporal e recuperação da funcionalidade do corpo.', img: 'assets/equipe/ellaine.jpeg' },
+  { name: 'Fabíola',          role: 'Massoterapeuta · Terapias orientais', bio: 'Fabíola é massoterapeuta formada por escola técnica, com mais de 15 anos de experiência no cuidado de dores e desconfortos musculares. Atuou por mais de uma década na Casa da Coluna, desenvolvendo expertise em liberação miofascial, Deep Tissue (massagem forte profunda) e técnicas de relaxamento terapêutico.', img: 'assets/equipe/fabiola.jpeg' },
+  { name: 'Amanda',           role: 'Massoterapeuta clínica', bio: 'Reconhecida pelo cuidado acolhedor e pela atenção aos detalhes, Amanda oferece uma experiência terapêutica marcada pelo carinho, presença e dedicação. Com formação em Thai Massage por Sebastian Valla, destaca-se pela massagem relaxante e pelo cuidado de dores e desconfortos musculares com um toque profundamente humano.', img: 'assets/equipe/amanda.jpeg' },
+  { name: 'Diana',            role: 'Massoterapeuta clínica', bio: 'Com mais de 25 anos de experiência, Diana construiu sua trajetória no cuidado com a mulher, sendo especialista em drenagem linfática — sua maior expertise. Possui formação internacional pela ITM – International Training Massage School - Tailândia, além de experiência em lifting facial, massagem facial e técnicas para dores e tensões musculares.', img: 'assets/equipe/diana.jpeg' },
+  { name: 'Selma',            role: 'Massoterapeuta clínica', bio: 'Reservada e profundamente presente em sua prática, Selma conduz atendimentos marcados pela conexão, escuta e cuidado atento. Formada em Thai Massage com Sebastian Valla, atua com drenagem linfática, massagem terapêutica profunda e Deep Tissue, unindo firmeza técnica e presença terapêutica para promover relaxamento, proteção e bem-estar ao corpo.', img: 'assets/equipe/selma.jpeg' },
 ];
 
 window.MRJ_TESTIMONIALS = [
