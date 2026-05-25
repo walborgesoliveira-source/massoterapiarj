@@ -569,7 +569,7 @@ function Equipe({ t, compact }) {
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <Btn t={t} size="md"
               onClick={() => window.open(window.MRJ_CONTACT.scheduleUrl, '_blank')}
-            >Agendar com Ellaine {Icon.arrow(14, '#fff')}</Btn>
+            >Agendar sessão {Icon.arrow(14, '#fff')}</Btn>
           </div>
         </div>
       </div>
