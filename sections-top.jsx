@@ -28,7 +28,7 @@ function Wordmark({ t, onDark = false, compact = false }) {
           fontSize: compact ? 8.5 : 9.5, letterSpacing: '0.22em',
           color: onDark ? 'rgba(240,228,208,0.65)' : t.muted,
           textTransform: 'uppercase', marginTop: 3,
-        }}>Ellaine · Fabiola · Copacabana</div>
+        }}>Copacabana</div>
       </div>
     </div>
   );
