@@ -21,14 +21,27 @@ Validar:
 curl -I http://127.0.0.1:8092
 ```
 
+## Dominios
+
+- Producao: `https://www.massoterapiarj.com.br`
+- Raiz: `https://massoterapiarj.com.br`
+- Fallback legado: `https://massoterapiarj.iaguru.com.br`
+
 ## Proxy
 
-No Nginx Proxy Manager, criar um Proxy Host para o domínio final apontando para:
+No Nginx Proxy Manager, manter um Proxy Host para:
+
+- `www.massoterapiarj.com.br`
+- `massoterapiarj.com.br`
+
+Apontando para:
 
 - Forward Hostname/IP: `127.0.0.1`
 - Forward Port: `8092`
 - SSL: Let's Encrypt
 - Force HTTPS: ativo
+
+O dominio legado `massoterapiarj.iaguru.com.br` permanece ativo apenas como fallback.
 
 ## Deploy
 
