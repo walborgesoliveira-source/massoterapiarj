@@ -106,6 +106,7 @@ function FeaturedServices({ t, compact, cardStyle }) {
           Ver todas as 16 técnicas e preços {Icon.arrow(14, t.ink)}
         </a>
       </div>
+      <WhatsAppCTA t={t} compact={compact} />
     </Section>
   );
 }
@@ -181,6 +182,7 @@ function PriceTable({ t, compact }) {
           </div>
         ))}
       </div>
+      <WhatsAppCTA t={t} compact={compact} />
     </Section>
   );
 }
@@ -250,6 +252,7 @@ function Depoimentos({ t, compact, cardStyle }) {
           </div>
         ))}
       </div>
+      <WhatsAppCTA t={t} compact={compact} />
     </Section>
   );
 }

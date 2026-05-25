@@ -494,6 +494,7 @@ function Sobre({ t, compact }) {
           </div>
         </div>
       </div>
+      <WhatsAppCTA t={t} compact={compact} />
     </Section>
   );
 }
@@ -666,6 +667,7 @@ function Equipe({ t, compact }) {
           </div>
         </div>
       </div>
+      <WhatsAppCTA t={t} compact={compact} />
     </Section>
   );
 }
@@ -788,6 +790,7 @@ function NossoEspaco({ t, compact }) {
           <Btn t={t} size="sm">Ver no Maps {Icon.arrow(13, '#fff')}</Btn>
         </a>
       </div>
+      <WhatsAppCTA t={t} compact={compact} />
     </Section>
   );
 }

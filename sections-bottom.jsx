@@ -66,6 +66,7 @@ function FAQ({ t, compact }) {
           })}
         </div>
       </div>
+      <WhatsAppCTA t={t} compact={compact} />
     </Section>
   );
 }
@@ -136,6 +137,7 @@ function Blog({ t, compact, cardStyle }) {
           </article>
         ))}
       </div>
+      <WhatsAppCTA t={t} compact={compact} />
     </Section>
   );
 }

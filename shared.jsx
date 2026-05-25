@@ -211,4 +211,45 @@ function Section({ children, t, bg, pad = 'lg', compact, fullBleed = false, styl
   );
 }
 
-Object.assign(window, { Placeholder, Icon, cardSurface, Stars, Btn, Eyebrow, Section });
+// ─── WhatsApp inline CTA — placed at the end of each content section ───
+function WhatsAppCTA({ t, compact }) {
+  return (
+    <div style={{
+      marginTop: compact ? 40 : 56,
+      padding: compact ? '20px 20px' : '24px 32px',
+      background: t.surface,
+      borderRadius: 6,
+      border: `1px solid ${t.line}`,
+      display: 'flex',
+      alignItems: compact ? 'flex-start' : 'center',
+      justifyContent: 'space-between',
+      flexDirection: compact ? 'column' : 'row',
+      gap: compact ? 20 : 32,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, flex: 1 }}>
+        <div style={{ flexShrink: 0, marginTop: 2 }}>
+          {Icon.whatsapp(20, t.accent)}
+        </div>
+        <p style={{
+          fontFamily: 'Karla',
+          fontSize: compact ? 15 : 16,
+          lineHeight: 1.55,
+          color: t.inkSoft,
+          margin: 0,
+        }}>
+          Não sabe por onde começar?{' '}
+          <span style={{ color: t.ink, fontWeight: 600 }}>Fale conosco no WhatsApp</span>{' '}
+          e encontre o cuidado ideal para você.
+        </p>
+      </div>
+      <a href={window.MRJ_CONTACT.whatsapp} target="_blank" rel="noopener"
+         style={{ textDecoration: 'none', flexShrink: 0 }}>
+        <Btn t={t} size="sm">
+          {Icon.whatsapp(15, '#fff')} Falar no WhatsApp
+        </Btn>
+      </a>
+    </div>
+  );
+}
+
+Object.assign(window, { Placeholder, Icon, cardSurface, Stars, Btn, Eyebrow, Section, WhatsAppCTA });
