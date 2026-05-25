@@ -96,6 +96,7 @@ window.MRJ_TESTIMONIALS = [
   { name: 'Daniel Mendiburu',   stars: 5, when: 'Maio 2026', text: 'Increíble. A 4 manos me sacaron el dolor de espalda.' },
   { name: 'Tomasz Lonycz',      stars: 5, when: 'Maio 2026', text: 'Very professional massage, very kindly staff!' },
   { name: 'Simone Macera',      stars: 5, when: 'Maio 2026', text: 'Massaggio ottimo 🙏', badge: 'Local Guide' },
+  { name: 'Gustavo Azevedo',   stars: 5, when: 'Maio 2026', text: 'Desconforto em todas as partes do corpo. Fiquei 100%. O trabalho de um ponto específico do lado esquerdo da coluna não se resolve em uma sessão. No entanto, a melhora foi tão grande que a excelente profissional me fez voltar a dormir. Agradeço muito.' },
 ];
 
 window.MRJ_FAQS = [
