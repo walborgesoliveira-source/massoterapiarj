@@ -442,7 +442,7 @@ function Footer({ t, compact }) {
               fontFamily: 'Karla', fontSize: compact ? 13.5 : 14, lineHeight: 1.6,
               color: t.inkSoft, marginTop: 18, maxWidth: 280,
             }}>
-              Massoterapia e fisioterapia em Copacabana. Cuidado real, sessão a sessão.
+              Massoterapia em Copacabana. Cuidado real, sessão a sessão.
             </p>
           </div>
           {[

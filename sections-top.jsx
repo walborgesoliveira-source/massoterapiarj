@@ -261,7 +261,7 @@ function Hero({ t, compact, heroText }) {
         }}>
           <div>
             <Eyebrow color="rgba(240,228,208,0.7)" compact={compact}>
-              Massoterapia & Fisioterapia · Copacabana
+              Massoterapia · Copacabana
             </Eyebrow>
             <h1 style={{
               fontFamily: 'Cormorant Garamond, serif',
