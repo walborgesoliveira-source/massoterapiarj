@@ -189,11 +189,11 @@ function PriceTable({ t, compact }) {
 
 // ─── Testimonials ───
 function Depoimentos({ t, compact, cardStyle }) {
-  const reviews = window.MRJ_TESTIMONIALS.slice(0, 3);
+  const reviews = window.MRJ_TESTIMONIALS;
   return (
     <Section id="depoimentos" t={t} pad="xl" compact={compact} bg={t.bg}>
       <div style={{
-        display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
+        display: 'flex', justifyContent: 'space-between',
         flexDirection: compact ? 'column' : 'row',
         alignItems: compact ? 'flex-start' : 'flex-end',
         gap: 24, marginBottom: compact ? 36 : 56,
@@ -209,16 +209,24 @@ function Depoimentos({ t, compact, cardStyle }) {
             O que dizem quem já passou por aqui
           </h2>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <Stars color={t.star} size={18}/>
-          <div style={{ fontFamily: 'Karla', fontSize: 14, color: t.inkSoft }}>
-            <strong style={{ color: t.ink }}>5</strong> de 5 — 87 avaliações no Google
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: compact ? 'flex-start' : 'flex-end', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Stars color={t.star} size={18}/>
+            <div style={{ fontFamily: 'Karla', fontSize: 14, color: t.inkSoft }}>
+              <strong style={{ color: t.ink }}>5</strong> de 5 no Google
+            </div>
           </div>
+          <a href={window.MRJ_CONTACT.googleReviews} target="_blank" rel="noopener noreferrer" style={{
+            fontFamily: 'Karla', fontSize: 13, color: t.accent,
+            textDecoration: 'none', borderBottom: `1px solid ${t.accent}55`,
+            paddingBottom: 1, lineHeight: 1,
+          }}>Ver todas as avaliações →</a>
         </div>
       </div>
 
       <div style={{
-        display: 'grid', gridTemplateColumns: compact ? '1fr' : 'repeat(3, 1fr)',
+        display: 'grid',
+        gridTemplateColumns: compact ? '1fr' : 'repeat(auto-fill, minmax(300px, 1fr))',
         gap: compact ? 16 : 24,
       }}>
         {reviews.map((r, i) => (
@@ -226,9 +234,18 @@ function Depoimentos({ t, compact, cardStyle }) {
             ...cardSurface(cardStyle, t),
             padding: compact ? 22 : 28,
             display: 'flex', flexDirection: 'column', gap: 16,
-            minHeight: compact ? 'auto' : 280,
+            minHeight: compact ? 'auto' : 220,
           }}>
-            <Stars color={t.star} size={14}/>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Stars color={t.star} size={14}/>
+              {r.badge && (
+                <span style={{
+                  fontFamily: 'Karla', fontSize: 11, color: t.accentDk,
+                  background: `${t.accent}18`, borderRadius: 20,
+                  padding: '2px 8px', letterSpacing: '0.02em',
+                }}>{r.badge}</span>
+              )}
+            </div>
             <p style={{
               fontFamily: 'Cormorant Garamond, serif',
               fontSize: compact ? 19 : 22, lineHeight: 1.4, fontWeight: 400,

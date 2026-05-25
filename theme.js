@@ -12,6 +12,7 @@ window.MRJ_CONTACT = {
   phoneTel:   'tel:+5521982033272',
   email:      'saudebemestarelazer@gmail.com',
   scheduleUrl: '/agendamento.html',
+  googleReviews: 'https://www.google.com/search?q=Massoterapia+RJ+Copacabana+avalia%C3%A7%C3%B5es',
 };
 
 window.MRJ_PALETTES = {
@@ -90,11 +91,11 @@ window.MRJ_TEAM = [
 ];
 
 window.MRJ_TESTIMONIALS = [
-  { name: 'Mariana C.',    stars: 5, when: 'há 2 semanas', text: 'Saio de cada sessão como se tivesse dormido três noites. A Ellaine entende exatamente onde está a tensão sem eu precisar dizer.' },
-  { name: 'Rafael Sousa',  stars: 5, when: 'há 1 mês',     text: 'Fui pela primeira vez por uma dor lombar antiga. Duas sessões e voltei a correr. Atendimento muito acolhedor, ambiente impecável.' },
-  { name: 'Joana Lima',    stars: 5, when: 'há 1 mês',     text: 'O melhor lugar de Copacabana, simples assim. A Fabíola faz uma Lomi Lomi que dá vontade de morar lá.' },
-  { name: 'Carla Mendes',  stars: 5, when: 'há 2 meses',   text: 'Profissionais de verdade. Não é só massagem — é cuidado. Já trouxe meu marido e minha mãe.' },
-  { name: 'Diego A.',      stars: 5, when: 'há 3 meses',   text: 'Faço deep tissue toda quinta. Mudou minha rotina, minha postura e meu humor. Não exagero.' },
+  { name: 'Marcelo Estanislau', stars: 5, when: 'Maio 2026', text: 'Melhor massagem do mundo. Massagem de verdade.' },
+  { name: 'Gary D\'Souza',      stars: 5, when: 'Maio 2026', text: 'Casa de massagem legítimo! Massagem maravilhosa, Elane é muito detalhada e treinada em vários estilos de massagem.', badge: 'Local Guide' },
+  { name: 'Daniel Mendiburu',   stars: 5, when: 'Maio 2026', text: 'Increíble. A 4 manos me sacaron el dolor de espalda.' },
+  { name: 'Tomasz Lonycz',      stars: 5, when: 'Maio 2026', text: 'Very professional massage, very kindly staff!' },
+  { name: 'Simone Macera',      stars: 5, when: 'Maio 2026', text: 'Massaggio ottimo 🙏', badge: 'Local Guide' },
 ];
 
 window.MRJ_FAQS = [
