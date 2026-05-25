@@ -74,7 +74,7 @@ function UtilityStrip({ t, compact }) {
           </span>
           <span style={{ width: 1, height: 14, background: 'rgba(240,228,208,0.18)' }} />
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'rgba(240,228,208,0.75)' }}>
-            {Icon.clock(13, 'rgba(240,228,208,0.6)')} Seg–Sex · 09h às 20h30 · Sáb · 09h às 19h
+            {Icon.clock(13, 'rgba(240,228,208,0.6)')} Seg–Sex · 09h–20h30 · Sáb · 09h–19h · Dom fechado
           </span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
