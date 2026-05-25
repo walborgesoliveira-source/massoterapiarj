@@ -123,3 +123,17 @@ window.MRJ_POSTS = [
   { tag: 'Técnicas',     title: 'Thai massagem: a arte do relaxamento e do alívio da dor',              img: 'assets/servicos/thai-massagem.jpeg',        read: '6 min', date: '28 Abr' },
   { tag: 'Bem-estar',    title: 'A importância da Massoterapia para o seu corpo e a sua rotina',        img: 'assets/servicos/massagem-terapeutica.jpeg', read: '4 min', date: '15 Abr' },
 ];
+
+// Turnos e escala de profissionais
+// Fonte de verdade: painel sobrescreve via localStorage 'mrj_turnos_config' e 'mrj_profissionais_turnos'
+window.MRJ_TURNOS = [
+  { id: 'turno_manha', label: 'Manhã & Tarde', inicio: '09:00', fim: '15:30', capacidade: 2 },
+  { id: 'turno_tarde', label: 'Tarde & Noite',  inicio: '15:30', fim: '20:30', capacidade: 2 },
+];
+
+window.MRJ_PROFISSIONAIS_TURNOS = [
+  { nome: 'Ellaine', turno: 'turno_manha', cargo: 'Massoterapeuta clínica' },
+  { nome: 'Selma',   turno: 'turno_manha', cargo: 'Massoterapeuta clínica' },
+  { nome: 'Fabiola', turno: 'turno_tarde', cargo: 'Massoterapeuta clínica' },
+  { nome: 'Diana',   turno: 'turno_tarde', cargo: 'Massoterapeuta clínica' },
+];

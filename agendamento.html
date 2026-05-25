@@ -382,6 +382,57 @@
       h1 { font-size: 42px; }
       .panel-header h2 { font-size: 32px; }
     }
+
+    /* ── Professional availability card ── */
+    .prof-card {
+      display: none;
+      grid-column: 1 / -1;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+    .prof-card.show { display: block; }
+    .prof-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+    .prof-card-head strong { font-size: 13px; color: var(--ink); }
+    .prof-card-head span { font-size: 12px; color: var(--muted); }
+    .prof-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 0;
+    }
+    .prof-row + .prof-row { border-top: 1px solid var(--line); }
+    .prof-initial {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--cream), rgba(184,137,90,0.3));
+      font-size: 13px; font-weight: 700; color: var(--accent-dark);
+      flex: 0 0 auto;
+    }
+    .prof-info { flex: 1; min-width: 0; }
+    .prof-info strong { display: block; font-size: 13px; color: var(--ink); }
+    .prof-info span { font-size: 11px; color: var(--muted); }
+    .prof-badge {
+      font-size: 11px; font-weight: 700;
+      padding: 2px 8px; border-radius: 20px; white-space: nowrap;
+    }
+    .prof-badge.livre   { background: rgba(47,125,80,0.1);  color: var(--ok); }
+    .prof-badge.ocupado { background: rgba(159,63,53,0.1); color: var(--error); }
+    .prof-card-footer {
+      margin-top: 10px; padding-top: 8px;
+      border-top: 1px solid var(--line);
+      font-size: 12px; font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -460,7 +511,8 @@
               </select>
             </label>
           </div>
-          <div class="hint">Funcionamento: seg–sex das 09h às 20h30 · sábado das 09h às 19h · domingo fechado.</div>
+          <div id="profCard" class="prof-card" aria-live="polite"></div>
+          <div class="hint">Funcionamento: seg–sex das 09h às 15h30 e 15h30 às 20h30 · sábado das 09h às 19h · domingo fechado. Agendamento com no mínimo 70 minutos de antecedência.</div>
         </div>
 
         <div class="fieldset">
@@ -537,86 +589,167 @@
   <script src="theme.js"></script>
   <script>
     const CONFIG = {
-      webhookUrl: 'https://n8n.iaguru.com.br/webhook/massoterapiarj-agendamento',
+      webhookUrl:      'https://n8n.iaguru.com.br/webhook/massoterapiarj-agendamento',
       availabilityUrl: '/coreps-api/agendamentos/disponibilidade',
-      webhookToken: '',
-      storageKey: 'mrj_schedule_requests',
+      webhookToken:    '',
+      storageKey:           'mrj_schedule_requests',
+      storageKeyTurnos:     'mrj_turnos_config',
+      storageKeyProfissionais: 'mrj_profissionais_turnos',
     };
 
-    const form = document.getElementById('scheduleForm');
+    const LEAD_MINUTES = 70;
+    const SESSION_MIN  = 50;
+    const BUSINESS_TIME_ZONE = 'America/Sao_Paulo';
+
+    // ── DOM refs ─────────────────────────────────────────────────
+    const form          = document.getElementById('scheduleForm');
     const serviceSelect = document.getElementById('service');
-    const dateInput = document.getElementById('date');
-    const timeSelect = document.getElementById('time');
-    const alertBox = document.getElementById('formAlert');
-    const summary = document.getElementById('summary');
+    const dateInput     = document.getElementById('date');
+    const timeSelect    = document.getElementById('time');
+    const alertBox      = document.getElementById('formAlert');
+    const summary       = document.getElementById('summary');
+    const profCard      = document.getElementById('profCard');
+
     const availabilityStatus = document.createElement('div');
     availabilityStatus.className = 'availability-status';
     timeSelect.closest('label').after(availabilityStatus);
 
+    // ── Populate services ─────────────────────────────────────────
     const services = Array.isArray(window.MRJ_SERVICES) ? window.MRJ_SERVICES : [];
     services.forEach((service) => {
-      const option = document.createElement('option');
-      option.value = service.name;
-      option.textContent = `${service.name} - ${service.dur || 50} min`;
-      option.dataset.duration = service.dur || 50;
-      option.dataset.price = service.price || '';
-      serviceSelect.appendChild(option);
+      const opt = document.createElement('option');
+      opt.value = service.name;
+      opt.textContent = `${service.name} - ${service.dur || 50} min`;
+      opt.dataset.duration = service.dur || 50;
+      opt.dataset.price = service.price || '';
+      serviceSelect.appendChild(opt);
     });
 
-    const BUSINESS_TIME_ZONE = 'America/Sao_Paulo';
-
+    // ── Business clock ────────────────────────────────────────────
     function getBusinessNow() {
       const parts = new Intl.DateTimeFormat('en-CA', {
         timeZone: BUSINESS_TIME_ZONE,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', hour12: false,
       }).formatToParts(new Date());
-      const value = (type) => parts.find((part) => part.type === type)?.value;
-      return {
-        date: `${value('year')}-${value('month')}-${value('day')}`,
-        time: `${value('hour')}:${value('minute')}`,
-      };
+      const v = (type) => parts.find((p) => p.type === type)?.value;
+      return { date: `${v('year')}-${v('month')}-${v('day')}`, time: `${v('hour')}:${v('minute')}` };
     }
 
     dateInput.min = getBusinessNow().date;
 
-    function formatDate(dateValue) {
-      if (!dateValue) return '-';
-      const [year, month, day] = dateValue.split('-');
-      return `${day}/${month}/${year}`;
+    // ── Shift helpers ─────────────────────────────────────────────
+    function getTurnos() {
+      try { const s = localStorage.getItem(CONFIG.storageKeyTurnos); if (s) return JSON.parse(s); } catch {}
+      return window.MRJ_TURNOS || [];
     }
 
-    function isPastSlot(dateValue, timeValue) {
-      if (!dateValue || !timeValue) return false;
-      const now = getBusinessNow();
-      return `${dateValue} ${timeValue}` <= `${now.date} ${now.time}`;
+    function getProfissionais() {
+      try { const s = localStorage.getItem(CONFIG.storageKeyProfissionais); if (s) return JSON.parse(s); } catch {}
+      return window.MRJ_PROFISSIONAIS_TURNOS || [];
     }
 
+    function turnoParaHorario(timeValue) {
+      const [h, m] = timeValue.split(':').map(Number);
+      const t = h * 60 + m;
+      return getTurnos().find((turno) => {
+        const [ih, im] = turno.inicio.split(':').map(Number);
+        const [fh, fm] = turno.fim.split(':').map(Number);
+        return t >= ih * 60 + im && t < fh * 60 + fm;
+      }) || null;
+    }
+
+    // ── Time slot generation (Rule 1 + 2) ────────────────────────
     function getAvailableTimes(dateValue) {
       if (!dateValue) return [];
-      const selected = new Date(`${dateValue}T12:00:00`);
-      const day = selected.getDay();
-      if (day === 0) return [];
+      const dow = new Date(`${dateValue}T12:00:00`).getDay();
+      if (dow === 0) return []; // Sunday closed
 
+      const now = getBusinessNow();
+      if (dateValue < now.date) return [];
+
+      const [nh, nm] = now.time.split(':').map(Number);
+      const minSlot = (dateValue === now.date) ? nh * 60 + nm + LEAD_MINUTES : 0;
+      const isSat = dow === 6;
       const times = [];
-      const startHour = 9;
-      const endHour = 21;
-      for (let hour = startHour; hour < endHour; hour += 1) {
-        times.push(`${String(hour).padStart(2, '0')}:00`);
-        times.push(`${String(hour).padStart(2, '0')}:30`);
-      }
-      return times.filter((time) => !isPastSlot(dateValue, time));
+
+      getTurnos().forEach((turno) => {
+        const [sh, sm] = turno.inicio.split(':').map(Number);
+        let [eh, em] = turno.fim.split(':').map(Number);
+
+        // Saturday cap at 19:00
+        if (isSat && eh * 60 + em > 19 * 60) { eh = 19; em = 0; }
+
+        const startMin = sh * 60 + sm;
+        const lastStart = eh * 60 + em - SESSION_MIN;
+
+        for (let t = startMin; t <= lastStart; t += 30) {
+          if (t < minSlot) continue; // Rule 1: 70-min advance
+          const hh = Math.floor(t / 60);
+          const mm = t % 60;
+          times.push(`${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`);
+        }
+      });
+
+      return times;
     }
 
+    // ── Submit-time validation ────────────────────────────────────
+    function isTooSoonOrPast(dateValue, timeValue) {
+      if (!dateValue || !timeValue) return false;
+      const now = getBusinessNow();
+      if (dateValue < now.date) return true;
+      if (dateValue > now.date) return false;
+      const [h, m] = timeValue.split(':').map(Number);
+      const [nh, nm] = now.time.split(':').map(Number);
+      return h * 60 + m < nh * 60 + nm + LEAD_MINUTES;
+    }
+
+    // ── Professional card (Rule 4) ────────────────────────────────
+    let currentBusyTimes = [];
+
+    function renderProfCard(timeValue) {
+      if (!timeValue) { profCard.className = 'prof-card'; return; }
+
+      const turno = turnoParaHorario(timeValue);
+      if (!turno) { profCard.className = 'prof-card'; return; }
+
+      const profs     = getProfissionais().filter((p) => p.turno === turno.id);
+      const busyCount = currentBusyTimes.filter((t) => t === timeValue).length;
+      const freeCount = Math.max(0, turno.capacidade - busyCount);
+
+      const rows = profs.map((p) => `
+        <div class="prof-row">
+          <div class="prof-initial">${p.nome[0]}</div>
+          <div class="prof-info">
+            <strong>${p.nome}</strong>
+            <span>${p.cargo || 'Massoterapeuta'}</span>
+          </div>
+          <span class="prof-badge livre">Disponível</span>
+        </div>
+      `).join('');
+
+      const footerColor = freeCount > 0 ? 'var(--ok)' : 'var(--error)';
+      const footerMsg   = freeCount > 0
+        ? `✓ ${freeCount} vaga(s) disponível(is) neste horário`
+        : '✕ Horário sem capacidade — todos os profissionais estão ocupados';
+
+      profCard.innerHTML = `
+        <div class="prof-card-head">
+          <strong>${turno.label}</strong>
+          <span>${turno.inicio} às ${turno.fim} · ${turno.capacidade} profissionais</span>
+        </div>
+        ${rows}
+        <div class="prof-card-footer" style="color:${footerColor}">${footerMsg}</div>
+      `;
+      profCard.className = 'prof-card show';
+    }
+
+    // ── Availability API ──────────────────────────────────────────
     async function fetchBusyTimes(dateValue, locationValue) {
       if (!dateValue || !CONFIG.availabilityUrl) return [];
       const params = new URLSearchParams({ data: dateValue });
       if (locationValue) params.set('local', locationValue);
-
       const response = await fetch(`${CONFIG.availabilityUrl}?${params.toString()}`, {
         headers: { Accept: 'application/json' },
       });
@@ -627,12 +760,12 @@
 
     async function refreshTimes() {
       const selectedTime = timeSelect.value;
-      const times = getAvailableTimes(dateInput.value);
+      const times        = getAvailableTimes(dateInput.value);
       const locationValue = form.elements.location.value;
-      let busyTimes = [];
       availabilityStatus.textContent = '';
       availabilityStatus.className = 'availability-status';
       timeSelect.disabled = false;
+      currentBusyTimes = [];
 
       timeSelect.innerHTML = '';
       if (!dateInput.value) {
@@ -647,9 +780,9 @@
         timeSelect.disabled = true;
         timeSelect.append(new Option('Consultando agenda...', ''));
         try {
-          busyTimes = await fetchBusyTimes(dateInput.value, locationValue);
-        } catch (error) {
-          availabilityStatus.textContent = 'Não foi possível consultar os horários ocupados agora. A equipe ainda validará o pedido antes da confirmação.';
+          currentBusyTimes = await fetchBusyTimes(dateInput.value, locationValue);
+        } catch {
+          availabilityStatus.textContent = 'Não foi possível consultar os horários ocupados. A equipe validará antes de confirmar.';
           availabilityStatus.classList.add('warning');
         }
 
@@ -657,34 +790,44 @@
         timeSelect.disabled = false;
         timeSelect.append(new Option('Selecione um horário', ''));
         times.forEach((time) => {
-          const busy = busyTimes.includes(time);
-          const option = new Option(busy ? `${time} - indisponível` : time, time);
-          option.disabled = busy;
-          timeSelect.append(option);
+          const busy = currentBusyTimes.includes(time);
+          const opt  = new Option(busy ? `${time} - indisponível` : time, time);
+          opt.disabled = busy;
+          timeSelect.append(opt);
         });
 
-        if (busyTimes.length) {
-          availabilityStatus.textContent = `${busyTimes.length} horário(s) já bloqueado(s) por pedidos pendentes, aprovados ou reagendados.`;
+        if (currentBusyTimes.length) {
+          availabilityStatus.textContent = `${currentBusyTimes.length} horário(s) já bloqueado(s).`;
         } else if (dateInput.value) {
           availabilityStatus.textContent = 'Agenda consultada: nenhum horário bloqueado para esta data.';
         }
 
-        if (selectedTime && !busyTimes.includes(selectedTime) && times.includes(selectedTime)) {
+        if (selectedTime && !currentBusyTimes.includes(selectedTime) && times.includes(selectedTime)) {
           timeSelect.value = selectedTime;
         }
       }
+
+      renderProfCard(timeSelect.value);
       updateSummary();
+    }
+
+    // ── Summary ───────────────────────────────────────────────────
+    function formatDate(dateValue) {
+      if (!dateValue) return '-';
+      const [year, month, day] = dateValue.split('-');
+      return `${day}/${month}/${year}`;
     }
 
     function updateSummary() {
       const values = new FormData(form);
-      const rows = summary.querySelectorAll('strong');
+      const rows   = summary.querySelectorAll('strong');
       rows[0].textContent = values.get('service') || '-';
       rows[1].textContent = formatDate(values.get('date'));
       rows[2].textContent = values.get('time') || '-';
       rows[3].textContent = 'Pendente';
     }
 
+    // ── Alert / persistence ───────────────────────────────────────
     function showAlert(type, message) {
       alertBox.className = `alert ${type} show`;
       alertBox.textContent = message;
@@ -702,56 +845,58 @@
       const headers = { 'Content-Type': 'application/json' };
       if (CONFIG.webhookToken) headers.Authorization = `Bearer ${CONFIG.webhookToken}`;
       const response = await fetch(CONFIG.webhookUrl, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(payload),
+        method: 'POST', headers, body: JSON.stringify(payload),
       });
       if (!response.ok) {
-        const error = new Error(`Webhook respondeu ${response.status}`);
-        error.status = response.status;
-        throw error;
+        const err = new Error(`Webhook respondeu ${response.status}`);
+        err.status = response.status;
+        throw err;
       }
       return response.json().catch(() => ({}));
     }
 
+    // ── Event listeners ───────────────────────────────────────────
     form.addEventListener('input', updateSummary);
     form.addEventListener('change', updateSummary);
     dateInput.addEventListener('change', refreshTimes);
     form.elements.location.addEventListener('change', refreshTimes);
+    timeSelect.addEventListener('change', () => renderProfCard(timeSelect.value));
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       const data = Object.fromEntries(new FormData(form).entries());
-      const selectedService = services.find((service) => service.name === data.service);
-      if (isPastSlot(data.date, data.time)) {
-        showAlert('error', 'Este horário já passou. Escolha um horário futuro para enviar o pedido.');
+      const selectedService = services.find((s) => s.name === data.service);
+
+      if (isTooSoonOrPast(data.date, data.time)) {
+        showAlert('error', `Este horário requer ${LEAD_MINUTES} minutos de antecedência. Escolha um horário disponível.`);
         await refreshTimes();
         return;
       }
+
       const busyTimes = await fetchBusyTimes(data.date, data.location).catch(() => []);
       if (busyTimes.includes(data.time)) {
-        showAlert('error', 'Este horário acabou de ficar indisponível. Escolha outro horário para enviar o pedido.');
+        showAlert('error', 'Este horário acabou de ficar indisponível. Escolha outro horário.');
         await refreshTimes();
         return;
       }
 
       const payload = {
-        id_agendamento: `MRJ-${Date.now()}`,
-        nome_cliente: data.name,
-        telefone: data.whatsapp,
-        whatsapp: data.whatsapp,
-        email: data.email,
-        telegram: data.telegram,
-        servico: data.service,
-        duracao_media: selectedService ? selectedService.dur : 50,
+        id_agendamento:  `MRJ-${Date.now()}`,
+        nome_cliente:    data.name,
+        telefone:        data.whatsapp,
+        whatsapp:        data.whatsapp,
+        email:           data.email,
+        telegram:        data.telegram,
+        servico:         data.service,
+        duracao_media:   selectedService ? selectedService.dur : 50,
         valor_referencia: selectedService ? selectedService.price : null,
-        data_agendada: data.date,
-        hora_agendada: data.time,
-        local: data.location,
+        data_agendada:   data.date,
+        hora_agendada:   data.time,
+        local:           data.location,
         observacoes_cliente: data.notes,
-        status: 'Pendente',
-        origem: 'site_massoterapiarj',
-        criado_em: new Date().toISOString(),
+        status:          'Pendente',
+        origem:          'site_massoterapiarj',
+        criado_em:       new Date().toISOString(),
       };
 
       const button = form.querySelector('button[type="submit"]');
@@ -762,20 +907,20 @@
         const result = await sendToWebhook(payload);
         saveLocal(payload);
         if (result.skipped) {
-          showAlert('warning', 'A página de agendamento está criada, mas o webhook do n8n ainda não foi configurado. Este teste ficou salvo apenas neste navegador e não foi enviado para a equipe.');
+          showAlert('warning', 'Webhook do n8n ainda não configurado. Pedido salvo apenas localmente.');
         } else {
-          showAlert('success', 'Pedido recebido com sucesso! Seu agendamento foi enviado para análise. Você receberá a confirmação após aprovação do responsável.');
+          showAlert('success', 'Pedido recebido! Seu agendamento foi enviado para análise e será confirmado pelo WhatsApp.');
         }
         form.reset();
         refreshTimes();
       } catch (error) {
         if (error.status === 409) {
-          showAlert('error', 'Este horário não está mais disponível. Escolha outro horário e envie novamente.');
+          showAlert('error', 'Horário indisponível. Escolha outro horário e envie novamente.');
           await refreshTimes();
           return;
         }
         saveLocal(payload);
-        showAlert('error', 'O pedido foi salvo localmente, mas ainda não foi enviado ao n8n. Verifique a integração do webhook antes de usar em produção.');
+        showAlert('error', 'Pedido salvo localmente mas não enviado. Verifique a integração do webhook.');
       } finally {
         button.disabled = false;
         button.textContent = 'Enviar pedido de agendamento';
