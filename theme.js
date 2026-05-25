@@ -113,7 +113,7 @@ window.MRJ_FAQS = [
   { q: 'Como funciona o agendamento?',
     a: 'Você agenda online pelo site, pelo WhatsApp, ou por telefone. Confirmamos o horário e enviamos o endereço com referências por mensagem.' },
   { q: 'Onde fica a clínica?',
-    a: 'Atendemos em Copacabana, Rio de Janeiro. Estamos atualizando o endereço para um espaço novo — confirme a localização exata da sua próxima sessão pelo WhatsApp ou no momento do agendamento.' },
+    a: 'Atendemos em Copacabana, Rio de Janeiro, na Av. Princesa Isabel, 323, sala 1007. A localização também está disponível no Google Maps e é enviada na confirmação do agendamento.' },
 ];
 
 window.MRJ_POSTS = [

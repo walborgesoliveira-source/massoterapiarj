@@ -467,7 +467,7 @@ function Footer({ t, compact }) {
           gap: 16,
         }}>
           <div style={{ fontFamily: 'Karla', fontSize: 12, color: t.muted }}>
-            © 2026 Ellaine Massoterapia · CNPJ 00.000.000/0001-00 · Todos os direitos reservados
+            © 2026 Ellaine Massoterapia · Todos os direitos reservados
           </div>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
             <a href={window.MRJ_CONTACT.instagram} target="_blank" rel="noopener" aria-label="Instagram da Massoterapia RJ" style={{
