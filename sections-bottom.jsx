@@ -268,7 +268,7 @@ function MapaContato({ t, compact }) {
 
           {/* Hours + phone */}
           {[
-            { ic: Icon.clock(16, t.accent), lbl: 'Horários', v1: 'Segunda a sexta · 08h às 20h', v2: 'Sábado e domingo · 09h às 17h' },
+            { ic: Icon.clock(16, t.accent), lbl: 'Horários', v1: 'Segunda a sexta · 09h às 20h30', v2: 'Sábado · 09h às 19h · Domingo fechado' },
             { ic: Icon.phone(16, t.accent), lbl: 'Telefone', v1: window.MRJ_CONTACT.phoneLabel,  v2: 'WhatsApp e ligação', href: window.MRJ_CONTACT.phoneTel },
           ].map((it, i) => (
             <div key={i} style={{
@@ -446,7 +446,7 @@ function Footer({ t, compact }) {
           {[
             ['Navegação', ['Início', 'Profissionais', 'Serviços', 'Agendamento', 'Blog']],
             ['Contato',   [window.MRJ_CONTACT.phoneLabel, window.MRJ_CONTACT.email, 'Copacabana, Rio de Janeiro']],
-            ['Horários',  ['Seg–Sex · 08h às 20h', 'Sáb–Dom · 09h às 17h']],
+            ['Horários',  ['Seg–Sex · 09h às 20h30', 'Sáb · 09h às 19h', 'Dom · Fechado']],
           ].map(([title, items], i) => (
             <div key={i}>
               <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10.5, letterSpacing: '0.2em', color: t.muted, textTransform: 'uppercase', marginBottom: 16 }}>{title}</div>
