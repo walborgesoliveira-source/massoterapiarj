@@ -185,7 +185,8 @@ function MapaContato({ t, compact }) {
                 Av. Princesa Isabel, 323 / 1007
               </div>
             </div>
-            <a href="#" style={{
+            <a href="https://www.google.com/maps/search/?api=1&query=Av.+Princesa+Isabel+323+Copacabana+Rio+de+Janeiro"
+               target="_blank" rel="noopener" style={{
               fontFamily: 'Karla', fontSize: 12, color: t.accent, fontWeight: 600,
               textDecoration: 'none', whiteSpace: 'nowrap',
             }}>Ver no Maps →</a>

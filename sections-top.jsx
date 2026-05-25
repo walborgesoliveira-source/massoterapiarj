@@ -84,7 +84,8 @@ function UtilityStrip({ t, compact }) {
           }}>
             {Icon.phone(13, 'rgba(240,228,208,0.7)')} {window.MRJ_CONTACT.phoneLabel}
           </a>
-          <a href="#" style={{
+          <a href="https://www.google.com/maps/search/?api=1&query=Av.+Princesa+Isabel+323+Copacabana+Rio+de+Janeiro"
+             target="_blank" rel="noopener" style={{
             color: t.accent, textDecoration: 'none', fontWeight: 600,
             display: 'inline-flex', alignItems: 'center', gap: 4,
           }}>
