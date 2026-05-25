@@ -433,6 +433,23 @@
       border-top: 1px solid var(--line);
       font-size: 12px; font-weight: 600;
     }
+    .prof-row {
+      cursor: pointer;
+      border-radius: 6px;
+      padding: 7px 8px;
+      margin: 0 -8px;
+      transition: background 140ms ease;
+    }
+    .prof-row:hover { background: var(--cream); }
+    .prof-row.selected {
+      background: rgba(184,137,90,0.12);
+      outline: 1.5px solid var(--accent);
+      outline-offset: -1.5px;
+    }
+    .prof-row.selected .prof-badge.livre {
+      background: var(--accent);
+      color: #fff;
+    }
   </style>
 </head>
 <body>
@@ -546,6 +563,7 @@
         </div>
 
         <input type="hidden" name="status" value="Pendente">
+        <input type="hidden" name="profissional_solicitada" id="profissionalInput" value="">
         <button class="button primary full" type="submit">Enviar pedido de agendamento</button>
         <div class="hint">Ao enviar, o pedido fica pendente de aprovação. A confirmação será feita pelo WhatsApp, e-mail, Telegram ou tela do site quando a integração estiver ativa.</div>
       </form>
@@ -559,6 +577,7 @@
           <div><span>Serviço</span><strong>-</strong></div>
           <div><span>Data</span><strong>-</strong></div>
           <div><span>Horário</span><strong>-</strong></div>
+          <div><span>Profissional</span><strong>A definir</strong></div>
           <div><span>Status</span><strong>Pendente</strong></div>
         </div>
       </div>
@@ -707,8 +726,21 @@
 
     // ── Professional card (Rule 4) ────────────────────────────────
     let currentBusyTimes = [];
+    const profissionalInput = document.getElementById('profissionalInput');
+
+    function selecionarProfissional(nome) {
+      profissionalInput.value = nome;
+      profCard.querySelectorAll('.prof-row').forEach((row) => {
+        const selected = row.dataset.nome === nome;
+        row.classList.toggle('selected', selected);
+        const badge = row.querySelector('.prof-badge');
+        if (badge) badge.textContent = selected ? 'Selecionada ✓' : 'Disponível';
+      });
+      updateSummary();
+    }
 
     function renderProfCard(timeValue) {
+      profissionalInput.value = '';
       if (!timeValue) { profCard.className = 'prof-card'; return; }
 
       const turno = turnoParaHorario(timeValue);
@@ -718,20 +750,9 @@
       const busyCount = currentBusyTimes.filter((t) => t === timeValue).length;
       const freeCount = Math.max(0, turno.capacidade - busyCount);
 
-      const rows = profs.map((p) => `
-        <div class="prof-row">
-          <div class="prof-initial">${p.nome[0]}</div>
-          <div class="prof-info">
-            <strong>${p.nome}</strong>
-            <span>${p.cargo || 'Massoterapeuta'}</span>
-          </div>
-          <span class="prof-badge livre">Disponível</span>
-        </div>
-      `).join('');
-
       const footerColor = freeCount > 0 ? 'var(--ok)' : 'var(--error)';
       const footerMsg   = freeCount > 0
-        ? `✓ ${freeCount} vaga(s) disponível(is) neste horário`
+        ? `Clique em uma profissional para selecioná-la — ou deixe em branco para a equipe definir.`
         : '✕ Horário sem capacidade — todos os profissionais estão ocupados';
 
       profCard.innerHTML = `
@@ -739,10 +760,33 @@
           <strong>${turno.label}</strong>
           <span>${turno.inicio} às ${turno.fim} · ${turno.capacidade} profissionais</span>
         </div>
-        ${rows}
+        ${profs.map((p) => `
+          <div class="prof-row" data-nome="${p.nome}" role="button" tabindex="0" aria-label="Selecionar ${p.nome}">
+            <div class="prof-initial">${p.nome[0]}</div>
+            <div class="prof-info">
+              <strong>${p.nome}</strong>
+              <span>${p.cargo || 'Massoterapeuta'}</span>
+            </div>
+            <span class="prof-badge livre">Disponível</span>
+          </div>
+        `).join('')}
         <div class="prof-card-footer" style="color:${footerColor}">${footerMsg}</div>
       `;
       profCard.className = 'prof-card show';
+
+      profCard.querySelectorAll('.prof-row').forEach((row) => {
+        row.addEventListener('click', () => {
+          const nome = row.dataset.nome;
+          selecionarProfissional(profissionalInput.value === nome ? '' : nome);
+          if (profissionalInput.value === '') {
+            row.classList.remove('selected');
+            row.querySelector('.prof-badge').textContent = 'Disponível';
+          }
+        });
+        row.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); row.click(); }
+        });
+      });
     }
 
     // ── Availability API ──────────────────────────────────────────
@@ -824,7 +868,8 @@
       rows[0].textContent = values.get('service') || '-';
       rows[1].textContent = formatDate(values.get('date'));
       rows[2].textContent = values.get('time') || '-';
-      rows[3].textContent = 'Pendente';
+      rows[3].textContent = values.get('profissional_solicitada') || 'A definir';
+      rows[4].textContent = 'Pendente';
     }
 
     // ── Alert / persistence ───────────────────────────────────────
@@ -894,6 +939,7 @@
         hora_agendada:   data.time,
         local:           data.location,
         observacoes_cliente: data.notes,
+        profissional_solicitada: data.profissional_solicitada || null,
         status:          'Pendente',
         origem:          'site_massoterapiarj',
         criado_em:       new Date().toISOString(),
