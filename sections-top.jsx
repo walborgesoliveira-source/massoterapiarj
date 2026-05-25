@@ -483,7 +483,7 @@ function Sobre({ t, compact }) {
           <div style={{ display: 'flex', gap: compact ? 24 : 40, flexWrap: 'wrap' }}>
             {[
               ['Profissionais', 'certificadas em\nfisioterapia + massoterapia'],
-              ['Localização',    'Copacabana, a 6 min\nda estação de metrô'],
+              ['Localização',    'Copacabana, a 6 min\nda estação de metrô\nMetrô Arco Verde, ao Hotel Hilton Copacabana'],
               ['Atendimento',    'Personalizado,\nsem fórmula pronta'],
             ].map(([k, v], i) => (
               <div key={i} style={{ minWidth: 0, flex: '1 1 140px' }}>
