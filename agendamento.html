@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Agendamento Online | Massoterapia RJ</title>
-  <meta name="description" content="Solicite seu agendamento online na Massoterapia RJ. Escolha serviço, data e horário para análise e confirmação da equipe.">
+  <meta name="description" content="Solicite seu agendamento online na Massoterapia RJ. Escolha serviço, data e horário para registro no sistema.">
   <link rel="icon" type="image/png" href="assets/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -456,7 +456,7 @@
   <div class="topbar">
     <div class="topbar-inner">
       <span>Av. Princesa Isabel, 323 — sala 1007 · Copacabana, Rio de Janeiro</span>
-      <span>Agendamentos enviados ficam pendentes até confirmação da equipe.</span>
+      <span>Agendamentos enviados entram como aprovados no sistema.</span>
     </div>
   </div>
 
@@ -481,12 +481,12 @@
     <div class="shell hero-inner">
       <div>
         <p class="eyebrow">Agendamento online</p>
-        <h1>Escolha sua sessão e envie o pedido para confirmação.</h1>
-        <p>Preencha serviço, data, horário e contato. A equipe recebe o pedido como pendente e confirma após análise da agenda.</p>
+        <h1>Escolha sua sessão e registre seu atendimento.</h1>
+        <p>Preencha serviço, data, horário e contato. A equipe recebe o pedido como aprovado e acompanha pelo sistema.</p>
       </div>
       <div class="status-card">
-        <strong>Status inicial: Pendente</strong>
-        <span>Este formulário segue o fluxo definido para integração com n8n, banco PS e aprovação pelo gerente mestre.</span>
+        <strong>Status inicial: Aprovado</strong>
+        <span>Este formulário segue o fluxo definido para integração com n8n, banco PS e acompanhamento pela equipe.</span>
       </div>
     </div>
   </section>
@@ -496,7 +496,7 @@
       <div class="panel-header">
         <p class="eyebrow">Solicitação</p>
         <h2>Dados do agendamento</h2>
-        <p>Os horários exibidos seguem a agenda base do site. A confirmação final acontece somente após aprovação da equipe.</p>
+        <p>Os horários exibidos seguem a agenda base do site. O pedido entra no sistema como aprovado e pode ser acompanhado pela equipe.</p>
       </div>
 
       <form class="form" id="scheduleForm">
@@ -562,10 +562,10 @@
           </label>
         </div>
 
-        <input type="hidden" name="status" value="Pendente">
+        <input type="hidden" name="status" value="Aprovado">
         <input type="hidden" name="profissional_solicitada" id="profissionalInput" value="">
         <button class="button primary full" type="submit">Enviar pedido de agendamento</button>
-        <div class="hint">Ao enviar, o pedido fica pendente de aprovação. A confirmação será feita pelo WhatsApp, e-mail, Telegram ou tela do site quando a integração estiver ativa.</div>
+        <div class="hint">Ao enviar, o pedido entra como aprovado no sistema. A equipe acompanha e pode ajustar o status se necessário.</div>
       </form>
     </section>
 
@@ -578,15 +578,15 @@
           <div><span>Data</span><strong>-</strong></div>
           <div><span>Horário</span><strong>-</strong></div>
           <div><span>Profissional</span><strong>A definir</strong></div>
-          <div><span>Status</span><strong>Pendente</strong></div>
+          <div><span>Status</span><strong>Aprovado</strong></div>
         </div>
       </div>
       <div class="side-card">
         <h3>Como funciona</h3>
         <ul>
           <li>Você envia o pedido pelo formulário.</li>
-          <li>A equipe analisa disponibilidade e serviço.</li>
-          <li>O agendamento é confirmado ou reagendado.</li>
+          <li>O pedido entra no sistema como aprovado.</li>
+          <li>A equipe acompanha e ajusta se houver necessidade.</li>
           <li>O fluxo será integrado ao n8n e banco PS.</li>
         </ul>
       </div>
@@ -601,7 +601,7 @@
   <footer>
     <div class="shell">
       <span>Massoterapia RJ · Agendamento online</span>
-      <span>Pedidos enviados com status pendente de aprovação.</span>
+      <span>Pedidos enviados com status aprovado.</span>
     </div>
   </footer>
 
@@ -658,14 +658,42 @@
     dateInput.min = getBusinessNow().date;
 
     // ── Shift helpers ─────────────────────────────────────────────
+    function isValidTurno(turno) {
+      return turno
+        && typeof turno.id === 'string'
+        && typeof turno.inicio === 'string'
+        && typeof turno.fim === 'string'
+        && /^\d{2}:\d{2}$/.test(turno.inicio)
+        && /^\d{2}:\d{2}$/.test(turno.fim);
+    }
+
+    function normalizarTurnos(turnos) {
+      if (!Array.isArray(turnos) || !turnos.length) return [];
+      return turnos
+        .filter(isValidTurno)
+        .map((turno) => ({
+          ...turno,
+          label: turno.label || turno.id,
+          capacidade: Number(turno.capacidade) > 0 ? Number(turno.capacidade) : 2,
+        }));
+    }
+
     function getTurnos() {
-      try { const s = localStorage.getItem(CONFIG.storageKeyTurnos); if (s) return JSON.parse(s); } catch {}
-      return window.MRJ_TURNOS || [];
+      const padrao = normalizarTurnos(window.MRJ_TURNOS || []);
+      try {
+        const salvos = normalizarTurnos(JSON.parse(localStorage.getItem(CONFIG.storageKeyTurnos) || '[]'));
+        if (salvos.length) return salvos;
+      } catch {}
+      return padrao;
     }
 
     function getProfissionais() {
-      try { const s = localStorage.getItem(CONFIG.storageKeyProfissionais); if (s) return JSON.parse(s); } catch {}
-      return window.MRJ_PROFISSIONAIS_TURNOS || [];
+      const padrao = Array.isArray(window.MRJ_PROFISSIONAIS_TURNOS) ? window.MRJ_PROFISSIONAIS_TURNOS : [];
+      try {
+        const salvos = JSON.parse(localStorage.getItem(CONFIG.storageKeyProfissionais) || '[]');
+        if (Array.isArray(salvos) && salvos.some((p) => p && p.nome && p.turno)) return salvos;
+      } catch {}
+      return padrao;
     }
 
     function turnoParaHorario(timeValue) {
@@ -869,7 +897,7 @@
       rows[1].textContent = formatDate(values.get('date'));
       rows[2].textContent = values.get('time') || '-';
       rows[3].textContent = values.get('profissional_solicitada') || 'A definir';
-      rows[4].textContent = 'Pendente';
+      rows[4].textContent = 'Aprovado';
     }
 
     // ── Alert / persistence ───────────────────────────────────────
@@ -940,7 +968,7 @@
         local:           data.location,
         observacoes_cliente: data.notes,
         profissional_solicitada: data.profissional_solicitada || null,
-        status:          'Pendente',
+        status:          'Aprovado',
         origem:          'site_massoterapiarj',
         criado_em:       new Date().toISOString(),
       };
