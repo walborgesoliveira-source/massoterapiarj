@@ -405,6 +405,17 @@
     }
     .prof-card-head strong { font-size: 13px; color: var(--ink); }
     .prof-card-head span { font-size: 12px; color: var(--muted); }
+    .prof-card-notes {
+      display: grid;
+      gap: 4px;
+      margin-bottom: 10px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      background: rgba(184,137,90,0.09);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
     .prof-row {
       display: flex;
       align-items: center;
@@ -486,7 +497,7 @@
       </div>
       <div class="status-card">
         <strong>Status inicial: Aprovado</strong>
-        <span>Este formulário segue o fluxo definido para integração com n8n, banco PS e acompanhamento pela equipe.</span>
+        <span>Este formulário segue o fluxo definido para integração e acompanhamento pela equipe.</span>
       </div>
     </div>
   </section>
@@ -610,6 +621,7 @@
     const CONFIG = {
       webhookUrl:      'https://n8n.iaguru.com.br/webhook/massoterapiarj-agendamento',
       availabilityUrl: '/coreps-api/agendamentos/disponibilidade',
+      collaboratorsAvailabilityUrl: '/coreps-api/agendamentos/colaboradores-disponibilidade',
       webhookToken:    '',
       storageKey:           'mrj_schedule_requests',
       storageKeyTurnos:     'mrj_turnos_config',
@@ -649,10 +661,35 @@
       const parts = new Intl.DateTimeFormat('en-CA', {
         timeZone: BUSINESS_TIME_ZONE,
         year: 'numeric', month: '2-digit', day: '2-digit',
-        hour: '2-digit', minute: '2-digit', hour12: false,
+        hour: '2-digit', minute: '2-digit', hour12: false, hourCycle: 'h23',
       }).formatToParts(new Date());
       const v = (type) => parts.find((p) => p.type === type)?.value;
       return { date: `${v('year')}-${v('month')}-${v('day')}`, time: `${v('hour')}:${v('minute')}` };
+    }
+
+    function timeToMinutes(timeValue) {
+      const [h, m] = String(timeValue || '').slice(0, 5).split(':').map(Number);
+      return Number.isFinite(h) && Number.isFinite(m) ? h * 60 + m : null;
+    }
+
+    function minutesToTime(totalMinutes) {
+      const minutes = Math.max(0, totalMinutes);
+      const hh = Math.floor(minutes / 60);
+      const mm = minutes % 60;
+      return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+    }
+
+    function getBusinessDateDay(dateValue) {
+      const [year, month, day] = String(dateValue || '').split('-').map(Number);
+      if (!year || !month || !day) return null;
+      return new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+    }
+
+    function getMinimumStartMinutes(dateValue) {
+      const now = getBusinessNow();
+      if (dateValue < now.date) return Infinity;
+      if (dateValue > now.date) return 0;
+      return timeToMinutes(now.time) + LEAD_MINUTES;
     }
 
     dateInput.min = getBusinessNow().date;
@@ -709,32 +746,29 @@
     // ── Time slot generation (Rule 1 + 2) ────────────────────────
     function getAvailableTimes(dateValue) {
       if (!dateValue) return [];
-      const dow = new Date(`${dateValue}T12:00:00`).getDay();
+      const dow = getBusinessDateDay(dateValue);
       if (dow === 0) return []; // Sunday closed
 
       const now = getBusinessNow();
       if (dateValue < now.date) return [];
 
-      const [nh, nm] = now.time.split(':').map(Number);
-      const minSlot = (dateValue === now.date) ? nh * 60 + nm + LEAD_MINUTES : 0;
+      const minSlot = getMinimumStartMinutes(dateValue);
       const isSat = dow === 6;
       const times = [];
 
       getTurnos().forEach((turno) => {
-        const [sh, sm] = turno.inicio.split(':').map(Number);
-        let [eh, em] = turno.fim.split(':').map(Number);
+        const startMin = timeToMinutes(turno.inicio);
+        let endMin = timeToMinutes(turno.fim);
+        if (startMin === null || endMin === null) return;
 
         // Saturday cap at 19:00
-        if (isSat && eh * 60 + em > 19 * 60) { eh = 19; em = 0; }
+        if (isSat && endMin > 19 * 60) endMin = 19 * 60;
 
-        const startMin = sh * 60 + sm;
-        const lastStart = eh * 60 + em - SESSION_MIN;
+        const lastStart = endMin - SESSION_MIN;
 
         for (let t = startMin; t <= lastStart; t += 30) {
-          if (t < minSlot) continue; // Rule 1: 70-min advance
-          const hh = Math.floor(t / 60);
-          const mm = t % 60;
-          times.push(`${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`);
+          if (t < minSlot) continue; // Minimum 70 minutes from Brasília time.
+          times.push(minutesToTime(t));
         }
       });
 
@@ -747,13 +781,13 @@
       const now = getBusinessNow();
       if (dateValue < now.date) return true;
       if (dateValue > now.date) return false;
-      const [h, m] = timeValue.split(':').map(Number);
-      const [nh, nm] = now.time.split(':').map(Number);
-      return h * 60 + m < nh * 60 + nm + LEAD_MINUTES;
+      return timeToMinutes(timeValue) < getMinimumStartMinutes(dateValue);
     }
 
     // ── Professional card (Rule 4) ────────────────────────────────
     let currentBusyTimes = [];
+    let currentBusyCounts = {};
+    let currentAvailabilityRules = [];
     const profissionalInput = document.getElementById('profissionalInput');
 
     function selecionarProfissional(nome) {
@@ -774,9 +808,10 @@
       const turno = turnoParaHorario(timeValue);
       if (!turno) { profCard.className = 'prof-card'; return; }
 
-      const profs     = getProfissionais().filter((p) => p.turno === turno.id);
-      const busyCount = currentBusyTimes.filter((t) => t === timeValue).length;
-      const freeCount = Math.max(0, turno.capacidade - busyCount);
+      const resultado = getProfissionaisParaHorario(timeValue, turno);
+      const profs     = resultado.profs;
+      const busyCount = currentBusyCounts[timeValue] || 0;
+      const freeCount = Math.max(0, profs.length - busyCount);
 
       const footerColor = freeCount > 0 ? 'var(--ok)' : 'var(--error)';
       const footerMsg   = freeCount > 0
@@ -786,8 +821,9 @@
       profCard.innerHTML = `
         <div class="prof-card-head">
           <strong>${turno.label}</strong>
-          <span>${turno.inicio} às ${turno.fim} · ${turno.capacidade} profissionais</span>
+          <span>${turno.inicio} às ${turno.fim} · ${profs.length} profissionais disponíveis</span>
         </div>
+        ${resultado.notas.length ? `<div class="prof-card-notes">${resultado.notas.map((n) => `<span>${n}</span>`).join('')}</div>` : ''}
         ${profs.map((p) => `
           <div class="prof-row" data-nome="${p.nome}" role="button" tabindex="0" aria-label="Selecionar ${p.nome}">
             <div class="prof-initial">${p.nome[0]}</div>
@@ -817,6 +853,40 @@
       });
     }
 
+    function regraAfetaHorario(regra, timeValue) {
+      return timeValue >= String(regra.hora_inicio || '').slice(0, 5)
+        && timeValue < String(regra.hora_fim || '').slice(0, 5);
+    }
+
+    function profissionalPorNome(nome) {
+      return getProfissionais().find((p) => p.nome === nome)
+        || { nome, turno: '', cargo: 'Massoterapeuta' };
+    }
+
+    function getProfissionaisParaHorario(timeValue, turno) {
+      const mapa = new Map(getProfissionais()
+        .filter((p) => p.turno === turno.id)
+        .map((p) => [p.nome, { ...p }]));
+      const notas = [];
+
+      currentAvailabilityRules
+        .filter((regra) => regraAfetaHorario(regra, timeValue))
+        .forEach((regra) => {
+          if (regra.disponivel === false) {
+            mapa.delete(regra.funcionario);
+            notas.push(`${regra.funcionario} indisponível hoje${regra.motivo ? ` · ${regra.motivo}` : ''}`);
+            if (regra.substituto) {
+              mapa.set(regra.substituto, profissionalPorNome(regra.substituto));
+              notas.push(`${regra.substituto} substitui ${regra.funcionario}`);
+            }
+          } else {
+            mapa.set(regra.funcionario, profissionalPorNome(regra.funcionario));
+          }
+        });
+
+      return { profs: Array.from(mapa.values()), notas };
+    }
+
     // ── Availability API ──────────────────────────────────────────
     async function fetchBusyTimes(dateValue, locationValue) {
       if (!dateValue || !CONFIG.availabilityUrl) return [];
@@ -827,7 +897,24 @@
       });
       if (!response.ok) throw new Error(`Disponibilidade respondeu ${response.status}`);
       const result = await response.json();
+      currentBusyCounts = {};
+      if (Array.isArray(result.registros)) {
+        result.registros.forEach((row) => {
+          currentBusyCounts[row.hora] = (currentBusyCounts[row.hora] || 0) + Number(row.total || 0);
+        });
+      }
       return Array.isArray(result.horarios_ocupados) ? result.horarios_ocupados : [];
+    }
+
+    async function fetchCollaboratorsAvailability(dateValue) {
+      if (!dateValue || !CONFIG.collaboratorsAvailabilityUrl) return [];
+      const params = new URLSearchParams({ data: dateValue });
+      const response = await fetch(`${CONFIG.collaboratorsAvailabilityUrl}?${params.toString()}`, {
+        headers: { Accept: 'application/json' },
+      });
+      if (!response.ok) throw new Error(`Disponibilidade dos colaboradores respondeu ${response.status}`);
+      const result = await response.json();
+      return Array.isArray(result.registros) ? result.registros : [];
     }
 
     async function refreshTimes() {
@@ -838,6 +925,8 @@
       availabilityStatus.className = 'availability-status';
       timeSelect.disabled = false;
       currentBusyTimes = [];
+      currentBusyCounts = {};
+      currentAvailabilityRules = [];
 
       timeSelect.innerHTML = '';
       if (!dateInput.value) {
@@ -853,8 +942,9 @@
         timeSelect.append(new Option('Consultando agenda...', ''));
         try {
           currentBusyTimes = await fetchBusyTimes(dateInput.value, locationValue);
+          currentAvailabilityRules = await fetchCollaboratorsAvailability(dateInput.value);
         } catch {
-          availabilityStatus.textContent = 'Não foi possível consultar os horários ocupados. A equipe validará antes de confirmar.';
+          availabilityStatus.textContent = 'Não foi possível consultar a agenda completa. A equipe validará antes de confirmar.';
           availabilityStatus.classList.add('warning');
         }
 
@@ -862,16 +952,27 @@
         timeSelect.disabled = false;
         timeSelect.append(new Option('Selecione um horário', ''));
         times.forEach((time) => {
-          const busy = currentBusyTimes.includes(time);
+          const turno = turnoParaHorario(time);
+          const profs = turno ? getProfissionaisParaHorario(time, turno).profs : [];
+          const busyCount = currentBusyCounts[time] || 0;
+          const busy = !turno || profs.length <= busyCount;
           const opt  = new Option(busy ? `${time} - indisponível` : time, time);
           opt.disabled = busy;
           timeSelect.append(opt);
         });
 
-        if (currentBusyTimes.length) {
-          availabilityStatus.textContent = `${currentBusyTimes.length} horário(s) já bloqueado(s).`;
+        if (currentBusyTimes.length || currentAvailabilityRules.length) {
+          const partes = [];
+          if (dateInput.value === getBusinessNow().date) {
+            partes.push(`Horários liberados a partir de ${minutesToTime(getMinimumStartMinutes(dateInput.value))} no horário de Brasília`);
+          }
+          if (currentBusyTimes.length) partes.push(`${currentBusyTimes.length} horário(s) já bloqueado(s)`);
+          if (currentAvailabilityRules.length) partes.push(`${currentAvailabilityRules.length} ajuste(s) de colaboradores`);
+          availabilityStatus.textContent = partes.join(' · ');
         } else if (dateInput.value) {
-          availabilityStatus.textContent = 'Agenda consultada: nenhum horário bloqueado para esta data.';
+          availabilityStatus.textContent = dateInput.value === getBusinessNow().date
+            ? `Agenda consultada: horários liberados a partir de ${minutesToTime(getMinimumStartMinutes(dateInput.value))} no horário de Brasília.`
+            : 'Agenda consultada: nenhum horário bloqueado para esta data.';
         }
 
         if (selectedTime && !currentBusyTimes.includes(selectedTime) && times.includes(selectedTime)) {
@@ -1003,6 +1104,11 @@
 
     refreshTimes();
     updateSummary();
+    window.setInterval(() => {
+      const today = getBusinessNow().date;
+      dateInput.min = today;
+      if (dateInput.value === today) refreshTimes();
+    }, 60000);
   </script>
 </body>
 </html>
