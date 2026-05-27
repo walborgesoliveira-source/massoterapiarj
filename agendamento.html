@@ -887,6 +887,14 @@
       return { profs: Array.from(mapa.values()), notas };
     }
 
+    function horarioTemVaga(timeValue) {
+      const turno = turnoParaHorario(timeValue);
+      if (!turno) return false;
+      const profs = getProfissionaisParaHorario(timeValue, turno).profs;
+      const busyCount = currentBusyCounts[timeValue] || 0;
+      return profs.length > busyCount;
+    }
+
     // ── Availability API ──────────────────────────────────────────
     async function fetchBusyTimes(dateValue, locationValue) {
       if (!dateValue || !CONFIG.availabilityUrl) return [];
@@ -1047,11 +1055,23 @@
         return;
       }
 
-      const busyTimes = await fetchBusyTimes(data.date, data.location).catch(() => []);
-      if (busyTimes.includes(data.time)) {
+      await fetchBusyTimes(data.date, data.location).catch(() => []);
+      currentAvailabilityRules = await fetchCollaboratorsAvailability(data.date).catch(() => []);
+
+      if (!horarioTemVaga(data.time)) {
         showAlert('error', 'Este horário acabou de ficar indisponível. Escolha outro horário.');
         await refreshTimes();
         return;
+      }
+
+      if (data.profissional_solicitada) {
+        const turno = turnoParaHorario(data.time);
+        const disponiveis = turno ? getProfissionaisParaHorario(data.time, turno).profs.map((p) => p.nome) : [];
+        if (!disponiveis.includes(data.profissional_solicitada)) {
+          showAlert('error', 'A profissional selecionada não está mais disponível neste horário. Escolha outra profissional.');
+          await refreshTimes();
+          return;
+        }
       }
 
       const payload = {
