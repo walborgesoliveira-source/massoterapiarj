@@ -283,7 +283,7 @@ function Hero({ t, compact, heroText }) {
               fontFamily: 'Karla, sans-serif',
               fontSize: 11, color: 'rgba(240,228,208,0.45)',
               margin: '-28px 0 36px', fontWeight: 400,
-            }}>Atualização: 26/05/2026 17:23</p>
+            }}>Atualização: 27/05/2026 12:53</p>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               <Btn t={t} variant="onDeep" size={compact ? 'md' : 'lg'}
                 onClick={() => window.open(window.MRJ_CONTACT.scheduleUrl, '_blank')}
