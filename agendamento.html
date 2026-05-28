@@ -452,6 +452,11 @@
       transition: background 140ms ease;
     }
     .prof-row:hover { background: var(--cream); }
+    .prof-row.unavailable {
+      cursor: not-allowed;
+      opacity: 0.72;
+    }
+    .prof-row.unavailable:hover { background: transparent; }
     .prof-row.selected {
       background: rgba(184,137,90,0.12);
       outline: 1.5px solid var(--accent);
@@ -631,6 +636,24 @@
     const LEAD_MINUTES = 70;
     const SESSION_MIN  = 50;
     const BUSINESS_TIME_ZONE = 'America/Sao_Paulo';
+    const ESCALA_OFICIAL = {
+      '2026-05-28': [
+        { inicio: '12:00', fim: '20:30', profissionais: ['Ellaine', 'Selma'] },
+      ],
+      '2026-05-29': [
+        { inicio: '12:00', fim: '14:00', profissionais: ['Amanda'] },
+        { inicio: '14:00', fim: '20:30', profissionais: ['Amanda', 'Diana'] },
+      ],
+      '2026-05-30': [
+        { inicio: '09:00', fim: '19:00', profissionais: ['Diana'] },
+      ],
+    };
+    const PROFISSIONAIS_OFICIAIS = [
+      { nome: 'Ellaine', cargo: 'Massoterapeuta clínica' },
+      { nome: 'Selma', cargo: 'Massoterapeuta clínica' },
+      { nome: 'Amanda', cargo: 'Massoterapeuta clínica' },
+      { nome: 'Diana', cargo: 'Massoterapeuta clínica' },
+    ];
 
     // ── DOM refs ─────────────────────────────────────────────────
     const form          = document.getElementById('scheduleForm');
@@ -725,49 +748,50 @@
     }
 
     function getProfissionais() {
-      const padrao = Array.isArray(window.MRJ_PROFISSIONAIS_TURNOS) ? window.MRJ_PROFISSIONAIS_TURNOS : [];
-      try {
-        const salvos = JSON.parse(localStorage.getItem(CONFIG.storageKeyProfissionais) || '[]');
-        if (Array.isArray(salvos) && salvos.some((p) => p && p.nome && p.turno)) return salvos;
-      } catch {}
-      return padrao;
+      return PROFISSIONAIS_OFICIAIS;
     }
 
     function turnoParaHorario(timeValue) {
-      const [h, m] = timeValue.split(':').map(Number);
-      const t = h * 60 + m;
-      return getTurnos().find((turno) => {
-        const [ih, im] = turno.inicio.split(':').map(Number);
-        const [fh, fm] = turno.fim.split(':').map(Number);
-        return t >= ih * 60 + im && t < fh * 60 + fm;
-      }) || null;
+      const bloco = getBlocoEscala(dateInput.value, timeValue);
+      if (!bloco) return null;
+      return {
+        id: `${dateInput.value}-${bloco.inicio}-${bloco.fim}`,
+        label: bloco.profissionais.join(' e '),
+        inicio: bloco.inicio,
+        fim: bloco.fim,
+        capacidade: bloco.profissionais.length,
+        profissionais: bloco.profissionais,
+      };
+    }
+
+    function getBlocosEscala(dateValue) {
+      return ESCALA_OFICIAL[dateValue] || [];
+    }
+
+    function getBlocoEscala(dateValue, timeValue) {
+      return getBlocosEscala(dateValue).find((bloco) => (
+        timeValue >= bloco.inicio && timeValue < bloco.fim
+      )) || null;
     }
 
     // ── Time slot generation (Rule 1 + 2) ────────────────────────
     function getAvailableTimes(dateValue) {
       if (!dateValue) return [];
-      const dow = getBusinessDateDay(dateValue);
-      if (dow === 0) return []; // Sunday closed
-
       const now = getBusinessNow();
       if (dateValue < now.date) return [];
 
       const minSlot = getMinimumStartMinutes(dateValue);
-      const isSat = dow === 6;
       const times = [];
 
-      getTurnos().forEach((turno) => {
-        const startMin = timeToMinutes(turno.inicio);
-        let endMin = timeToMinutes(turno.fim);
+      getBlocosEscala(dateValue).forEach((bloco) => {
+        const startMin = timeToMinutes(bloco.inicio);
+        const endMin = timeToMinutes(bloco.fim);
         if (startMin === null || endMin === null) return;
 
-        // Saturday cap at 19:00
-        if (isSat && endMin > 19 * 60) endMin = 19 * 60;
-
         const lastStart = endMin - SESSION_MIN;
+        const firstStart = Math.max(startMin, minSlot);
 
-        for (let t = startMin; t <= lastStart; t += 30) {
-          if (t < minSlot) continue; // Minimum 70 minutes from Brasília time.
+        for (let t = firstStart; t <= lastStart; t += 30) {
           times.push(minutesToTime(t));
         }
       });
@@ -787,12 +811,14 @@
     // ── Professional card (Rule 4) ────────────────────────────────
     let currentBusyTimes = [];
     let currentBusyCounts = {};
+    let currentBusyAppointments = [];
     let currentAvailabilityRules = [];
     const profissionalInput = document.getElementById('profissionalInput');
 
     function selecionarProfissional(nome) {
       profissionalInput.value = nome;
       profCard.querySelectorAll('.prof-row').forEach((row) => {
+        if (row.classList.contains('unavailable')) return;
         const selected = row.dataset.nome === nome;
         row.classList.toggle('selected', selected);
         const badge = row.querySelector('.prof-badge');
@@ -810,8 +836,8 @@
 
       const resultado = getProfissionaisParaHorario(timeValue, turno);
       const profs     = resultado.profs;
-      const busyCount = currentBusyCounts[timeValue] || 0;
-      const freeCount = Math.max(0, profs.length - busyCount);
+      const ocupadas  = profissionaisOcupadasNoHorario(timeValue);
+      const freeCount = profs.filter((p) => !ocupadas.has(p.nome)).length;
 
       const footerColor = freeCount > 0 ? 'var(--ok)' : 'var(--error)';
       const footerMsg   = freeCount > 0
@@ -821,25 +847,27 @@
       profCard.innerHTML = `
         <div class="prof-card-head">
           <strong>${turno.label}</strong>
-          <span>${turno.inicio} às ${turno.fim} · ${profs.length} profissionais disponíveis</span>
+          <span>${turno.inicio} às ${turno.fim} · ${freeCount} profissional(is) livre(s)</span>
         </div>
-        ${resultado.notas.length ? `<div class="prof-card-notes">${resultado.notas.map((n) => `<span>${n}</span>`).join('')}</div>` : ''}
-        ${profs.map((p) => `
-          <div class="prof-row" data-nome="${p.nome}" role="button" tabindex="0" aria-label="Selecionar ${p.nome}">
+        ${profs.map((p) => {
+          const ocupada = ocupadas.has(p.nome);
+          return `
+          <div class="prof-row${ocupada ? ' unavailable' : ''}" data-nome="${p.nome}" role="button" tabindex="${ocupada ? '-1' : '0'}" aria-label="${ocupada ? `${p.nome} em atendimento` : `Selecionar ${p.nome}`}" aria-disabled="${ocupada ? 'true' : 'false'}">
             <div class="prof-initial">${p.nome[0]}</div>
             <div class="prof-info">
               <strong>${p.nome}</strong>
               <span>${p.cargo || 'Massoterapeuta'}</span>
             </div>
-            <span class="prof-badge livre">Disponível</span>
+            <span class="prof-badge ${ocupada ? 'ocupado' : 'livre'}">${ocupada ? 'Em atendimento' : 'Disponível'}</span>
           </div>
-        `).join('')}
+        `}).join('')}
         <div class="prof-card-footer" style="color:${footerColor}">${footerMsg}</div>
       `;
       profCard.className = 'prof-card show';
 
       profCard.querySelectorAll('.prof-row').forEach((row) => {
         row.addEventListener('click', () => {
+          if (row.classList.contains('unavailable')) return;
           const nome = row.dataset.nome;
           selecionarProfissional(profissionalInput.value === nome ? '' : nome);
           if (profissionalInput.value === '') {
@@ -864,34 +892,46 @@
     }
 
     function getProfissionaisParaHorario(timeValue, turno) {
-      const mapa = new Map(getProfissionais()
-        .filter((p) => p.turno === turno.id)
-        .map((p) => [p.nome, { ...p }]));
-      const notas = [];
+      const base = Array.isArray(turno?.profissionais) ? turno.profissionais : [];
+      const mapa = new Map(base.map((nome) => [nome, profissionalPorNome(nome)]));
 
       currentAvailabilityRules
         .filter((regra) => regraAfetaHorario(regra, timeValue))
         .forEach((regra) => {
           if (regra.disponivel === false) {
             mapa.delete(regra.funcionario);
-            notas.push(`${regra.funcionario} indisponível hoje${regra.motivo ? ` · ${regra.motivo}` : ''}`);
             if (regra.substituto) {
               mapa.set(regra.substituto, profissionalPorNome(regra.substituto));
-              notas.push(`${regra.substituto} substitui ${regra.funcionario}`);
             }
           } else {
             mapa.set(regra.funcionario, profissionalPorNome(regra.funcionario));
           }
         });
 
-      return { profs: Array.from(mapa.values()), notas };
+      return { profs: Array.from(mapa.values()) };
+    }
+
+    function atendimentoAfetaHorario(atendimento, timeValue) {
+      const inicio = timeToMinutes(atendimento.hora);
+      const horario = timeToMinutes(timeValue);
+      const duracao = Number(atendimento.duracao_media || SESSION_MIN);
+      if (inicio === null || horario === null || !Number.isFinite(duracao)) return false;
+      return inicio < horario + SESSION_MIN && horario < inicio + duracao;
+    }
+
+    function atendimentosNoHorario(timeValue) {
+      return currentBusyAppointments.filter((row) => atendimentoAfetaHorario(row, timeValue));
+    }
+
+    function profissionaisOcupadasNoHorario(timeValue) {
+      return new Set(atendimentosNoHorario(timeValue).map((row) => row.colaborador).filter(Boolean));
     }
 
     function horarioTemVaga(timeValue) {
       const turno = turnoParaHorario(timeValue);
       if (!turno) return false;
       const profs = getProfissionaisParaHorario(timeValue, turno).profs;
-      const busyCount = currentBusyCounts[timeValue] || 0;
+      const busyCount = atendimentosNoHorario(timeValue).length;
       return profs.length > busyCount;
     }
 
@@ -906,9 +946,18 @@
       if (!response.ok) throw new Error(`Disponibilidade respondeu ${response.status}`);
       const result = await response.json();
       currentBusyCounts = {};
+      currentBusyAppointments = [];
       if (Array.isArray(result.registros)) {
         result.registros.forEach((row) => {
           currentBusyCounts[row.hora] = (currentBusyCounts[row.hora] || 0) + Number(row.total || 0);
+        });
+        currentBusyAppointments = result.registros.flatMap((row) => {
+          const total = Math.max(1, Number(row.total || 1));
+          return Array.from({ length: total }, () => ({
+            hora: row.hora,
+            colaborador: row.colaborador || null,
+            duracao_media: Number(row.duracao_media || SESSION_MIN),
+          }));
         });
       }
       return Array.isArray(result.horarios_ocupados) ? result.horarios_ocupados : [];
@@ -934,13 +983,16 @@
       timeSelect.disabled = false;
       currentBusyTimes = [];
       currentBusyCounts = {};
+      currentBusyAppointments = [];
       currentAvailabilityRules = [];
 
       timeSelect.innerHTML = '';
       if (!dateInput.value) {
         timeSelect.append(new Option('Escolha uma data primeiro', ''));
       } else if (!times.length) {
-        timeSelect.append(new Option('Data indisponível', ''));
+        timeSelect.append(new Option('❌ Sem Atendimento', ''));
+        availabilityStatus.textContent = '❌ Sem Atendimento: não existe profissional disponível dentro da escala oficial para esta data.';
+        availabilityStatus.classList.add('error');
         if (dateInput.value === getBusinessNow().date) {
           availabilityStatus.textContent = 'Não há mais horários disponíveis para hoje. Escolha uma data futura.';
           availabilityStatus.classList.add('error');
@@ -962,12 +1014,19 @@
         times.forEach((time) => {
           const turno = turnoParaHorario(time);
           const profs = turno ? getProfissionaisParaHorario(time, turno).profs : [];
-          const busyCount = currentBusyCounts[time] || 0;
+          const busyCount = atendimentosNoHorario(time).length;
           const busy = !turno || profs.length <= busyCount;
-          const opt  = new Option(busy ? `${time} - indisponível` : time, time);
-          opt.disabled = busy;
+          if (busy) return;
+          const opt  = new Option(time, time);
           timeSelect.append(opt);
         });
+
+        if (timeSelect.options.length === 1) {
+          timeSelect.innerHTML = '';
+          timeSelect.append(new Option('❌ Sem Atendimento', ''));
+          availabilityStatus.textContent = '❌ Sem Atendimento: todos os horários da escala estão sem profissional livre.';
+          availabilityStatus.classList.add('error');
+        }
 
         if (currentBusyTimes.length || currentAvailabilityRules.length) {
           const partes = [];
@@ -1067,7 +1126,8 @@
       if (data.profissional_solicitada) {
         const turno = turnoParaHorario(data.time);
         const disponiveis = turno ? getProfissionaisParaHorario(data.time, turno).profs.map((p) => p.nome) : [];
-        if (!disponiveis.includes(data.profissional_solicitada)) {
+        const ocupadas = profissionaisOcupadasNoHorario(data.time);
+        if (!disponiveis.includes(data.profissional_solicitada) || ocupadas.has(data.profissional_solicitada)) {
           showAlert('error', 'A profissional selecionada não está mais disponível neste horário. Escolha outra profissional.');
           await refreshTimes();
           return;

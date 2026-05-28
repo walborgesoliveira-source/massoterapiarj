@@ -419,24 +419,6 @@
       "main": [
         [
           {
-            "node": "4. Horário Ocupado?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "4. Horário Ocupado?": {
-      "main": [
-        [
-          {
-            "node": "5. Responder Horário Ocupado",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
             "node": "6. Salvar no CORE PS",
             "type": "main",
             "index": 0
