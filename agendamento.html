@@ -261,6 +261,17 @@
       font-size: 14px;
       font-weight: 700;
     }
+    .label-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .required-note {
+      color: var(--error);
+      font-size: 12px;
+      font-weight: 800;
+    }
     input, select, textarea {
       width: 100%;
       border: 1px solid var(--line);
@@ -283,6 +294,27 @@
       color: var(--muted);
       font-size: 13px;
       line-height: 1.45;
+    }
+    .form-help {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px;
+      border: 1px solid rgba(159, 63, 53, 0.24);
+      border-radius: 8px;
+      background: rgba(159, 63, 53, 0.06);
+    }
+    .form-help strong {
+      color: var(--error);
+      font-size: 15px;
+      line-height: 1.45;
+      font-weight: 800;
+    }
+    .form-help .button {
+      min-height: 40px;
+      padding: 10px 16px;
+      white-space: nowrap;
     }
     .availability-status {
       color: var(--muted);
@@ -381,6 +413,7 @@
     }
     @media (max-width: 620px) {
       .grid { grid-template-columns: 1fr; }
+      .form-help { align-items: flex-start; flex-direction: column; }
       .panel-header, .form, .side-card { padding: 22px; }
       .button { width: 100%; }
       .link { width: 100%; text-align: center; }
@@ -566,14 +599,22 @@
               <input type="tel" name="whatsapp" autocomplete="tel" placeholder="(21) 99999-9999" required>
             </label>
             <label>
-              E-mail
-              <input type="email" name="email" autocomplete="email" placeholder="voce@email.com">
+              <span class="label-line">
+                <span>E-mail</span>
+                <span class="required-note">campo obrigatório</span>
+              </span>
+              <input type="email" name="email" autocomplete="email" placeholder="voce@email.com" required>
             </label>
             <label>
               Telegram
               <input type="text" name="telegram" placeholder="@usuario">
             </label>
           </div>
+        </div>
+
+        <div class="form-help">
+          <strong>Está com dúvidas para preencher o formulário ou não recebeu o e-mail de confirmação? Fale conosco pelo WhatsApp. Nossa equipe terá prazer em ajudar você!</strong>
+          <a class="button primary" href="https://wa.me/message/JWUUFOFDZABFB1" target="_blank" rel="noopener">WhatsApp</a>
         </div>
 
         <div class="fieldset">
