@@ -884,11 +884,15 @@
       const resultado = getProfissionaisParaHorario(timeValue, turno);
       const profs     = resultado.profs;
       const ocupadas  = profissionaisOcupadasNoHorario(timeValue);
-      const freeCount = profs.filter((p) => !ocupadas.has(p.nome)).length;
+      const freeProfs = profs.filter((p) => !ocupadas.has(p.nome));
+      const freeCount = freeProfs.length;
+      if (freeCount === 1) profissionalInput.value = freeProfs[0].nome;
 
       const footerColor = freeCount > 0 ? 'var(--ok)' : 'var(--error)';
       const footerMsg   = freeCount > 0
-        ? `Clique em uma profissional disponível para selecioná-la.`
+        ? freeCount === 1
+          ? `${freeProfs[0].nome} selecionada automaticamente.`
+          : `Clique em uma profissional disponível para selecioná-la.`
         : '✕ Horário sem capacidade — todos os profissionais estão ocupados';
 
       profCard.innerHTML = `
@@ -898,14 +902,15 @@
         </div>
         ${profs.map((p) => {
           const ocupada = ocupadas.has(p.nome);
+          const selecionada = !ocupada && profissionalInput.value === p.nome;
           return `
-          <div class="prof-row${ocupada ? ' unavailable' : ''}" data-nome="${p.nome}" role="button" tabindex="${ocupada ? '-1' : '0'}" aria-label="${ocupada ? `${p.nome} em atendimento` : `Selecionar ${p.nome}`}" aria-disabled="${ocupada ? 'true' : 'false'}">
+          <div class="prof-row${ocupada ? ' unavailable' : ''}${selecionada ? ' selected' : ''}" data-nome="${p.nome}" role="button" tabindex="${ocupada ? '-1' : '0'}" aria-label="${ocupada ? `${p.nome} em atendimento` : `Selecionar ${p.nome}`}" aria-disabled="${ocupada ? 'true' : 'false'}">
             <div class="prof-initial">${p.nome[0]}</div>
             <div class="prof-info">
               <strong>${p.nome}</strong>
               <span>${p.cargo || 'Massoterapeuta'}</span>
             </div>
-            <span class="prof-badge ${ocupada ? 'ocupado' : 'livre'}">${ocupada ? 'Em atendimento' : 'Disponível'}</span>
+            <span class="prof-badge ${ocupada ? 'ocupado' : 'livre'}">${ocupada ? 'Em atendimento' : selecionada ? 'Selecionada ✓' : 'Disponível'}</span>
           </div>
         `}).join('')}
         <div class="prof-card-footer" style="color:${footerColor}">${footerMsg}</div>
