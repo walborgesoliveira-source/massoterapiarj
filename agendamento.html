@@ -683,30 +683,30 @@
     const LEAD_MINUTES = 70;
     const SESSION_MIN  = 50;
     const BUSINESS_TIME_ZONE = 'America/Sao_Paulo';
-    const ESCALA_OFICIAL = {
-      '2026-06-01': [
+    const ESCALA_SEMANAL_OFICIAL = {
+      1: [
         { inicio: '09:00', fim: '12:00', profissionais: ['Diana'] },
         { inicio: '12:00', fim: '20:30', profissionais: ['Amanda', 'Fabíola'] },
       ],
-      '2026-06-02': [
+      2: [
         { inicio: '09:00', fim: '15:30', profissionais: ['Diana'] },
         { inicio: '11:00', fim: '19:00', profissionais: ['Ellaine'] },
         { inicio: '15:30', fim: '20:30', profissionais: ['Selma'] },
       ],
-      '2026-06-03': [
+      3: [
         { inicio: '09:00', fim: '20:30', profissionais: ['Diana'] },
         { inicio: '12:00', fim: '20:30', profissionais: ['Selma'] },
       ],
-      '2026-06-04': [
+      4: [
         { inicio: '10:00', fim: '20:30', profissionais: ['Selma'] },
         { inicio: '11:00', fim: '19:00', profissionais: ['Ellaine'] },
       ],
-      '2026-06-05': [
+      5: [
         { inicio: '09:00', fim: '15:30', profissionais: ['Diana'] },
         { inicio: '10:00', fim: '20:30', profissionais: ['Fabíola'] },
         { inicio: '15:30', fim: '20:30', profissionais: ['Amanda'] },
       ],
-      '2026-06-06': [
+      6: [
         { inicio: '09:00', fim: '19:00', profissionais: ['Diana'] },
       ],
     };
@@ -827,8 +827,15 @@
       };
     }
 
+    function getEscalaSemanal(dateValue) {
+      const dia = getBusinessDateDay(dateValue);
+      return ESCALA_SEMANAL_OFICIAL[dia] || [];
+    }
+
+    let currentRemoteScales = {};
+
     function getBlocosEscala(dateValue) {
-      return ESCALA_OFICIAL[dateValue] || [];
+      return currentRemoteScales[dateValue] || getEscalaSemanal(dateValue);
     }
 
     function getBlocoEscala(dateValue, timeValue) {
@@ -1021,6 +1028,7 @@
       const result = await response.json();
       currentBusyCounts = {};
       currentBusyAppointments = [];
+      currentRemoteScales[dateValue] = Array.isArray(result.escala_oficial) ? result.escala_oficial : getEscalaSemanal(dateValue);
       if (Array.isArray(result.registros)) {
         result.registros.forEach((row) => {
           currentBusyCounts[row.hora] = (currentBusyCounts[row.hora] || 0) + Number(row.total || 0);
@@ -1050,7 +1058,6 @@
 
     async function refreshTimes() {
       const selectedTime = timeSelect.value;
-      const times        = getAvailableTimes(dateInput.value);
       const locationValue = form.elements.location.value;
       availabilityStatus.textContent = '';
       availabilityStatus.className = 'availability-status';
@@ -1063,14 +1070,6 @@
       timeSelect.innerHTML = '';
       if (!dateInput.value) {
         timeSelect.append(new Option('Escolha uma data primeiro', ''));
-      } else if (!times.length) {
-        timeSelect.append(new Option('❌ Sem Atendimento', ''));
-        availabilityStatus.textContent = '❌ Sem Atendimento: não existe profissional disponível dentro da escala oficial para esta data.';
-        availabilityStatus.classList.add('error');
-        if (dateInput.value === getBusinessNow().date) {
-          availabilityStatus.textContent = 'Não há mais horários disponíveis para hoje. Escolha uma data futura.';
-          availabilityStatus.classList.add('error');
-        }
       } else {
         timeSelect.disabled = true;
         timeSelect.append(new Option('Consultando agenda...', ''));
@@ -1082,8 +1081,20 @@
           availabilityStatus.classList.add('warning');
         }
 
+        const times = getAvailableTimes(dateInput.value);
         timeSelect.innerHTML = '';
         timeSelect.disabled = false;
+        if (!times.length) {
+          timeSelect.append(new Option('❌ Sem Atendimento', ''));
+          availabilityStatus.textContent = dateInput.value === getBusinessNow().date
+            ? 'Não há mais horários disponíveis para hoje. Escolha uma data futura.'
+            : '❌ Sem Atendimento: não existe profissional disponível dentro da escala oficial para esta data.';
+          availabilityStatus.classList.add('error');
+          renderProfCard(timeSelect.value);
+          updateSummary();
+          return;
+        }
+
         timeSelect.append(new Option('Selecione um horário', ''));
         times.forEach((time) => {
           const turno = turnoParaHorario(time);
