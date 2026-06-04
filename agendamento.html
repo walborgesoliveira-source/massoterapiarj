@@ -682,7 +682,37 @@
 
     const LEAD_MINUTES = 70;
     const SESSION_MIN  = 50;
+    const SLOT_STEP_MIN = 30;
     const BUSINESS_TIME_ZONE = 'America/Sao_Paulo';
+    const SEM_ATENDIMENTO_MSG = '❌ Sem Atendimento! Agenda em atualização! 📱 Entre em contato pelo nosso WhatsApp para agendar.';
+    const ESCALA_OFICIAL_DIAS = {
+      '2026-06-08': [
+        { inicio: '09:00', fim: '12:00', profissionais: ['Diana'] },
+        { inicio: '12:00', fim: '20:30', profissionais: ['Amanda', 'Fabíola'] },
+      ],
+      '2026-06-09': [
+        { inicio: '09:00', fim: '15:30', profissionais: ['Diana'] },
+        { inicio: '11:00', fim: '19:00', profissionais: ['Ellaine'] },
+        { inicio: '15:30', fim: '20:30', profissionais: ['Selma'] },
+      ],
+      '2026-06-10': [
+        { inicio: '09:00', fim: '20:30', profissionais: ['Diana'] },
+        { inicio: '12:00', fim: '20:30', profissionais: ['Selma'] },
+      ],
+      '2026-06-11': [
+        { inicio: '10:00', fim: '20:30', profissionais: ['Selma'] },
+        { inicio: '11:00', fim: '19:00', profissionais: ['Ellaine'] },
+      ],
+      '2026-06-12': [
+        { inicio: '09:00', fim: '15:30', profissionais: ['Diana'] },
+        { inicio: '10:00', fim: '20:30', profissionais: ['Fabíola'] },
+        { inicio: '15:30', fim: '20:30', profissionais: ['Amanda'] },
+      ],
+      '2026-06-13': [
+        { inicio: '09:00', fim: '19:00', profissionais: ['Diana'] },
+      ],
+      '2026-06-14': [],
+    };
     const ESCALA_SEMANAL_OFICIAL = {
       1: [
         { inicio: '09:00', fim: '12:00', profissionais: ['Diana'] },
@@ -765,6 +795,12 @@
       return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
     }
 
+    function getSelectedServiceDuration() {
+      const selected = services.find((s) => s.name === serviceSelect.value);
+      const duration = Number(selected?.dur || serviceSelect.selectedOptions[0]?.dataset.duration || SESSION_MIN);
+      return Number.isFinite(duration) && duration > 0 ? duration : SESSION_MIN;
+    }
+
     function getBusinessDateDay(dateValue) {
       const [year, month, day] = String(dateValue || '').split('-').map(Number);
       if (!year || !month || !day) return null;
@@ -835,7 +871,7 @@
     let currentRemoteScales = {};
 
     function getBlocosEscala(dateValue) {
-      return currentRemoteScales[dateValue] || getEscalaSemanal(dateValue);
+      return currentRemoteScales[dateValue] || ESCALA_OFICIAL_DIAS[dateValue] || getEscalaSemanal(dateValue);
     }
 
     function getBlocoEscala(dateValue, timeValue) {
@@ -864,12 +900,22 @@
         const endMin = timeToMinutes(bloco.fim);
         if (startMin === null || endMin === null) return;
 
-        const lastStart = endMin - SESSION_MIN;
+        const lastStart = endMin - getSelectedServiceDuration();
         const firstStart = Math.max(startMin, minSlot);
 
-        for (let t = firstStart; t <= lastStart; t += 30) {
+        for (let t = firstStart; t <= lastStart; t += SLOT_STEP_MIN) {
           times.push(minutesToTime(t));
         }
+
+        currentBusyAppointments.forEach((atendimento) => {
+          const inicio = timeToMinutes(atendimento.hora);
+          const duracao = Number(atendimento.duracao_media || SESSION_MIN);
+          if (inicio === null || !Number.isFinite(duracao)) return;
+          const proximoInicio = inicio + duracao;
+          if (proximoInicio >= firstStart && proximoInicio <= lastStart) {
+            times.push(minutesToTime(proximoInicio));
+          }
+        });
       });
 
       return [...new Set(times)].sort();
@@ -889,9 +935,11 @@
     let currentBusyCounts = {};
     let currentBusyAppointments = [];
     let currentAvailabilityRules = [];
+    let selectedProfessionalName = '';
     const profissionalInput = document.getElementById('profissionalInput');
 
     function selecionarProfissional(nome) {
+      selectedProfessionalName = nome || '';
       profissionalInput.value = nome;
       profCard.querySelectorAll('.prof-row').forEach((row) => {
         if (row.classList.contains('unavailable')) return;
@@ -904,6 +952,7 @@
     }
 
     function renderProfCard(timeValue) {
+      selectedProfessionalName = '';
       profissionalInput.value = '';
       if (!timeValue) { profCard.className = 'prof-card'; return; }
 
@@ -915,7 +964,10 @@
       const ocupadas  = profissionaisOcupadasNoHorario(timeValue);
       const freeProfs = profs.filter((p) => !ocupadas.has(p.nome));
       const freeCount = freeProfs.length;
-      if (freeCount === 1) profissionalInput.value = freeProfs[0].nome;
+      if (freeCount === 1) {
+        selectedProfessionalName = freeProfs[0].nome;
+        profissionalInput.value = freeProfs[0].nome;
+      }
 
       const footerColor = freeCount > 0 ? 'var(--ok)' : 'var(--error)';
       const footerMsg   = freeCount > 0
@@ -996,8 +1048,9 @@
       const inicio = timeToMinutes(atendimento.hora);
       const horario = timeToMinutes(timeValue);
       const duracao = Number(atendimento.duracao_media || SESSION_MIN);
+      const duracaoSolicitada = getSelectedServiceDuration();
       if (inicio === null || horario === null || !Number.isFinite(duracao)) return false;
-      return inicio < horario + SESSION_MIN && horario < inicio + duracao;
+      return inicio < horario + duracaoSolicitada && horario < inicio + duracao;
     }
 
     function atendimentosNoHorario(timeValue) {
@@ -1088,7 +1141,7 @@
           timeSelect.append(new Option('❌ Sem Atendimento', ''));
           availabilityStatus.textContent = dateInput.value === getBusinessNow().date
             ? 'Não há mais horários disponíveis para hoje. Escolha uma data futura.'
-            : '❌ Sem Atendimento: não existe profissional disponível dentro da escala oficial para esta data.';
+            : SEM_ATENDIMENTO_MSG;
           availabilityStatus.classList.add('error');
           renderProfCard(timeSelect.value);
           updateSummary();
@@ -1109,7 +1162,7 @@
         if (timeSelect.options.length === 1) {
           timeSelect.innerHTML = '';
           timeSelect.append(new Option('❌ Sem Atendimento', ''));
-          availabilityStatus.textContent = '❌ Sem Atendimento: todos os horários da escala estão sem profissional livre.';
+          availabilityStatus.textContent = SEM_ATENDIMENTO_MSG;
           availabilityStatus.classList.add('error');
         }
 
@@ -1184,6 +1237,7 @@
     // ── Event listeners ───────────────────────────────────────────
     form.addEventListener('input', updateSummary);
     form.addEventListener('change', updateSummary);
+    serviceSelect.addEventListener('change', refreshTimes);
     dateInput.addEventListener('change', refreshTimes);
     form.elements.location.addEventListener('change', refreshTimes);
     timeSelect.addEventListener('change', () => renderProfCard(timeSelect.value));
@@ -1191,6 +1245,8 @@
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       const data = Object.fromEntries(new FormData(form).entries());
+      data.profissional_solicitada = selectedProfessionalName || profissionalInput.value || data.profissional_solicitada || '';
+      profissionalInput.value = data.profissional_solicitada;
       const selectedService = services.find((s) => s.name === data.service);
 
       if (isTooSoonOrPast(data.date, data.time)) {
@@ -1240,6 +1296,7 @@
         local:           data.location,
         observacoes_cliente: data.notes,
         profissional_solicitada: data.profissional_solicitada || null,
+        colaborador:     data.profissional_solicitada || null,
         status:          'Aprovado',
         origem:          'site_massoterapiarj',
         criado_em:       new Date().toISOString(),
