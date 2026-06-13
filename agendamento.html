@@ -323,6 +323,116 @@
     }
     .availability-status.warning { color: var(--warn); }
     .availability-status.error { color: var(--error); }
+    .service-picker {
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fffdf9;
+    }
+    .service-picker-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .service-picker-head h3 {
+      margin: 0 0 4px;
+      font-family: "Cormorant Garamond", serif;
+      font-size: 26px;
+      line-height: 1;
+    }
+    .service-picker-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .selected-service {
+      flex: 0 0 auto;
+      max-width: 240px;
+      padding: 8px 10px;
+      border: 1px solid rgba(184, 137, 90, 0.28);
+      border-radius: 6px;
+      color: var(--accent-dark);
+      background: rgba(184, 137, 90, 0.08);
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.35;
+      text-align: right;
+    }
+    .service-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .service-option {
+      min-height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 12px 14px;
+      color: var(--ink);
+      background: var(--surface);
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+    }
+    .service-option:hover {
+      transform: translateY(-1px);
+      border-color: rgba(184, 137, 90, 0.58);
+    }
+    .service-option.is-selected {
+      border-color: var(--accent);
+      background: rgba(184, 137, 90, 0.12);
+      box-shadow: 0 0 0 3px rgba(184, 137, 90, 0.12);
+    }
+    .service-option strong {
+      display: block;
+      font-size: 15px;
+      line-height: 1.25;
+    }
+    .service-option span {
+      flex: 0 0 auto;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .service-toggle {
+      justify-self: start;
+      border: 0;
+      padding: 0;
+      color: var(--accent-dark);
+      background: transparent;
+      cursor: pointer;
+      font-weight: 800;
+      text-align: left;
+      line-height: 1.45;
+    }
+    .service-collapse {
+      display: grid;
+      gap: 12px;
+      padding-top: 2px;
+    }
+    .service-collapse[hidden] { display: none; }
+    .service-collapse h3 {
+      margin: 0;
+      font-family: "Cormorant Garamond", serif;
+      font-size: 24px;
+      line-height: 1;
+    }
+    .service-select-technical {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
     .alert {
       display: none;
       border-radius: 8px;
@@ -383,12 +493,34 @@
       color: var(--soft);
       font-size: 14px;
     }
+    .summary-card {
+      border-color: rgba(155, 106, 26, 0.42);
+      background: linear-gradient(135deg, #fff2bf 0%, #ffe2a8 48%, #f7c46a 100%);
+      box-shadow: 0 18px 38px rgba(155, 106, 26, 0.18);
+    }
+    .summary-card h3 {
+      color: #5c3200;
+    }
+    .summary-card p,
+    .summary-card .summary {
+      color: #68420c;
+    }
+    .summary-card .summary {
+      border-top-color: rgba(92, 50, 0, 0.22);
+    }
     .summary div {
       display: flex;
       justify-content: space-between;
       gap: 14px;
     }
     .summary strong { color: var(--ink); text-align: right; }
+    .summary-card .summary strong {
+      color: #1f1400;
+      font-weight: 900;
+    }
+    .mobile-summary-card {
+      display: none;
+    }
 
     footer {
       border-top: 1px solid var(--line);
@@ -410,9 +542,18 @@
       .hero-inner, .main { grid-template-columns: 1fr; }
       .hero-inner { min-height: auto; padding-top: 54px; }
       .side { position: static; }
+      .side .summary-card { display: none; }
+      .mobile-summary-card {
+        display: block;
+        padding: 20px;
+        border-radius: 8px;
+      }
     }
     @media (max-width: 620px) {
       .grid { grid-template-columns: 1fr; }
+      .service-picker-head { display: grid; }
+      .selected-service { max-width: none; text-align: left; }
+      .service-list { grid-template-columns: 1fr; }
       .form-help { align-items: flex-start; flex-direction: column; }
       .panel-header, .form, .side-card { padding: 22px; }
       .button { width: 100%; }
@@ -559,13 +700,30 @@
 
         <div class="fieldset">
           <div class="fieldset-title">Serviço e horário</div>
-          <div class="grid">
-            <label>
-              Serviço
-              <select name="service" id="service" required>
+          <div class="service-picker" aria-labelledby="popularServicesTitle">
+            <div class="service-picker-head">
+              <div>
+                <h3 id="popularServicesTitle">⭐ Massagens Mais Procuradas</h3>
+                <p>Escolha uma das técnicas mais agendadas para continuar.</p>
+              </div>
+              <div class="selected-service" id="selectedServiceLabel">Nenhuma massagem selecionada</div>
+            </div>
+            <div class="service-list" id="popularServices"></div>
+            <button class="service-toggle" type="button" id="toggleSpecialized" aria-expanded="false" aria-controls="specializedServices">
+              ➕ Ver todas as técnicas disponíveis
+            </button>
+            <div class="service-collapse" id="specializedServices" hidden>
+              <h3>🎯 Técnicas Especializadas</h3>
+              <div class="service-list" id="specializedServiceList"></div>
+            </div>
+            <label class="service-select-technical">
+              Serviço selecionado
+              <select name="service" id="service">
                 <option value="">Selecione uma técnica</option>
               </select>
             </label>
+          </div>
+          <div class="grid">
             <label>
               Local
               <select name="location" required>
@@ -627,16 +785,27 @@
 
         <input type="hidden" name="status" value="Aprovado">
         <input type="hidden" name="profissional_solicitada" id="profissionalInput" value="">
+        <div class="side-card summary-card mobile-summary-card">
+          <h3>Resumo do agendamento</h3>
+          <p>Confira os dados principais antes de enviar.</p>
+          <div class="summary" data-summary>
+            <div><span>Serviço</span><strong>-</strong></div>
+            <div><span>Data</span><strong>-</strong></div>
+            <div><span>Horário</span><strong>-</strong></div>
+            <div><span>Profissional</span><strong>A definir</strong></div>
+            <div><span>Status</span><strong>Aprovado</strong></div>
+          </div>
+        </div>
         <button class="button primary full" type="submit">Enviar pedido de agendamento</button>
         <div class="hint">Ao enviar, o pedido entra como aprovado no sistema. A equipe acompanha e pode ajustar o status se necessário.</div>
       </form>
     </section>
 
     <aside class="side">
-      <div class="side-card">
+      <div class="side-card summary-card">
         <h3>Resumo</h3>
         <p>Confira os dados principais antes de enviar.</p>
-        <div class="summary" id="summary">
+        <div class="summary" data-summary>
           <div><span>Serviço</span><strong>-</strong></div>
           <div><span>Data</span><strong>-</strong></div>
           <div><span>Horário</span><strong>-</strong></div>
@@ -668,7 +837,7 @@
     </div>
   </footer>
 
-  <script src="theme.js"></script>
+  <script src="theme.js?v=20260613-agendamento-servicos"></script>
   <script>
     const CONFIG = {
       webhookUrl:      'https://n8n.iaguru.com.br/webhook/massoterapiarj-agendamento',
@@ -751,25 +920,104 @@
     // ── DOM refs ─────────────────────────────────────────────────
     const form          = document.getElementById('scheduleForm');
     const serviceSelect = document.getElementById('service');
+    const popularServices = document.getElementById('popularServices');
+    const specializedServices = document.getElementById('specializedServices');
+    const specializedServiceList = document.getElementById('specializedServiceList');
+    const toggleSpecialized = document.getElementById('toggleSpecialized');
+    const selectedServiceLabel = document.getElementById('selectedServiceLabel');
     const dateInput     = document.getElementById('date');
     const timeSelect    = document.getElementById('time');
     const alertBox      = document.getElementById('formAlert');
-    const summary       = document.getElementById('summary');
+    const summaries     = document.querySelectorAll('[data-summary]');
     const profCard      = document.getElementById('profCard');
 
     const availabilityStatus = document.createElement('div');
     availabilityStatus.className = 'availability-status';
     timeSelect.closest('label').after(availabilityStatus);
 
-    // ── Populate services ─────────────────────────────────────────
+    // ── Populate service groups ───────────────────────────────────
+    const MAIN_SERVICE_ORDER = [
+      'Massagem Terapêutica',
+      'Deep Tissue',
+      'Massagem Relaxante',
+      'Liberação Miofascial',
+      'Drenagem Linfática',
+      'Massagem Desportiva',
+      'Shiatsu',
+    ];
+    const SPECIALIZED_SERVICE_ORDER = [
+      'Thai Massagem',
+      'New Seitai',
+      'Reflexologia Podal',
+      'Massagem Lomi Lomi',
+      'Pedras Quentes',
+      'Massagem com Velas',
+      'Aromaterapia',
+      'Massagem Crânio Facial',
+      'Ventosaterapia',
+      'Massagem 4 Mãos',
+    ];
     const services = Array.isArray(window.MRJ_SERVICES) ? window.MRJ_SERVICES : [];
-    services.forEach((service) => {
+    const servicesByName = new Map(services.map((service) => [service.name, service]));
+    const listedServiceNames = new Set([...MAIN_SERVICE_ORDER, ...SPECIALIZED_SERVICE_ORDER]);
+    const mainServices = MAIN_SERVICE_ORDER.map((name) => servicesByName.get(name)).filter(Boolean);
+    const specializedServiceItems = [
+      ...SPECIALIZED_SERVICE_ORDER.map((name) => servicesByName.get(name)).filter(Boolean),
+      ...services.filter((service) => !listedServiceNames.has(service.name)),
+    ];
+
+    function appendServiceOption(service, group) {
       const opt = document.createElement('option');
       opt.value = service.name;
       opt.textContent = `${service.name} - ${service.dur || 50} min`;
       opt.dataset.duration = service.dur || 50;
       opt.dataset.price = service.price || '';
-      serviceSelect.appendChild(opt);
+      group.appendChild(opt);
+    }
+
+    function renderServiceButton(service, target) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'service-option';
+      button.dataset.service = service.name;
+      button.innerHTML = `<strong>${service.name}</strong><span>${service.dur || 50} min</span>`;
+      button.addEventListener('click', () => {
+        serviceSelect.value = service.name;
+        serviceSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+      target.appendChild(button);
+    }
+
+    const mainGroup = document.createElement('optgroup');
+    mainGroup.label = 'Massagens Mais Procuradas';
+    mainServices.forEach((service) => appendServiceOption(service, mainGroup));
+    serviceSelect.appendChild(mainGroup);
+
+    const specializedGroup = document.createElement('optgroup');
+    specializedGroup.label = 'Técnicas Especializadas';
+    specializedServiceItems.forEach((service) => appendServiceOption(service, specializedGroup));
+    serviceSelect.appendChild(specializedGroup);
+
+    mainServices.forEach((service) => renderServiceButton(service, popularServices));
+    specializedServiceItems.forEach((service) => renderServiceButton(service, specializedServiceList));
+
+    function syncServiceSelection() {
+      const selected = servicesByName.get(serviceSelect.value);
+      document.querySelectorAll('.service-option').forEach((button) => {
+        button.classList.toggle('is-selected', button.dataset.service === serviceSelect.value);
+      });
+      selectedServiceLabel.textContent = selected
+        ? `${selected.name} · ${selected.dur || 50} min`
+        : 'Nenhuma massagem selecionada';
+    }
+
+    toggleSpecialized.addEventListener('click', () => {
+      const isOpening = specializedServices.hidden;
+      specializedServices.hidden = !isOpening;
+      toggleSpecialized.setAttribute('aria-expanded', String(isOpening));
+      toggleSpecialized.textContent = isOpening
+        ? '− Ocultar técnicas especializadas'
+        : '➕ Ver todas as técnicas disponíveis';
     });
 
     // ── Business clock ────────────────────────────────────────────
@@ -1198,12 +1446,14 @@
 
     function updateSummary() {
       const values = new FormData(form);
-      const rows   = summary.querySelectorAll('strong');
-      rows[0].textContent = values.get('service') || '-';
-      rows[1].textContent = formatDate(values.get('date'));
-      rows[2].textContent = values.get('time') || '-';
-      rows[3].textContent = values.get('profissional_solicitada') || 'A definir';
-      rows[4].textContent = 'Aprovado';
+      summaries.forEach((summary) => {
+        const rows = summary.querySelectorAll('strong');
+        rows[0].textContent = values.get('service') || '-';
+        rows[1].textContent = formatDate(values.get('date'));
+        rows[2].textContent = values.get('time') || '-';
+        rows[3].textContent = values.get('profissional_solicitada') || 'A definir';
+        rows[4].textContent = 'Aprovado';
+      });
     }
 
     // ── Alert / persistence ───────────────────────────────────────
@@ -1237,7 +1487,10 @@
     // ── Event listeners ───────────────────────────────────────────
     form.addEventListener('input', updateSummary);
     form.addEventListener('change', updateSummary);
-    serviceSelect.addEventListener('change', refreshTimes);
+    serviceSelect.addEventListener('change', () => {
+      syncServiceSelection();
+      refreshTimes();
+    });
     dateInput.addEventListener('change', refreshTimes);
     form.elements.location.addEventListener('change', refreshTimes);
     timeSelect.addEventListener('change', () => renderProfCard(timeSelect.value));
@@ -1248,6 +1501,11 @@
       data.profissional_solicitada = selectedProfessionalName || profissionalInput.value || data.profissional_solicitada || '';
       profissionalInput.value = data.profissional_solicitada;
       const selectedService = services.find((s) => s.name === data.service);
+
+      if (!data.service || !selectedService) {
+        showAlert('error', 'Escolha uma massagem para continuar o agendamento.');
+        return;
+      }
 
       if (isTooSoonOrPast(data.date, data.time)) {
         showAlert('error', `Este horário requer ${LEAD_MINUTES} minutos de antecedência. Escolha um horário disponível.`);
@@ -1315,6 +1573,7 @@
           showAlert('success', 'Pedido recebido! Seu agendamento foi enviado para análise e será confirmado pelo WhatsApp.');
         }
         form.reset();
+        syncServiceSelection();
         refreshTimes();
       } catch (error) {
         if (error.status === 409) {
@@ -1331,6 +1590,7 @@
     });
 
     refreshTimes();
+    syncServiceSelection();
     updateSummary();
     window.setInterval(() => {
       const today = getBusinessNow().date;

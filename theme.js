@@ -70,6 +70,7 @@ window.MRJ_SERVICES = [
   { name: 'Liberação Miofascial',    price: 280, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/liberacao-miofascial.jpeg', desc: 'Trabalho instrumental na fáscia muscular. Devolve mobilidade ao tecido.' },
   { name: 'Shiatsu',                 price: 280, dur: 50, tag: 'Oriental',    img: 'assets/servicos/massagem-2.jpeg', desc: 'Pressão em pontos energéticos da tradição japonesa. Equilíbrio profundo.' },
   { name: 'Massagem Relaxante',      price: 250, dur: 50, tag: 'Relaxante',   img: 'assets/servicos/massagem-relaxante.jpeg', desc: 'Toque suave com creme ou óleo. Desacelera o sistema nervoso e descontrai o corpo.' },
+  { name: 'Massagem Desportiva',     price: 280, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/massagem-terapeutica.jpeg', desc: 'Indicada para preparo e recuperação muscular, aliviando tensões ligadas a esforço físico e treino.' },
   { name: 'Thai Massagem',           price: 280, dur: 50, tag: 'Oriental',    img: 'assets/servicos/thai-massagem.jpeg', desc: 'Alongamentos passivos e digitopressão. Como um yoga praticado em você.' },
   { name: 'New Seitai',              price: 320, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/new-seitai.jpeg', desc: 'Técnica japonesa de realinhamento postural. Reorganiza estrutura e respiração.' },
   { name: 'Reflexologia Podal',      price: 280, dur: 50, tag: 'Oriental',    img: 'assets/servicos/reflexologia.jpeg', desc: 'Pressão em pontos dos pés que correspondem a órgãos e sistemas do corpo.' },
