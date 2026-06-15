@@ -126,13 +126,13 @@ window.MRJ_POSTS = [
 ];
 
 // Turnos e escala de profissionais
-// Escala oficial de atendimento definida para a semana de 01/06/2026 a 06/06/2026.
+// Escala oficial de atendimento definida para a semana de 15/06/2026 a 20/06/2026.
 window.MRJ_TURNOS = [
   { id: 'segunda_diana', label: 'Segunda · Diana', inicio: '09:00', fim: '12:00', capacidade: 1 },
   { id: 'segunda_equipe', label: 'Segunda · Amanda e Fabíola', inicio: '12:00', fim: '20:30', capacidade: 2 },
   { id: 'terca_diana', label: 'Terça · Diana', inicio: '09:00', fim: '15:30', capacidade: 1 },
   { id: 'terca_ellaine', label: 'Terça · Ellaine', inicio: '11:00', fim: '19:00', capacidade: 1 },
-  { id: 'terca_selma', label: 'Terça · Selma', inicio: '15:30', fim: '20:30', capacidade: 1 },
+  { id: 'terca_selma', label: 'Terça · Selma', inicio: '11:30', fim: '20:30', capacidade: 1 },
   { id: 'quarta_diana', label: 'Quarta · Diana', inicio: '09:00', fim: '20:30', capacidade: 1 },
   { id: 'quarta_selma', label: 'Quarta · Selma', inicio: '12:00', fim: '20:30', capacidade: 1 },
   { id: 'quinta_selma', label: 'Quinta · Selma', inicio: '10:00', fim: '20:30', capacidade: 1 },
