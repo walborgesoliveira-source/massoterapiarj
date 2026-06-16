@@ -843,6 +843,7 @@
       webhookUrl:      'https://n8n.iaguru.com.br/webhook/massoterapiarj-agendamento',
       availabilityUrl: '/coreps-api/agendamentos/disponibilidade',
       collaboratorsAvailabilityUrl: '/coreps-api/agendamentos/colaboradores-disponibilidade',
+      availableSlotsUrl: '/coreps-api/agendamentos/horarios-disponiveis',
       webhookToken:    '',
       storageKey:           'mrj_schedule_requests',
       storageKeyTurnos:     'mrj_turnos_config',
@@ -1166,6 +1167,13 @@
       if (dateValue < now.date) return [];
 
       const minSlot = getMinimumStartMinutes(dateValue);
+      if (currentAvailableSlots.length) {
+        return currentAvailableSlots
+          .map((slot) => slot.hora)
+          .filter((hora) => timeToMinutes(hora) >= minSlot)
+          .sort();
+      }
+
       const times = [];
 
       getBlocosEscala(dateValue).forEach((bloco) => {
@@ -1208,6 +1216,7 @@
     let currentBusyCounts = {};
     let currentBusyAppointments = [];
     let currentAvailabilityRules = [];
+    let currentAvailableSlots = [];
     let selectedProfessionalName = '';
     const profissionalInput = document.getElementById('profissionalInput');
 
@@ -1297,7 +1306,18 @@
         || { nome, turno: '', cargo: 'Massoterapeuta' };
     }
 
+    function getSlotDisponibilidade(timeValue) {
+      return currentAvailableSlots.find((slot) => slot.hora === timeValue) || null;
+    }
+
     function getProfissionaisParaHorario(timeValue, turno) {
+      const slot = getSlotDisponibilidade(timeValue);
+      if (slot) {
+        return {
+          profs: (slot.profissionais || []).map(profissionalPorNome),
+        };
+      }
+
       const base = Array.isArray(turno?.profissionais) ? turno.profissionais : [];
       const mapa = new Map(base.map((nome) => [nome, profissionalPorNome(nome)]));
 
@@ -1331,10 +1351,14 @@
     }
 
     function profissionaisOcupadasNoHorario(timeValue) {
+      const slot = getSlotDisponibilidade(timeValue);
+      if (slot) return new Set(slot.profissionais_ocupados || []);
       return new Set(atendimentosNoHorario(timeValue).map((row) => row.colaborador).filter(Boolean));
     }
 
     function horarioTemVaga(timeValue) {
+      const slot = getSlotDisponibilidade(timeValue);
+      if (slot) return Boolean(slot.disponivel);
       const turno = turnoParaHorario(timeValue);
       if (!turno) return false;
       const profs = getProfissionaisParaHorario(timeValue, turno).profs;
@@ -1343,6 +1367,24 @@
     }
 
     // ── Availability API ──────────────────────────────────────────
+    async function fetchFinalAvailability(dateValue, locationValue) {
+      if (!dateValue || !CONFIG.availableSlotsUrl) return null;
+      const params = new URLSearchParams({
+        data: dateValue,
+        duracao: String(getSelectedServiceDuration()),
+      });
+      if (locationValue) params.set('local', locationValue);
+      const response = await fetch(`${CONFIG.availableSlotsUrl}?${params.toString()}`, {
+        headers: { Accept: 'application/json' },
+      });
+      if (!response.ok) throw new Error(`Horários disponíveis respondeu ${response.status}`);
+      const result = await response.json();
+      currentRemoteScales[dateValue] = Array.isArray(result.escala_oficial) ? result.escala_oficial : getEscalaSemanal(dateValue);
+      currentAvailabilityRules = Array.isArray(result.regras) ? result.regras : [];
+      currentAvailableSlots = Array.isArray(result.horarios) ? result.horarios : [];
+      return result;
+    }
+
     async function fetchBusyTimes(dateValue, locationValue) {
       if (!dateValue || !CONFIG.availabilityUrl) return [];
       const params = new URLSearchParams({ data: dateValue });
@@ -1392,6 +1434,7 @@
       currentBusyCounts = {};
       currentBusyAppointments = [];
       currentAvailabilityRules = [];
+      currentAvailableSlots = [];
 
       timeSelect.innerHTML = '';
       if (!dateInput.value) {
@@ -1400,11 +1443,15 @@
         timeSelect.disabled = true;
         timeSelect.append(new Option('Consultando agenda...', ''));
         try {
-          currentBusyTimes = await fetchBusyTimes(dateInput.value, locationValue);
-          currentAvailabilityRules = await fetchCollaboratorsAvailability(dateInput.value);
+          const finalAvailability = await fetchFinalAvailability(dateInput.value, locationValue);
+          currentBusyTimes = (finalAvailability?.horarios || [])
+            .filter((slot) => !slot.disponivel)
+            .map((slot) => slot.hora);
         } catch {
           availabilityStatus.textContent = 'Não foi possível consultar a agenda completa. A equipe validará antes de confirmar.';
           availabilityStatus.classList.add('warning');
+          currentBusyTimes = await fetchBusyTimes(dateInput.value, locationValue).catch(() => []);
+          currentAvailabilityRules = await fetchCollaboratorsAvailability(dateInput.value).catch(() => []);
         }
 
         const times = getAvailableTimes(dateInput.value);
@@ -1425,8 +1472,9 @@
         times.forEach((time) => {
           const turno = turnoParaHorario(time);
           const profs = turno ? getProfissionaisParaHorario(time, turno).profs : [];
-          const busyCount = atendimentosNoHorario(time).length;
-          const busy = !turno || profs.length <= busyCount;
+          const slot = getSlotDisponibilidade(time);
+          const busyCount = slot ? slot.total_ocupado || 0 : atendimentosNoHorario(time).length;
+          const busy = slot ? !slot.disponivel : (!turno || profs.length <= busyCount);
           if (busy) return;
           const opt  = new Option(time, time);
           timeSelect.append(opt);
@@ -1453,7 +1501,7 @@
             : 'Agenda consultada: nenhum horário bloqueado para esta data.';
         }
 
-        if (selectedTime && !currentBusyTimes.includes(selectedTime) && times.includes(selectedTime)) {
+        if (selectedTime && horarioTemVaga(selectedTime) && times.includes(selectedTime)) {
           timeSelect.value = selectedTime;
         }
       }
@@ -1538,8 +1586,10 @@
         return;
       }
 
-      await fetchBusyTimes(data.date, data.location).catch(() => []);
-      currentAvailabilityRules = await fetchCollaboratorsAvailability(data.date).catch(() => []);
+      await fetchFinalAvailability(data.date, data.location).catch(async () => {
+        await fetchBusyTimes(data.date, data.location).catch(() => []);
+        currentAvailabilityRules = await fetchCollaboratorsAvailability(data.date).catch(() => []);
+      });
 
       if (!horarioTemVaga(data.time)) {
         showAlert('error', 'Este horário acabou de ficar indisponível. Escolha outro horário.');
