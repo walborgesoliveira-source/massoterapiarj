@@ -31,3 +31,18 @@ cliente, mesmo quando fazem parte da escala publicada.
 Para reverter, remover as regras 144 e 145 e recriar os bloqueios 143 e 114 com
 os mesmos periodos descritos acima. A reversao deve ser feita de forma atomica e
 validada novamente nas rotas publica e administrativa.
+
+## Atualizacao posterior - Amanda indisponivel apos as 17h
+
+Por solicitacao operacional posterior, a disponibilidade ampliada de Amanda foi
+revertida parcialmente em 19/06/2026:
+
+- regra 144 removida;
+- regra 146 criada para Amanda, indisponivel das 17:00 as 20:30;
+- Diana e a regra 145 de 20/06/2026 nao foram alteradas;
+- painel e formulario publico validados visualmente apos a publicacao;
+- o formulario publico foi ajustado para exibir no cabecalho somente as
+  profissionais efetivamente disponiveis no horario selecionado.
+
+Para reverter apenas esta atualizacao, remover a regra 146 e recriar a regra 144
+com Amanda disponivel em 19/06/2026 das 11:00 as 20:30.

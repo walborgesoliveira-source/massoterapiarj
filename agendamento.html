@@ -1246,6 +1246,9 @@
       const ocupadas  = profissionaisOcupadasNoHorario(timeValue);
       const freeProfs = profs.filter((p) => !ocupadas.has(p.nome));
       const freeCount = freeProfs.length;
+      const availabilityLabel = freeCount > 0
+        ? freeProfs.map((p) => p.nome).join(' e ')
+        : 'Sem profissionais disponíveis';
       if (freeCount === 1) {
         selectedProfessionalName = freeProfs[0].nome;
         profissionalInput.value = freeProfs[0].nome;
@@ -1260,7 +1263,7 @@
 
       profCard.innerHTML = `
         <div class="prof-card-head">
-          <strong>${turno.label}</strong>
+          <strong>${availabilityLabel}</strong>
           <span>${turno.inicio} às ${turno.fim} · ${freeCount} profissional(is) livre(s)</span>
         </div>
         ${profs.map((p) => {
