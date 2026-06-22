@@ -126,13 +126,13 @@ window.MRJ_POSTS = [
 ];
 
 // Turnos e escala de profissionais
-// Escala oficial de atendimento definida para a semana de 15/06/2026 a 20/06/2026.
+// Escala oficial semanal de atendimento.
 window.MRJ_TURNOS = [
-  { id: 'segunda_diana', label: 'Segunda · Diana', inicio: '09:00', fim: '12:00', capacidade: 1 },
-  { id: 'segunda_equipe', label: 'Segunda · Amanda e Fabíola', inicio: '12:00', fim: '20:30', capacidade: 2 },
+  { id: 'segunda_diana', label: 'Segunda · Diana', inicio: '09:00', fim: '20:30', capacidade: 1 },
+  { id: 'segunda_amanda', label: 'Segunda · Amanda', inicio: '12:00', fim: '20:30', capacidade: 1 },
   { id: 'terca_diana', label: 'Terça · Diana', inicio: '09:00', fim: '15:30', capacidade: 1 },
   { id: 'terca_ellaine', label: 'Terça · Ellaine', inicio: '11:00', fim: '19:00', capacidade: 1 },
-  { id: 'terca_selma', label: 'Terça · Selma', inicio: '11:30', fim: '20:30', capacidade: 1 },
+  { id: 'terca_selma', label: 'Terça · Selma', inicio: '15:30', fim: '20:30', capacidade: 1 },
   { id: 'quarta_diana', label: 'Quarta · Diana', inicio: '09:00', fim: '20:30', capacidade: 1 },
   { id: 'quarta_selma', label: 'Quarta · Selma', inicio: '12:00', fim: '20:30', capacidade: 1 },
   { id: 'quinta_selma', label: 'Quinta · Selma', inicio: '10:00', fim: '20:30', capacidade: 1 },
@@ -145,8 +145,7 @@ window.MRJ_TURNOS = [
 
 window.MRJ_PROFISSIONAIS_TURNOS = [
   { nome: 'Diana', turno: 'segunda_diana', cargo: 'Massoterapeuta clínica' },
-  { nome: 'Amanda', turno: 'segunda_equipe', cargo: 'Massoterapeuta clínica' },
-  { nome: 'Fabíola', turno: 'segunda_equipe', cargo: 'Massoterapeuta clínica' },
+  { nome: 'Amanda', turno: 'segunda_amanda', cargo: 'Massoterapeuta clínica' },
   { nome: 'Diana', turno: 'terca_diana', cargo: 'Massoterapeuta clínica' },
   { nome: 'Ellaine', turno: 'terca_ellaine', cargo: 'Massoterapeuta clínica' },
   { nome: 'Selma', turno: 'terca_selma', cargo: 'Massoterapeuta clínica' },
