@@ -515,7 +515,7 @@ function Equipe({ t, compact }) {
           fontFamily: 'Karla', fontSize: compact ? 15 : 17, lineHeight: 1.6,
           color: t.inkSoft, margin: '20px auto 0', maxWidth: 560,
         }}>
-          Cinco profissionais certificadas, cada uma com especialidades complementares. 
+          Três profissionais, cada um com experiências e especialidades complementares.
           Para que o seu corpo encontre sempre o toque certo.
         </p>
       </div>
@@ -533,9 +533,9 @@ function Equipe({ t, compact }) {
           borderRadius: 6, overflow: 'hidden',
           boxShadow: `inset 0 0 0 1px ${t.line}`,
         }}>
-          <img src={team[0].img} alt={team[0].name}
+          <img src={team[0].img} alt={team[0].alt}
             style={{
-              width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+              width: '100%', height: '100%', objectFit: 'cover', objectPosition: team[0].objectPosition, display: 'block',
               filter: 'saturate(0.85) brightness(0.95)',
             }}/>
           <div style={{
@@ -577,7 +577,7 @@ function Equipe({ t, compact }) {
       {/* Rest of team in grid */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: compact ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+        gridTemplateColumns: compact ? '1fr' : 'repeat(2, 1fr)',
         gap: compact ? 16 : 28,
       }}>
         {team.slice(1).map((p, i) => {
@@ -600,9 +600,9 @@ function Equipe({ t, compact }) {
                   : `inset 0 0 0 1px ${t.line}`,
                 transition: 'box-shadow 0.3s ease',
               }}>
-                <img src={p.img} alt={p.name}
+                <img src={p.img} alt={p.alt}
                   style={{
-                    width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+                    width: '100%', height: '100%', objectFit: 'cover', objectPosition: p.objectPosition, display: 'block',
                     filter: 'saturate(0.85) brightness(0.95)',
                     transition: 'transform 0.5s ease',
                     transform: hovered ? 'scale(1.05)' : 'scale(1)',
@@ -639,7 +639,7 @@ function Equipe({ t, compact }) {
         position: 'relative',
         boxShadow: `inset 0 0 0 1px ${t.line}`,
       }}>
-        <img src="assets/equipe/equipe-grupo.jpeg" alt="Equipe Massoterapia RJ"
+        <img src="imagens/equipes/Equipe MassoterapiaRJ.jpg" alt="Ellaine, Júlio César e Selma - Massoterapia RJ"
           style={{
             width: '100%', height: compact ? 320 : 640, objectFit: 'cover', objectPosition: 'center 30%',
             display: 'block', filter: 'saturate(0.85) brightness(0.92)',
@@ -663,7 +663,7 @@ function Equipe({ t, compact }) {
             <div style={{
               fontFamily: 'Karla', fontSize: compact ? 12 : 14,
               color: 'rgba(240,228,208,0.75)', marginTop: 8,
-            }}>5 profissionais · 16 técnicas · +500 atendimentos</div>
+            }}>Ellaine, Júlio César e Selma · confiança, experiência e cuidado personalizado</div>
           </div>
         </div>
       </div>

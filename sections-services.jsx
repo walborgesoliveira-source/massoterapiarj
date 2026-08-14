@@ -114,6 +114,8 @@ function FeaturedServices({ t, compact, cardStyle }) {
 // ─── Full price table ───
 function PriceTable({ t, compact }) {
   const services = window.MRJ_SERVICES;
+  const standardServices = services.filter((service) => service.dur === 50);
+  const specialSessions = services.filter((service) => service.dur > 50);
   return (
     <Section t={t} pad="xl" compact={compact} bg={t.surface} style={{ scrollMarginTop: 80 }}>
       <div id="tabela" style={{ textAlign: 'center', marginBottom: compact ? 36 : 56 }}>
@@ -148,12 +150,12 @@ function PriceTable({ t, compact }) {
             <div style={{ textAlign: 'right' }}>Valor</div>
           </div>
         )}
-        {services.map((s, i) => (
+        {standardServices.map((s, i) => (
           <div key={i} style={{
             display: 'grid',
             gridTemplateColumns: compact ? '1fr auto' : '1fr 100px 110px',
             padding: compact ? '16px 18px' : '18px 28px',
-            borderBottom: i < services.length - 1 ? `1px solid ${t.line}` : 'none',
+            borderBottom: i < standardServices.length - 1 ? `1px solid ${t.line}` : 'none',
             alignItems: 'center',
             gap: compact ? 12 : 0,
           }}>
@@ -182,6 +184,61 @@ function PriceTable({ t, compact }) {
           </div>
         ))}
       </div>
+
+      <section aria-labelledby="sessoes-especiais-titulo" style={{
+        maxWidth: 820, margin: compact ? '64px auto 0' : '96px auto 0',
+      }}>
+        <div style={{ textAlign: 'center', marginBottom: compact ? 28 : 40 }}>
+          <Eyebrow color={t.muted} compact={compact}>Mais tempo para você</Eyebrow>
+          <h2 id="sessoes-especiais-titulo" style={{
+            fontFamily: 'Cormorant Garamond, serif',
+            fontSize: compact ? 32 : 48, lineHeight: 1.05, fontWeight: 400,
+            color: t.ink, margin: '16px 0 0', letterSpacing: '-0.02em',
+          }}>Sessões especiais</h2>
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: compact ? '1fr' : 'repeat(2, 1fr)',
+          gap: compact ? 16 : 24,
+        }}>
+          {specialSessions.map((session) => (
+            <article key={session.name} style={{
+              background: t.bg, borderRadius: 6, border: `1px solid ${t.line}`,
+              padding: compact ? 22 : 28,
+              display: 'flex', flexDirection: 'column', alignItems: 'flex-start',
+            }}>
+              <div style={{
+                display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
+                gap: 16, width: '100%',
+              }}>
+                <h3 style={{
+                  fontFamily: 'Cormorant Garamond, serif', fontWeight: 500,
+                  fontSize: compact ? 24 : 28, color: t.ink, margin: 0, lineHeight: 1.1,
+                }}>{session.name}</h3>
+                <div style={{
+                  fontFamily: 'Karla', fontSize: compact ? 15 : 16,
+                  color: t.accent, fontWeight: 600, whiteSpace: 'nowrap',
+                }}>R$ {session.price}</div>
+              </div>
+              <p style={{
+                fontFamily: 'Karla', fontSize: compact ? 14 : 15,
+                lineHeight: 1.55, color: t.inkSoft, margin: '16px 0 0',
+              }}>{session.desc}</p>
+              <div style={{
+                fontFamily: 'ui-monospace, monospace', fontSize: 10,
+                letterSpacing: '0.15em', color: t.muted, textTransform: 'uppercase',
+                margin: '14px 0 24px',
+              }}>{session.dur} min</div>
+              <a href={window.MRJ_CONTACT.scheduleUrl} target="_blank" rel="noopener" style={{
+                textDecoration: 'none', marginTop: 'auto',
+              }}>
+                <Btn t={t} size="sm">Agendar sessão {Icon.arrow(14, '#fff')}</Btn>
+              </a>
+            </article>
+          ))}
+        </div>
+      </section>
       <WhatsAppCTA t={t} compact={compact} />
     </Section>
   );

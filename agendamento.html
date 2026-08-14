@@ -715,6 +715,8 @@
             <div class="service-collapse" id="specializedServices" hidden>
               <h3>🎯 Técnicas Especializadas</h3>
               <div class="service-list" id="specializedServiceList"></div>
+              <h3>✨ Sessões Especiais</h3>
+              <div class="service-list" id="specialSessionList"></div>
             </div>
             <label class="service-select-technical">
               Serviço selecionado
@@ -792,6 +794,9 @@
             <div><span>Serviço</span><strong>-</strong></div>
             <div><span>Data</span><strong>-</strong></div>
             <div><span>Horário</span><strong>-</strong></div>
+            <div><span>Término</span><strong>-</strong></div>
+            <div><span>Duração</span><strong>-</strong></div>
+            <div><span>Valor</span><strong>-</strong></div>
             <div><span>Profissional</span><strong>A definir</strong></div>
             <div><span>Status</span><strong>Aprovado</strong></div>
           </div>
@@ -809,6 +814,9 @@
           <div><span>Serviço</span><strong>-</strong></div>
           <div><span>Data</span><strong>-</strong></div>
           <div><span>Horário</span><strong>-</strong></div>
+          <div><span>Término</span><strong>-</strong></div>
+          <div><span>Duração</span><strong>-</strong></div>
+          <div><span>Valor</span><strong>-</strong></div>
           <div><span>Profissional</span><strong>A definir</strong></div>
           <div><span>Status</span><strong>Aprovado</strong></div>
         </div>
@@ -837,7 +845,7 @@
     </div>
   </footer>
 
-  <script src="theme.js?v=20260615-selma-disponibilidade"></script>
+  <script src="theme.js?v=20260814-julio-cesar"></script>
   <script>
     const CONFIG = {
       webhookUrl:      'https://n8n.iaguru.com.br/webhook/massoterapiarj-agendamento',
@@ -951,40 +959,73 @@
       '2026-07-11': [
         { inicio: '09:00', fim: '19:00', profissionais: ['Diana'] },
       ],
+      '2026-07-27': [
+        { inicio: '14:00', fim: '20:00', profissionais: ['Amanda', 'Fabíola'] },
+      ],
+      '2026-07-28': [
+        { inicio: '14:00', fim: '20:00', profissionais: ['Fabíola'] },
+        { inicio: '12:00', fim: '20:00', profissionais: ['Selma'] },
+      ],
+      '2026-07-29': [
+        { inicio: '12:00', fim: '20:00', profissionais: ['Selma'] },
+      ],
+      '2026-07-30': [
+        { inicio: '14:00', fim: '20:00', profissionais: ['Amanda'] },
+        { inicio: '12:00', fim: '20:00', profissionais: ['Selma'] },
+      ],
+      '2026-07-31': [
+        { inicio: '12:00', fim: '20:00', profissionais: ['Amanda', 'Fabíola'] },
+      ],
+      '2026-08-01': [],
+      '2026-08-03': [],
+      '2026-08-04': [{ inicio: '11:00', fim: '20:00', profissionais: ['Ellaine', 'Selma'] }],
+      '2026-08-05': [{ inicio: '11:00', fim: '20:00', profissionais: ['Ellaine', 'Selma'] }],
+      '2026-08-06': [{ inicio: '11:00', fim: '20:00', profissionais: ['Ellaine', 'Selma'] }],
+      '2026-08-07': [
+        { inicio: '11:00', fim: '20:00', profissionais: ['Ellaine'] },
+        { inicio: '14:00', fim: '20:00', profissionais: ['Selma'] },
+      ],
+      '2026-08-08': [],
+      '2026-08-10': [],
+      '2026-08-11': [{ inicio: '11:00', fim: '20:00', profissionais: ['Ellaine', 'Selma'] }],
+      '2026-08-12': [{ inicio: '11:00', fim: '20:00', profissionais: ['Ellaine', 'Selma'] }],
+      '2026-08-13': [{ inicio: '11:00', fim: '20:00', profissionais: ['Ellaine', 'Selma'] }],
+      '2026-08-14': [
+        { inicio: '09:00', fim: '20:00', profissionais: ['Júlio César'] },
+        { inicio: '14:00', fim: '20:00', profissionais: ['Selma'] },
+      ],
+      '2026-08-15': [{ inicio: '09:00', fim: '18:00', profissionais: ['Júlio César'] }],
+      '2026-08-16': [],
     };
     const ESCALA_SEMANAL_OFICIAL = {
       1: [
-        { inicio: '09:00', fim: '20:30', profissionais: ['Diana'] },
-        { inicio: '12:00', fim: '20:30', profissionais: ['Amanda'] },
+        { inicio: '09:00', fim: '20:00', profissionais: ['Júlio César'] },
       ],
       2: [
-        { inicio: '09:00', fim: '15:30', profissionais: ['Diana'] },
-        { inicio: '11:00', fim: '19:00', profissionais: ['Ellaine'] },
-        { inicio: '15:30', fim: '20:30', profissionais: ['Selma'] },
+        { inicio: '09:00', fim: '11:00', profissionais: ['Júlio César'] },
+        { inicio: '11:00', fim: '20:00', profissionais: ['Ellaine', 'Selma'] },
       ],
       3: [
-        { inicio: '09:00', fim: '20:30', profissionais: ['Diana'] },
-        { inicio: '12:00', fim: '20:30', profissionais: ['Selma'] },
+        { inicio: '09:00', fim: '11:00', profissionais: ['Júlio César'] },
+        { inicio: '11:00', fim: '20:00', profissionais: ['Ellaine', 'Selma'] },
       ],
       4: [
-        { inicio: '10:00', fim: '20:30', profissionais: ['Selma'] },
-        { inicio: '11:00', fim: '19:00', profissionais: ['Ellaine'] },
+        { inicio: '09:00', fim: '11:00', profissionais: ['Júlio César'] },
+        { inicio: '11:00', fim: '20:00', profissionais: ['Ellaine', 'Selma'] },
       ],
       5: [
-        { inicio: '09:00', fim: '15:30', profissionais: ['Diana'] },
-        { inicio: '10:00', fim: '20:30', profissionais: ['Fabíola'] },
-        { inicio: '15:30', fim: '20:30', profissionais: ['Amanda'] },
+        { inicio: '09:00', fim: '20:00', profissionais: ['Júlio César'] },
+        { inicio: '11:00', fim: '20:00', profissionais: ['Ellaine'] },
+        { inicio: '14:00', fim: '20:00', profissionais: ['Selma'] },
       ],
       6: [
-        { inicio: '09:00', fim: '19:00', profissionais: ['Diana'] },
+        { inicio: '09:00', fim: '18:00', profissionais: ['Júlio César'] },
       ],
     };
     const PROFISSIONAIS_OFICIAIS = [
       { nome: 'Ellaine', cargo: 'Massoterapeuta clínica' },
+      { nome: 'Júlio César', cargo: 'Massoterapeuta' },
       { nome: 'Selma', cargo: 'Massoterapeuta clínica' },
-      { nome: 'Amanda', cargo: 'Massoterapeuta clínica' },
-      { nome: 'Diana', cargo: 'Massoterapeuta clínica' },
-      { nome: 'Fabíola', cargo: 'Massoterapeuta clínica' },
     ];
 
     // ── DOM refs ─────────────────────────────────────────────────
@@ -993,6 +1034,7 @@
     const popularServices = document.getElementById('popularServices');
     const specializedServices = document.getElementById('specializedServices');
     const specializedServiceList = document.getElementById('specializedServiceList');
+    const specialSessionList = document.getElementById('specialSessionList');
     const toggleSpecialized = document.getElementById('toggleSpecialized');
     const selectedServiceLabel = document.getElementById('selectedServiceLabel');
     const dateInput     = document.getElementById('date');
@@ -1027,14 +1069,19 @@
       'Ventosaterapia',
       'Massagem 4 Mãos',
     ];
+    const SPECIAL_SESSION_ORDER = [
+      'Massoterapia 90 minutos',
+      'Mix de Massagens',
+    ];
     const services = Array.isArray(window.MRJ_SERVICES) ? window.MRJ_SERVICES : [];
     const servicesByName = new Map(services.map((service) => [service.name, service]));
-    const listedServiceNames = new Set([...MAIN_SERVICE_ORDER, ...SPECIALIZED_SERVICE_ORDER]);
+    const listedServiceNames = new Set([...MAIN_SERVICE_ORDER, ...SPECIALIZED_SERVICE_ORDER, ...SPECIAL_SESSION_ORDER]);
     const mainServices = MAIN_SERVICE_ORDER.map((name) => servicesByName.get(name)).filter(Boolean);
     const specializedServiceItems = [
       ...SPECIALIZED_SERVICE_ORDER.map((name) => servicesByName.get(name)).filter(Boolean),
       ...services.filter((service) => !listedServiceNames.has(service.name)),
     ];
+    const specialSessionItems = SPECIAL_SESSION_ORDER.map((name) => servicesByName.get(name)).filter(Boolean);
 
     function appendServiceOption(service, group) {
       const opt = document.createElement('option');
@@ -1068,8 +1115,14 @@
     specializedServiceItems.forEach((service) => appendServiceOption(service, specializedGroup));
     serviceSelect.appendChild(specializedGroup);
 
+    const specialSessionGroup = document.createElement('optgroup');
+    specialSessionGroup.label = 'Sessões Especiais';
+    specialSessionItems.forEach((service) => appendServiceOption(service, specialSessionGroup));
+    serviceSelect.appendChild(specialSessionGroup);
+
     mainServices.forEach((service) => renderServiceButton(service, popularServices));
     specializedServiceItems.forEach((service) => renderServiceButton(service, specializedServiceList));
+    specialSessionItems.forEach((service) => renderServiceButton(service, specialSessionList));
 
     function syncServiceSelection() {
       const selected = servicesByName.get(serviceSelect.value);
@@ -1566,13 +1619,23 @@
 
     function updateSummary() {
       const values = new FormData(form);
+      const selectedService = servicesByName.get(values.get('service'));
+      const startMinutes = timeToMinutes(values.get('time'));
+      const duration = selectedService ? Number(selectedService.dur || SESSION_MIN) : null;
+      const endTime = startMinutes !== null && duration ? minutesToTime(startMinutes + duration) : '-';
+      const price = selectedService
+        ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(selectedService.price)
+        : '-';
       summaries.forEach((summary) => {
         const rows = summary.querySelectorAll('strong');
         rows[0].textContent = values.get('service') || '-';
         rows[1].textContent = formatDate(values.get('date'));
         rows[2].textContent = values.get('time') || '-';
-        rows[3].textContent = values.get('profissional_solicitada') || 'A definir';
-        rows[4].textContent = 'Aprovado';
+        rows[3].textContent = endTime;
+        rows[4].textContent = duration ? `${duration} min` : '-';
+        rows[5].textContent = price;
+        rows[6].textContent = values.get('profissional_solicitada') || 'A definir';
+        rows[7].textContent = 'Aprovado';
       });
     }
 

@@ -81,14 +81,14 @@ window.MRJ_SERVICES = [
   { name: 'Massagem Crânio Facial',  price: 280, dur: 50, tag: 'Relaxante',   img: 'assets/servicos/massagem-relaxante.jpeg', desc: 'Foco em cabeça, rosto e pescoço. Alívio para quem trabalha muito na tela.' },
   { name: 'Ventosaterapia',          price: 280, dur: 50, tag: 'Terapêutica', img: 'assets/servicos/massagem-terapeutica.jpeg', desc: 'Técnica milenar com ventosas que alivia tensões musculares profundas e melhora a circulação.' },
   { name: 'Massagem 4 Mãos',         price: 560, dur: 50, tag: 'Especial',    img: 'assets/servicos/massagem-1.jpeg', desc: 'Duas terapeutas, sincronizadas. Uma experiência sensorial completa.' },
+  { name: 'Massoterapia 90 minutos', price: 420, dur: 90, tag: 'Sessão especial', desc: 'Mais tempo para um cuidado completo, com foco nas necessidades do seu corpo.' },
+  { name: 'Mix de Massagens',        price: 520, dur: 120, tag: 'Sessão especial', desc: 'Uma experiência de 2 horas combinando até 6 técnicas de massagem em uma única sessão.' },
 ];
 
 window.MRJ_TEAM = [
-  { name: 'Ellaine Moreira', role: 'Fisioterapeuta · Massoterapeuta', bio: 'Idealizadora da Massoterapia RJ, Ellaine é fisioterapeuta e especialista nas técnicas oferecidas pela clínica, com foco em massagem terapêutica para alívio de dores, liberação muscular, equilíbrio corporal e recuperação da funcionalidade do corpo.', img: 'assets/equipe/ellaine.jpeg' },
-  { name: 'Fabíola',          role: 'Massoterapeuta clínica', bio: 'Fabíola é massoterapeuta formada por escola técnica, com mais de 15 anos de experiência no cuidado de dores e desconfortos musculares. Atuou por mais de uma década na Casa da Coluna, desenvolvendo expertise em liberação miofascial, Deep Tissue (massagem forte profunda) e técnicas de relaxamento terapêutico.', img: 'assets/equipe/fabiola.jpeg' },
-  { name: 'Amanda',           role: 'Massoterapeuta clínica', bio: 'Reconhecida pelo cuidado acolhedor e pela atenção aos detalhes, Amanda oferece uma experiência terapêutica marcada pelo carinho, presença e dedicação. Com formação em Thai Massage por Sebastian Valla, destaca-se pela massagem relaxante e pelo cuidado de dores e desconfortos musculares com um toque profundamente humano.', img: 'assets/equipe/amanda.jpeg' },
-  { name: 'Diana',            role: 'Massoterapeuta clínica', bio: 'Com mais de 25 anos de experiência, Diana construiu sua trajetória no cuidado com a mulher, sendo especialista em drenagem linfática — sua maior expertise. Possui formação internacional pela ITM – International Training Massage School - Tailândia, além de experiência em lifting facial, massagem facial e técnicas para dores e tensões musculares.', img: 'assets/equipe/diana.jpeg' },
-  { name: 'Selma',            role: 'Massoterapeuta clínica', bio: 'Reservada e profundamente presente em sua prática, Selma conduz atendimentos marcados pela conexão, escuta e cuidado atento. Formada em Thai Massage com Sebastian Valla, atua com drenagem linfática, massagem terapêutica profunda e Deep Tissue, unindo firmeza técnica e presença terapêutica para promover relaxamento, proteção e bem-estar ao corpo.', img: 'assets/equipe/selma.jpeg' },
+  { name: 'Ellaine', role: 'Fisioterapeuta · Massoterapeuta', bio: 'Ellaine é fisioterapeuta e massoterapeuta, com ampla experiência clínica e diversas especializações na área da saúde e do movimento. Ingressou na massoterapia com o propósito de unir seu conhecimento técnico a técnicas capazes de proporcionar alívio, bem-estar e resultados perceptíveis desde o primeiro atendimento. Seu trabalho une experiência, precisão e cuidado, com um atendimento discreto, acolhedor e totalmente individualizado. Para Ellaine, cada pessoa merece ser cuidada de acordo com suas necessidades, transformando conhecimento em uma experiência terapêutica de qualidade.', img: 'imagens/equipes/Ellaine.jpg', alt: 'Ellaine - Massoterapia RJ', objectPosition: 'center 30%' },
+  { name: 'Júlio César', role: 'Massoterapeuta', bio: 'Júlio César é massoterapeuta com vasta experiência em massoterapia e atuação junto a atletas de alta performance. Especialista em calistenia, destaca-se pelo domínio de técnicas como liberação miofascial, massagem desportiva, relaxamento profundo e abordagens terapêuticas e relaxantes. Seu trabalho une conhecimento técnico, atenção minuciosa e um atendimento cordial e personalizado, respeitando as necessidades de cada cliente. Atende homens e mulheres com o compromisso de proporcionar bem-estar, recuperação e qualidade de vida.', img: 'imagens/equipes/Júlio César.jpg', alt: 'Júlio César - Massoterapia RJ', objectPosition: 'center 25%' },
+  { name: 'Selma', role: 'Massoterapeuta clínica', bio: 'Selma é uma profissional radiante, daquelas pessoas que fazem diferença não apenas pelo conhecimento, mas também pela forma como acolhem cada cliente. Com vasta experiência em massagens terapêuticas para dores, tensões e desconfortos, seu atendimento é cuidadoso, preciso e verdadeiramente transformador. Atenciosa, gentil e dona de uma energia leve e contagiante, Selma consegue unir técnica e acolhimento de uma maneira muito especial. Cada atendimento se torna uma experiência terapêutica, agradável e humanizada, em que o cuidado com o corpo também vem acompanhado de bem-estar e boas energias.', img: 'imagens/equipes/Selma.jpg', alt: 'Selma - Massoterapia RJ', objectPosition: 'center 25%' },
 ];
 
 window.MRJ_TESTIMONIALS = [
@@ -128,33 +128,35 @@ window.MRJ_POSTS = [
 // Turnos e escala de profissionais
 // Escala oficial semanal de atendimento.
 window.MRJ_TURNOS = [
-  { id: 'segunda_diana', label: 'Segunda · Diana', inicio: '09:00', fim: '20:30', capacidade: 1 },
-  { id: 'segunda_amanda', label: 'Segunda · Amanda', inicio: '12:00', fim: '20:30', capacidade: 1 },
-  { id: 'terca_diana', label: 'Terça · Diana', inicio: '09:00', fim: '15:30', capacidade: 1 },
-  { id: 'terca_ellaine', label: 'Terça · Ellaine', inicio: '11:00', fim: '19:00', capacidade: 1 },
-  { id: 'terca_selma', label: 'Terça · Selma', inicio: '15:30', fim: '20:30', capacidade: 1 },
-  { id: 'quarta_diana', label: 'Quarta · Diana', inicio: '09:00', fim: '20:30', capacidade: 1 },
-  { id: 'quarta_selma', label: 'Quarta · Selma', inicio: '12:00', fim: '20:30', capacidade: 1 },
-  { id: 'quinta_selma', label: 'Quinta · Selma', inicio: '10:00', fim: '20:30', capacidade: 1 },
-  { id: 'quinta_ellaine', label: 'Quinta · Ellaine', inicio: '11:00', fim: '19:00', capacidade: 1 },
-  { id: 'sexta_diana', label: 'Sexta · Diana', inicio: '09:00', fim: '15:30', capacidade: 1 },
-  { id: 'sexta_fabiola', label: 'Sexta · Fabíola', inicio: '10:00', fim: '20:30', capacidade: 1 },
-  { id: 'sexta_amanda', label: 'Sexta · Amanda', inicio: '15:30', fim: '20:30', capacidade: 1 },
-  { id: 'sabado_diana', label: 'Sábado · Diana', inicio: '09:00', fim: '19:00', capacidade: 1 },
+  { id: 'segunda_julio', label: 'Segunda · Júlio César', inicio: '09:00', fim: '20:00', capacidade: 1 },
+  { id: 'terca_julio', label: 'Terça · Júlio César', inicio: '09:00', fim: '11:00', capacidade: 1 },
+  { id: 'terca_ellaine', label: 'Terça · Ellaine', inicio: '11:00', fim: '20:00', capacidade: 1 },
+  { id: 'terca_selma', label: 'Terça · Selma', inicio: '11:00', fim: '20:00', capacidade: 1 },
+  { id: 'quarta_julio', label: 'Quarta · Júlio César', inicio: '09:00', fim: '11:00', capacidade: 1 },
+  { id: 'quarta_ellaine', label: 'Quarta · Ellaine', inicio: '11:00', fim: '20:00', capacidade: 1 },
+  { id: 'quarta_selma', label: 'Quarta · Selma', inicio: '11:00', fim: '20:00', capacidade: 1 },
+  { id: 'quinta_julio', label: 'Quinta · Júlio César', inicio: '09:00', fim: '11:00', capacidade: 1 },
+  { id: 'quinta_ellaine', label: 'Quinta · Ellaine', inicio: '11:00', fim: '20:00', capacidade: 1 },
+  { id: 'quinta_selma', label: 'Quinta · Selma', inicio: '11:00', fim: '20:00', capacidade: 1 },
+  { id: 'sexta_julio', label: 'Sexta · Júlio César', inicio: '09:00', fim: '20:00', capacidade: 1 },
+  { id: 'sexta_ellaine', label: 'Sexta · Ellaine', inicio: '11:00', fim: '20:00', capacidade: 1 },
+  { id: 'sexta_selma', label: 'Sexta · Selma', inicio: '14:00', fim: '20:00', capacidade: 1 },
+  { id: 'sabado_julio', label: 'Sábado · Júlio César', inicio: '09:00', fim: '18:00', capacidade: 1 },
 ];
 
 window.MRJ_PROFISSIONAIS_TURNOS = [
-  { nome: 'Diana', turno: 'segunda_diana', cargo: 'Massoterapeuta clínica' },
-  { nome: 'Amanda', turno: 'segunda_amanda', cargo: 'Massoterapeuta clínica' },
-  { nome: 'Diana', turno: 'terca_diana', cargo: 'Massoterapeuta clínica' },
+  { nome: 'Júlio César', turno: 'segunda_julio', cargo: 'Massoterapeuta' },
+  { nome: 'Júlio César', turno: 'terca_julio', cargo: 'Massoterapeuta' },
   { nome: 'Ellaine', turno: 'terca_ellaine', cargo: 'Massoterapeuta clínica' },
   { nome: 'Selma', turno: 'terca_selma', cargo: 'Massoterapeuta clínica' },
-  { nome: 'Diana', turno: 'quarta_diana', cargo: 'Massoterapeuta clínica' },
+  { nome: 'Júlio César', turno: 'quarta_julio', cargo: 'Massoterapeuta' },
+  { nome: 'Ellaine', turno: 'quarta_ellaine', cargo: 'Massoterapeuta clínica' },
   { nome: 'Selma', turno: 'quarta_selma', cargo: 'Massoterapeuta clínica' },
+  { nome: 'Júlio César', turno: 'quinta_julio', cargo: 'Massoterapeuta' },
   { nome: 'Selma', turno: 'quinta_selma', cargo: 'Massoterapeuta clínica' },
   { nome: 'Ellaine', turno: 'quinta_ellaine', cargo: 'Massoterapeuta clínica' },
-  { nome: 'Diana', turno: 'sexta_diana', cargo: 'Massoterapeuta clínica' },
-  { nome: 'Fabíola', turno: 'sexta_fabiola', cargo: 'Massoterapeuta clínica' },
-  { nome: 'Amanda', turno: 'sexta_amanda', cargo: 'Massoterapeuta clínica' },
-  { nome: 'Diana', turno: 'sabado_diana', cargo: 'Massoterapeuta clínica' },
+  { nome: 'Júlio César', turno: 'sexta_julio', cargo: 'Massoterapeuta' },
+  { nome: 'Ellaine', turno: 'sexta_ellaine', cargo: 'Massoterapeuta clínica' },
+  { nome: 'Selma', turno: 'sexta_selma', cargo: 'Massoterapeuta clínica' },
+  { nome: 'Júlio César', turno: 'sabado_julio', cargo: 'Massoterapeuta' },
 ];
