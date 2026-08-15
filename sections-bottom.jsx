@@ -425,6 +425,17 @@ function FinalCTA({ t, compact }) {
 
 // ─── Footer ───
 function Footer({ t, compact }) {
+  const navigation = [
+    { label: 'Início', href: '/' },
+    { label: 'Sobre', href: '/sobre' },
+    { label: 'Serviços', href: '/servicos' },
+    { label: 'Equipe', href: '/equipe' },
+    { label: 'Espaço', href: '/espaco' },
+    { label: 'Depoimentos', href: '/depoimentos' },
+    { label: 'FAQ', href: '/faq' },
+    { label: 'Contato', href: '/contato' },
+    { label: 'Agendamento', href: '/agendamento.html' },
+  ];
   return (
     <footer style={{
       background: t.bg, borderTop: `1px solid ${t.line}`,
@@ -446,14 +457,16 @@ function Footer({ t, compact }) {
             </p>
           </div>
           {[
-            ['Navegação', ['Início', 'Profissionais', 'Serviços', 'Agendamento', 'Blog']],
+            ['Navegação', navigation],
             ['Contato',   [window.MRJ_CONTACT.phoneLabel, window.MRJ_CONTACT.email, 'Copacabana, Rio de Janeiro']],
             ['Horários',  ['Seg–Sex · 09h às 20h30', 'Sáb · 09h às 19h', 'Dom · Fechado']],
           ].map(([title, items], i) => (
             <div key={i}>
               <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: 10.5, letterSpacing: '0.2em', color: t.muted, textTransform: 'uppercase', marginBottom: 16 }}>{title}</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {items.map((x, j) => (
+                {items.map((x, j) => x.href ? (
+                  <a key={j} href={x.href} style={{ fontFamily: 'Karla', fontSize: 14, color: t.inkSoft, lineHeight: 1.5, textDecoration: 'none' }}>{x.label}</a>
+                ) : (
                   <div key={j} style={{ fontFamily: 'Karla', fontSize: 14, color: t.inkSoft, lineHeight: 1.5, wordBreak: 'break-word' }}>{x}</div>
                 ))}
               </div>

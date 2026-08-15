@@ -101,32 +101,15 @@ function UtilityStrip({ t, compact }) {
 function Nav({ t, compact }) {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const links = [
-    { label: 'Início',      id: 'inicio' },
-    { label: 'Sobre',       id: 'sobre' },
-    { label: 'Serviços',    id: 'servicos' },
-    { label: 'Equipe',      id: 'equipe' },
-    { label: 'Espaço',      id: 'espaco' },
-    { label: 'Depoimentos', id: 'depoimentos' },
-    { label: 'FAQ',         id: 'faq' },
-    { label: 'Contato',     id: 'contato' },
+    { label: 'Início',      href: '/' },
+    { label: 'Sobre',       href: '/sobre' },
+    { label: 'Serviços',    href: '/servicos' },
+    { label: 'Equipe',      href: '/equipe' },
+    { label: 'Espaço',      href: '/espaco' },
+    { label: 'Depoimentos', href: '/depoimentos' },
+    { label: 'FAQ',         href: '/faq' },
+    { label: 'Contato',     href: '/contato' },
   ];
-
-  const scrollTo = (id) => {
-    setIsMenuOpen(false);
-    const el = document.getElementById(id);
-    if (el) {
-      const offset = compact ? 70 : 100;
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = el.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-    }
-  };
 
   if (compact) {
     return (
@@ -138,9 +121,9 @@ function Nav({ t, compact }) {
           padding: '14px 20px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
-          <div onClick={() => scrollTo('inicio')} style={{ cursor: 'pointer' }}>
+          <a href="/" style={{ textDecoration: 'none' }}>
             <Wordmark t={t} compact />
-          </div>
+          </a>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <a href={window.MRJ_CONTACT.scheduleUrl} style={{ textDecoration: 'none' }}>
               <button style={{
@@ -170,16 +153,16 @@ function Nav({ t, compact }) {
               @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
             `}</style>
             {links.map((l, i) => (
-              <div key={i} 
-                onClick={() => scrollTo(l.id)}
+              <a key={i} href={l.href}
+                onClick={() => setIsMenuOpen(false)}
                 style={{
                   fontFamily: 'Cormorant Garamond, serif', fontSize: 32,
                   color: t.ink, fontWeight: 500, borderBottom: `1px solid ${t.line}`,
-                  paddingBottom: 12
+                  paddingBottom: 12, textDecoration: 'none'
                 }}
               >
                 {l.label}
-              </div>
+              </a>
             ))}
             <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 16 }}>
               <Btn t={t} full onClick={() => { setIsMenuOpen(false); window.open(window.MRJ_CONTACT.whatsapp); }}>
@@ -207,13 +190,12 @@ function Nav({ t, compact }) {
           maxWidth: 1200, margin: '0 auto', padding: '20px 64px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
-          <div onClick={() => scrollTo('inicio')} style={{ cursor: 'pointer' }}>
+          <a href="/" style={{ textDecoration: 'none' }}>
             <Wordmark t={t} />
-          </div>
+          </a>
           <nav style={{ display: 'flex', gap: 32 }}>
             {links.map((l, i) => (
-              <div key={i} 
-                onClick={() => scrollTo(l.id)}
+              <a key={i} href={l.href}
                 style={{
                   fontFamily: 'Karla, sans-serif', fontSize: 14,
                   color: t.inkSoft, fontWeight: 500,
@@ -224,7 +206,7 @@ function Nav({ t, compact }) {
                 onMouseOut={(e) => e.target.style.color = t.inkSoft}
               >
                 {l.label}
-              </div>
+              </a>
             ))}
           </nav>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -291,10 +273,7 @@ function Hero({ t, compact, heroText }) {
                 Agendar sessão {Icon.arrow(16, t.deep)}
               </Btn>
               <Btn t={t} variant="outDeep" size={compact ? 'md' : 'lg'}
-                onClick={() => {
-                  const el = document.getElementById('servicos');
-                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }}
+                onClick={() => { window.location.href = '/servicos'; }}
               >
                 Ver técnicas
               </Btn>
