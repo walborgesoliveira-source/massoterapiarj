@@ -128,24 +128,26 @@ window.MRJ_POSTS = [
 // Turnos e escala de profissionais
 // Escala oficial semanal de atendimento.
 window.MRJ_TURNOS = [
-  { id: 'segunda_julio', label: 'Segunda · Júlio César', inicio: '09:00', fim: '20:00', capacidade: 1 },
-  { id: 'terca_julio', label: 'Terça · Júlio César', inicio: '09:00', fim: '11:00', capacidade: 1 },
+  { id: 'segunda_julio', label: 'Segunda · Júlio César', inicio: '11:00', fim: '18:00', capacidade: 1 },
+  { id: 'segunda_selma', label: 'Segunda · Selma', inicio: '14:00', fim: '20:30', capacidade: 1 },
+  { id: 'terca_julio', label: 'Terça · Júlio César', inicio: '11:00', fim: '18:00', capacidade: 1 },
   { id: 'terca_ellaine', label: 'Terça · Ellaine', inicio: '11:00', fim: '20:00', capacidade: 1 },
-  { id: 'terca_selma', label: 'Terça · Selma', inicio: '11:00', fim: '20:00', capacidade: 1 },
-  { id: 'quarta_julio', label: 'Quarta · Júlio César', inicio: '09:00', fim: '11:00', capacidade: 1 },
+  { id: 'terca_selma', label: 'Terça · Selma', inicio: '11:00', fim: '20:30', capacidade: 1 },
+  { id: 'quarta_julio', label: 'Quarta · Júlio César', inicio: '11:00', fim: '18:00', capacidade: 1 },
   { id: 'quarta_ellaine', label: 'Quarta · Ellaine', inicio: '11:00', fim: '20:00', capacidade: 1 },
-  { id: 'quarta_selma', label: 'Quarta · Selma', inicio: '11:00', fim: '20:00', capacidade: 1 },
-  { id: 'quinta_julio', label: 'Quinta · Júlio César', inicio: '09:00', fim: '11:00', capacidade: 1 },
+  { id: 'quarta_selma', label: 'Quarta · Selma', inicio: '11:00', fim: '20:30', capacidade: 1 },
+  { id: 'quinta_julio', label: 'Quinta · Júlio César', inicio: '11:00', fim: '18:00', capacidade: 1 },
   { id: 'quinta_ellaine', label: 'Quinta · Ellaine', inicio: '11:00', fim: '20:00', capacidade: 1 },
-  { id: 'quinta_selma', label: 'Quinta · Selma', inicio: '11:00', fim: '20:00', capacidade: 1 },
-  { id: 'sexta_julio', label: 'Sexta · Júlio César', inicio: '09:00', fim: '20:00', capacidade: 1 },
+  { id: 'quinta_selma', label: 'Quinta · Selma', inicio: '11:00', fim: '20:30', capacidade: 1 },
+  { id: 'sexta_julio', label: 'Sexta · Júlio César', inicio: '11:00', fim: '18:00', capacidade: 1 },
   { id: 'sexta_ellaine', label: 'Sexta · Ellaine', inicio: '11:00', fim: '20:00', capacidade: 1 },
-  { id: 'sexta_selma', label: 'Sexta · Selma', inicio: '14:00', fim: '20:00', capacidade: 1 },
-  { id: 'sabado_julio', label: 'Sábado · Júlio César', inicio: '09:00', fim: '18:00', capacidade: 1 },
+  { id: 'sexta_selma', label: 'Sexta · Selma', inicio: '10:00', fim: '20:30', capacidade: 1 },
+  { id: 'sabado_julio', label: 'Sábado · Júlio César', inicio: '09:00', fim: '16:00', capacidade: 1 },
 ];
 
 window.MRJ_PROFISSIONAIS_TURNOS = [
   { nome: 'Júlio César', turno: 'segunda_julio', cargo: 'Massoterapeuta' },
+  { nome: 'Selma', turno: 'segunda_selma', cargo: 'Massoterapeuta clínica' },
   { nome: 'Júlio César', turno: 'terca_julio', cargo: 'Massoterapeuta' },
   { nome: 'Ellaine', turno: 'terca_ellaine', cargo: 'Massoterapeuta clínica' },
   { nome: 'Selma', turno: 'terca_selma', cargo: 'Massoterapeuta clínica' },
