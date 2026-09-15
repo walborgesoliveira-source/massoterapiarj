@@ -1445,21 +1445,7 @@
 
     function getSlotDisponibilidade(timeValue) {
       const slot = currentAvailableSlots.find((item) => item.hora === timeValue) || null;
-      const localOverride = ESCALA_OFICIAL_DIAS[dateInput.value];
-      if (!slot || !localOverride) return slot;
-
-      const turno = turnoParaHorario(timeValue);
-      const permitidos = new Set(turno?.profissionais || []);
-      const profissionais = Array.from(permitidos);
-      const profissionaisOcupados = (slot.profissionais_ocupados || [])
-        .filter((nome) => permitidos.has(nome));
-      return {
-        ...slot,
-        profissionais,
-        profissionais_ocupados: profissionaisOcupados,
-        total_ocupado: profissionaisOcupados.length,
-        disponivel: profissionais.length > profissionaisOcupados.length,
-      };
+      return slot;
     }
 
     function getProfissionaisParaHorario(timeValue, turno) {
