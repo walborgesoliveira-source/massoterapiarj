@@ -1053,35 +1053,45 @@
       ],
       '2026-09-27': [],
     };
-    const ESCALA_SEMANAL_OFICIAL = {
-      1: [
-        { inicio: '11:00', fim: '18:00', profissionais: ['Júlio César'] },
-        { inicio: '14:00', fim: '20:30', profissionais: ['Selma'] },
-      ],
-      2: [
-        { inicio: '11:00', fim: '18:00', profissionais: ['Júlio César'] },
-        { inicio: '11:00', fim: '20:00', profissionais: ['Ellaine'] },
-        { inicio: '11:00', fim: '20:30', profissionais: ['Selma'] },
-      ],
-      3: [
-        { inicio: '11:00', fim: '18:00', profissionais: ['Júlio César'] },
-        { inicio: '11:00', fim: '20:00', profissionais: ['Ellaine'] },
-        { inicio: '11:00', fim: '20:30', profissionais: ['Selma'] },
-      ],
-      4: [
-        { inicio: '11:00', fim: '18:00', profissionais: ['Júlio César'] },
-        { inicio: '11:00', fim: '20:00', profissionais: ['Ellaine'] },
-        { inicio: '11:00', fim: '20:30', profissionais: ['Selma'] },
-      ],
-      5: [
-        { inicio: '11:00', fim: '18:00', profissionais: ['Júlio César'] },
-        { inicio: '11:00', fim: '20:00', profissionais: ['Ellaine'] },
-        { inicio: '10:00', fim: '20:30', profissionais: ['Selma'] },
-      ],
-      6: [
-        { inicio: '09:00', fim: '16:00', profissionais: ['Júlio César'] },
-      ],
-    };
+    const ESCALA_SEMANAL_ANTERIOR = {
+  1: [],
+  2: [{ inicio: '11:00', fim: '20:30', profissionais: ['Ellaine', 'Selma'] }],
+  3: [{ inicio: '11:00', fim: '20:30', profissionais: ['Ellaine', 'Selma'] }],
+  4: [{ inicio: '11:00', fim: '20:30', profissionais: ['Ellaine', 'Selma'] }],
+  5: [
+    { inicio: '09:00', fim: '20:30', profissionais: ['Júlio César'] },
+    { inicio: '10:00', fim: '20:30', profissionais: ['Selma'] },
+  ],
+  6: [{ inicio: '09:00', fim: '17:00', profissionais: ['Júlio César'] }],
+};
+
+// Nova escala vigente a partir de 05/10/2026; histórico preservado.
+const ESCALA_SEMANAL_OFICIAL = {
+  1: [
+    { inicio: '14:00', fim: '20:30', profissionais: ['Selma'] },
+    { inicio: '11:00', fim: '18:00', profissionais: ['Júlio César'] },
+  ],
+  2: [
+    { inicio: '11:00', fim: '20:30', profissionais: ['Selma'] },
+    { inicio: '11:00', fim: '18:00', profissionais: ['Júlio César'] },
+    { inicio: '11:00', fim: '19:00', profissionais: ['Ellaine'] },
+  ],
+  3: [
+    { inicio: '11:00', fim: '20:30', profissionais: ['Selma'] },
+    { inicio: '11:00', fim: '18:00', profissionais: ['Júlio César'] },
+    { inicio: '11:00', fim: '19:00', profissionais: ['Ellaine'] },
+  ],
+  4: [
+    { inicio: '11:00', fim: '20:30', profissionais: ['Selma'] },
+    { inicio: '11:00', fim: '18:00', profissionais: ['Júlio César'] },
+    { inicio: '11:00', fim: '19:00', profissionais: ['Ellaine'] },
+  ],
+  5: [
+    { inicio: '10:00', fim: '20:30', profissionais: ['Selma'] },
+    { inicio: '11:00', fim: '18:00', profissionais: ['Júlio César'] },
+  ],
+  6: [{ inicio: '09:00', fim: '16:00', profissionais: ['Júlio César'] }],
+};
     const PROFISSIONAIS_OFICIAIS = [
       { nome: 'Ellaine', cargo: 'Massoterapeuta clínica' },
       { nome: 'Júlio César', cargo: 'Massoterapeuta' },
@@ -1296,7 +1306,7 @@
 
     function getEscalaSemanal(dateValue) {
       const dia = getBusinessDateDay(dateValue);
-      return ESCALA_SEMANAL_OFICIAL[dia] || [];
+      return (dateValue >= '2026-10-05' ? ESCALA_SEMANAL_OFICIAL : ESCALA_SEMANAL_ANTERIOR)[dia] || [];
     }
 
     let currentRemoteScales = {};
