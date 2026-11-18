@@ -1737,12 +1737,17 @@ const ESCALA_SEMANAL_OFICIAL = {
       const response = await fetch(CONFIG.webhookUrl, {
         method: 'POST', headers, body: JSON.stringify(payload),
       });
-      if (!response.ok) {
+      // Só considera sucesso com confirmação explícita do n8n ({ sucesso: true }).
+      const text = await response.text();
+      let data = null;
+      try { data = text ? JSON.parse(text) : null; } catch (_) { data = null; }
+      if (!response.ok || !data || data.sucesso !== true) {
         const err = new Error(`Webhook respondeu ${response.status}`);
-        err.status = response.status;
+        err.status = response.ok ? 502 : response.status;
+        err.mensagem = data && (data.erro || data.mensagem) ? String(data.erro || data.mensagem) : '';
         throw err;
       }
-      return response.json().catch(() => ({}));
+      return data;
     }
 
     // ── Event listeners ───────────────────────────────────────────
@@ -1840,12 +1845,16 @@ const ESCALA_SEMANAL_OFICIAL = {
         refreshTimes();
       } catch (error) {
         if (error.status === 409) {
-          showAlert('error', 'Horário indisponível. Escolha outro horário e envie novamente.');
+          showAlert('error', (error.mensagem ? error.mensagem + ' ' : 'Horário indisponível. ') + 'Escolha outro horário e envie novamente.');
           await refreshTimes();
           return;
         }
+        if (error.status === 400 && error.mensagem) {
+          showAlert('error', 'Não foi possível enviar: ' + error.mensagem);
+          return;
+        }
         saveLocal(payload);
-        showAlert('error', 'Pedido salvo localmente mas não enviado. Verifique a integração do webhook.');
+        showAlert('error', 'Não conseguimos registrar seu agendamento agora. Seus dados continuam preenchidos: tente novamente em instantes ou fale conosco pelo WhatsApp.');
       } finally {
         button.disabled = false;
         button.textContent = 'Enviar pedido de agendamento';

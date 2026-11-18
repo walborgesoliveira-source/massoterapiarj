@@ -22,7 +22,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const input = $input.first().json;\nconst body = input.body || input;\n\nconst LEAD_MINUTES = 70;\nconst BUSINESS_TIME_ZONE = 'America/Sao_Paulo';\nconst limpar = (valor, limite = 500) => valor ? String(valor).trim().slice(0, limite) : '';\n\nfunction getBusinessNow() {\n  const parts = new Intl.DateTimeFormat('en-CA', {\n    timeZone: BUSINESS_TIME_ZONE,\n    year: 'numeric', month: '2-digit', day: '2-digit',\n    hour: '2-digit', minute: '2-digit', hour12: false, hourCycle: 'h23',\n  }).formatToParts(new Date());\n  const v = (type) => parts.find((p) => p.type === type)?.value;\n  return { date: v('year') + '-' + v('month') + '-' + v('day'), time: v('hour') + ':' + v('minute') };\n}\n\nfunction timeToMinutes(timeValue) {\n  const [h, m] = String(timeValue || '').slice(0, 5).split(':').map(Number);\n  return Number.isFinite(h) && Number.isFinite(m) ? h * 60 + m : null;\n}\n\nfunction isTooSoonOrPast(dateValue, timeValue) {\n  const now = getBusinessNow();\n  if (dateValue < now.date) return true;\n  if (dateValue > now.date) return false;\n  const slotMinutes = timeToMinutes(timeValue);\n  const nowMinutes = timeToMinutes(now.time);\n  return slotMinutes === null || slotMinutes < nowMinutes + LEAD_MINUTES;\n}\n\nconst profissionalEscolhida = limpar(body.profissional_solicitada || body.colaborador || body.profissional || body.funcionario, 180) || null;\n\nconst payload = {\n  id_agendamento: limpar(body.id_agendamento || 'MRJ-' + Date.now(), 40),\n  nome_cliente: limpar(body.nome_cliente || body.name || body.nome, 200),\n  telefone: limpar(body.telefone || body.phone || body.whatsapp, 40),\n  whatsapp: limpar(body.whatsapp, 40),\n  email: limpar(body.email, 180),\n  telegram: limpar(body.telegram, 120),\n  servico: limpar(body.servico || body.service, 180),\n  duracao_media: Number(body.duracao_media || body.duration || 50),\n  valor_referencia: body.valor_referencia || body.price || null,\n  data_agendada: limpar(body.data_agendada || body.date, 20),\n  hora_agendada: limpar(body.hora_agendada || body.time, 20),\n  local: limpar(body.local || body.location, 220),\n  observacoes_cliente: limpar(body.observacoes_cliente || body.notes, 1000),\n  profissional_solicitada: profissionalEscolhida,\n  colaborador: profissionalEscolhida,\n  status: 'Aprovado',\n  origem: 'site_massoterapiarj',\n  recebido_em: new Date().toISOString()\n};\n\nconst erros = [];\nif (!payload.nome_cliente) erros.push('Nome do cliente é obrigatório.');\nif (!payload.servico) erros.push('Serviço é obrigatório.');\nif (!payload.data_agendada) erros.push('Data é obrigatória.');\nif (!payload.hora_agendada) erros.push('Horário é obrigatório.');\nif (!payload.profissional_solicitada) erros.push('Profissional é obrigatória.');\nif (!payload.whatsapp && !payload.telefone && !payload.email && !payload.telegram) erros.push('Informe ao menos um contato.');\nif (payload.data_agendada && payload.hora_agendada && isTooSoonOrPast(payload.data_agendada, payload.hora_agendada)) {\n  erros.push('Horário deve ter pelo menos ' + LEAD_MINUTES + ' minutos de antecedência no fuso de Brasília.');\n}\n\nif (erros.length) {\n  throw new Error('VALIDACAO: ' + erros.join(' '));\n}\n\nreturn [{ json: payload }];"
+        "jsCode": "const input = $input.first().json;\nconst body = input.body || input;\n\nconst LEAD_MINUTES = 70;\nconst BUSINESS_TIME_ZONE = 'America/Sao_Paulo';\nconst limpar = (valor, limite = 500) => valor ? String(valor).trim().slice(0, limite) : '';\n\nfunction getBusinessNow() {\n  const parts = new Intl.DateTimeFormat('en-CA', {\n    timeZone: BUSINESS_TIME_ZONE,\n    year: 'numeric', month: '2-digit', day: '2-digit',\n    hour: '2-digit', minute: '2-digit', hour12: false, hourCycle: 'h23',\n  }).formatToParts(new Date());\n  const v = (type) => parts.find((p) => p.type === type)?.value;\n  return { date: v('year') + '-' + v('month') + '-' + v('day'), time: v('hour') + ':' + v('minute') };\n}\n\nfunction timeToMinutes(timeValue) {\n  const [h, m] = String(timeValue || '').slice(0, 5).split(':').map(Number);\n  return Number.isFinite(h) && Number.isFinite(m) ? h * 60 + m : null;\n}\n\nfunction isTooSoonOrPast(dateValue, timeValue) {\n  const now = getBusinessNow();\n  if (dateValue < now.date) return true;\n  if (dateValue > now.date) return false;\n  const slotMinutes = timeToMinutes(timeValue);\n  const nowMinutes = timeToMinutes(now.time);\n  return slotMinutes === null || slotMinutes < nowMinutes + LEAD_MINUTES;\n}\n\nconst profissionalEscolhida = limpar(body.profissional_solicitada || body.colaborador || body.profissional || body.funcionario, 180) || null;\n\nconst payload = {\n  id_agendamento: limpar(body.id_agendamento || 'MRJ-' + Date.now(), 40),\n  nome_cliente: limpar(body.nome_cliente || body.name || body.nome, 200),\n  telefone: limpar(body.telefone || body.phone || body.whatsapp, 40),\n  whatsapp: limpar(body.whatsapp, 40),\n  email: limpar(body.email, 180),\n  telegram: limpar(body.telegram, 120),\n  servico: limpar(body.servico || body.service, 180),\n  duracao_media: Number(body.duracao_media || body.duration || 50),\n  valor_referencia: body.valor_referencia || body.price || null,\n  data_agendada: limpar(body.data_agendada || body.date, 20),\n  hora_agendada: limpar(body.hora_agendada || body.time, 20),\n  local: limpar(body.local || body.location, 220),\n  observacoes_cliente: limpar(body.observacoes_cliente || body.notes, 1000),\n  profissional_solicitada: profissionalEscolhida,\n  colaborador: profissionalEscolhida,\n  status: 'Aprovado',\n  origem: 'site_massoterapiarj',\n  recebido_em: new Date().toISOString()\n};\n\nconst erros = [];\nif (!payload.nome_cliente) erros.push('Nome do cliente é obrigatório.');\nif (!payload.servico) erros.push('Serviço é obrigatório.');\nif (!payload.data_agendada) erros.push('Data é obrigatória.');\nif (!payload.hora_agendada) erros.push('Horário é obrigatório.');\nif (!payload.profissional_solicitada) erros.push('Profissional é obrigatória.');\nif (!payload.whatsapp && !payload.telefone && !payload.email && !payload.telegram) erros.push('Informe ao menos um contato.');\nif (payload.data_agendada && payload.hora_agendada && isTooSoonOrPast(payload.data_agendada, payload.hora_agendada)) {\n  erros.push('Horário deve ter pelo menos ' + LEAD_MINUTES + ' minutos de antecedência no fuso de Brasília.');\n}\n\nif (erros.length) {\n  // Não lança erro: devolve o motivo para o site (resposta 400)\n  return [{ json: { _erro: true, mensagem: erros.join(' ') } }];\n}\n\nreturn [{ json: payload }];"
       },
       "id": "validar-agendamento",
       "name": "2. Validar Dados",
@@ -31,7 +31,8 @@
       "position": [
         500,
         300
-      ]
+      ],
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -45,7 +46,8 @@
       "position": [
         760,
         300
-      ]
+      ],
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -126,7 +128,8 @@
       "position": [
         1280,
         420
-      ]
+      ],
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -139,7 +142,8 @@
       "position": [
         1540,
         420
-      ]
+      ],
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -364,7 +368,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={ \"sucesso\": true, \"mensagem\": \"Pedido recebido com sucesso e aprovado no sistema.\", \"status\": \"Aprovado\", \"agendamento\": {{ JSON.stringify($json.agendamento || $json) }} }",
+        "responseBody": "={{ JSON.stringify({ sucesso: true, mensagem: 'Pedido recebido com sucesso e aprovado no sistema.', status: 'Aprovado', agendamento: $('6. Salvar no CORE PS').first().json.agendamento || $('6. Salvar no CORE PS').first().json }) }}",
         "options": {
           "responseCode": 201
         }
@@ -390,36 +394,119 @@
         1930,
         320
       ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "79d74cd1-21b5-4b89-b57b-5653c283e0ad",
+              "leftValue": "={{ $json._erro === true }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ed5e3af3-b2bd-4600-963c-586fe370ebe9",
+      "name": "2b. Dados OK?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        620,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ sucesso: false, erro: $json.mensagem || 'Dados inválidos.', status: 'Inválido' }) }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "91bb22fb-8ea2-4412-8cb8-932f88b59129",
+      "name": "2c. Responder Dados Inválidos",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        860,
+        680
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Converte o erro do CORE PS (ou de outra etapa) em resposta para o site\nconst bruto = JSON.stringify($input.first().json || {});\nlet status = 500;\nlet mensagem = '';\nconst m = bruto.match(/\\b([45]\\d\\d) - /);\nif (m) status = Number(m[1]);\nconst e = bruto.match(/erro\\\\*\"\\s*:\\s*\\\\*\"([^\"\\\\]{3,300})/);\nif (e) mensagem = e[1];\n// Recusas de negócio do CORE PS (4xx, exceto falhas de autenticação) vão para a cliente.\nif (status >= 400 && status < 500 && status !== 401 && status !== 403) {\n  return [{ json: { _status: status, sucesso: false, erro: mensagem || 'Horário indisponível. Escolha outro horário.', status: 'Indisponível' } }];\n}\nreturn [{ json: { _status: 500, sucesso: false, erro: 'Não foi possível registrar o agendamento agora. Tente novamente em instantes ou fale conosco pelo WhatsApp.', status: 'Erro' } }];"
+      },
+      "id": "bd89faa0-5196-4a02-a91d-c24f58118e65",
+      "name": "6b. Tratar Recusa CORE PS",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1500,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ sucesso: false, erro: $json.erro, status: $json.status }) }}",
+        "options": {
+          "responseCode": "={{ $json._status || 500 }}"
+        }
+      },
+      "id": "74c28e92-755e-4af0-8fe8-b1bdda3f9dfe",
+      "name": "6c. Responder Recusa/Erro",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1740,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ sucesso: false, erro: 'Não foi possível registrar o agendamento agora. Tente novamente em instantes ou fale conosco pelo WhatsApp.', status: 'Erro' }) }}",
+        "options": {
+          "responseCode": 500
+        }
+      },
+      "id": "76cde19b-ce63-4230-ad8a-92ba0ad1d9a6",
+      "name": "2d. Responder Erro Interno",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        860,
+        860
+      ]
     }
   ],
   "connections": {
-    "1. Webhook Agendamento": {
-      "main": [
-        [
-          {
-            "node": "2. Validar Dados",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "2. Validar Dados": {
       "main": [
         [
           {
-            "node": "3. Verificar Disponibilidade",
+            "node": "2b. Dados OK?",
             "type": "main",
             "index": 0
           }
-        ]
-      ]
-    },
-    "3. Verificar Disponibilidade": {
-      "main": [
+        ],
         [
           {
-            "node": "6. Salvar no CORE PS",
+            "node": "2d. Responder Erro Interno",
             "type": "main",
             "index": 0
           }
@@ -434,24 +521,32 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "6b. Tratar Recusa CORE PS",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
-    "7. Preparar Alerta Telegram": {
+    "1. Webhook Agendamento": {
       "main": [
         [
           {
-            "node": "8. Telegram Configurado?",
+            "node": "2. Validar Dados",
             "type": "main",
             "index": 0
-          },
+          }
+        ]
+      ]
+    },
+    "10. Cliente Tem Email?": {
+      "main": [
+        [
           {
-            "node": "10. Cliente Tem Email?",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "12. Cliente Tem WhatsApp?",
+            "node": "11. Email Cliente",
             "type": "main",
             "index": 0
           }
@@ -481,17 +576,6 @@
         ]
       ]
     },
-    "10. Cliente Tem Email?": {
-      "main": [
-        [
-          {
-            "node": "11. Email Cliente",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "12. Cliente Tem WhatsApp?": {
       "main": [
         [
@@ -503,11 +587,86 @@
         ]
       ]
     },
+    "7. Preparar Alerta Telegram": {
+      "main": [
+        [
+          {
+            "node": "8. Telegram Configurado?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "10. Cliente Tem Email?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "12. Cliente Tem WhatsApp?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "14. Responder Sucesso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3. Verificar Disponibilidade": {
+      "main": [
+        [
+          {
+            "node": "6. Salvar no CORE PS",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "6b. Tratar Recusa CORE PS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "8.1 Preparar Destinos Telegram": {
       "main": [
         [
           {
             "node": "9. Enviar Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2b. Dados OK?": {
+      "main": [
+        [
+          {
+            "node": "3. Verificar Disponibilidade",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "2c. Responder Dados Inválidos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "6b. Tratar Recusa CORE PS": {
+      "main": [
+        [
+          {
+            "node": "6c. Responder Recusa/Erro",
             "type": "main",
             "index": 0
           }
